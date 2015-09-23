@@ -34,6 +34,14 @@ public class Chess {
 	public Chess() {
 		intialize(true);
 	}
+
+	/**
+	 * initialize the chess game.
+	 * 
+	 * @param first
+	 *            true if it is the first time, false if we want to restart
+	 *            (reinitialize) the game
+	 */
 	protected void intialize(boolean first) {
 		whoseTurn = true;
 		time = 1;
@@ -46,10 +54,10 @@ public class Chess {
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				Square t;
-				if (first){
+				if (first) {
 					t = new Square(i, j, this);
 					spots[i][j] = t;
-				}else{
+				} else {
 					t = spots[i][j];
 				}
 				int y = t.Y();
@@ -67,7 +75,7 @@ public class Chess {
 		Collections.sort(white);
 		Collections.sort(black);
 	}
-	
+
 	/**
 	 * 
 	 * @param x
@@ -158,8 +166,7 @@ public class Chess {
 	 *            the position moved to
 	 */
 	protected void addRecord(Piece moved, Square start, Piece taken, Square end) {
-		records.add(new Move(moved, start, taken, end, time,
-				checkOrNot(whoseTurn)));
+		records.add(new Move(moved, start, taken, end, time, checkOrNot(whoseTurn)));
 	}
 
 	/**
@@ -177,10 +184,10 @@ public class Chess {
 	 * @param rookStart
 	 *            the original positon of the rook
 	 * @param rookEnd
-	 *            the final positon of the rook, though this parameter is not actually used
+	 *            the final positon of the rook, though this parameter is not
+	 *            actually used
 	 */
-	protected void addRecord(King king, Square kingStart, Square kingEnd,
-			Rook rook, Square rookStart, Square rookEnd) {
+	protected void addRecord(King king, Square kingStart, Square kingEnd, Rook rook, Square rookStart, Square rookEnd) {
 		records.add(new Castling(king, kingStart, kingEnd, rook, rookStart, time, checkOrNot(whoseTurn)));
 	}
 
@@ -190,14 +197,12 @@ public class Chess {
 	 * @param promoteTo
 	 *            the piece that the pawn promoted to
 	 */
-	protected void addPromotionRecord(Piece moved, Square start, Piece taken,
-			Square end, Piece promotedTo) {
-		
+	protected void addPromotionRecord(Piece moved, Square start, Piece taken, Square end, Piece promotedTo) {
+
 		takeOffBoard(moved);
 		putBackToBoard(promotedTo, end);
-		
-		Promotion a = new Promotion(moved, start, taken, end, time,
-				checkOrNot(whoseTurn), promotedTo);
+
+		Promotion a = new Promotion(moved, start, taken, end, time, checkOrNot(whoseTurn), promotedTo);
 		records.add(a);
 	}
 
@@ -214,8 +219,7 @@ public class Chess {
 	 * @param wb
 	 * @return
 	 */
-	public boolean giveAwayKing(Piece moved, Square start, Piece taken, Square end,
-			boolean wb) {
+	public boolean giveAwayKing(Piece moved, Square start, Piece taken, Square end, boolean wb) {
 		boolean giveAway = true;
 		if (taken != null) {
 			taken.moveTo(null);
@@ -313,8 +317,7 @@ public class Chess {
 				return;
 			boolean repetition = true;
 			for (int j = 1; j <= 2 * i; j++) {
-				if (!records.get(recordNum - j).equals(
-						records.get(recordNum - j - 2 * i))) {
+				if (!records.get(recordNum - j).equals(records.get(recordNum - j - 2 * i))) {
 					repetition = false;
 					break;
 				}
@@ -341,16 +344,18 @@ public class Chess {
 	public boolean canEnPassant(Square end) {
 		if (records.size() < 1)
 			return false;
-		return records.get(records.size() -1).canEnPassant(end);
+		return records.get(records.size() - 1).canEnPassant(end);
 	}
-	
+
 	/**
-	 * this method is only used by undo method of Move, it will check whether that move was an En Passant move.
+	 * this method is only used by undo method of Move, it will check whether
+	 * that move was an En Passant move.
+	 * 
 	 * @param end
 	 * @return true, if that move was an En Passant move.
 	 */
 	public boolean canEnPassantFromUndoMethod(Square end) {
-		return records.get(records.size() -2).canEnPassant(end);
+		return records.get(records.size() - 2).canEnPassant(end);
 	}
 
 	/**
@@ -381,16 +386,14 @@ public class Chess {
 	}
 
 	private boolean canNotLongCastling(int y, ArrayList<Piece> attack) {
-		return hasMoved(spotAt(1, y), 'R') || hasMoved(spotAt(5, y), 'K')
-				|| spotAt(2, y).occupied() || spotAt(3, y).occupied()
-				|| spotAt(4, y).occupied() || isAttacked(attack, spotAt(5, y))
+		return hasMoved(spotAt(1, y), 'R') || hasMoved(spotAt(5, y), 'K') || spotAt(2, y).occupied()
+				|| spotAt(3, y).occupied() || spotAt(4, y).occupied() || isAttacked(attack, spotAt(5, y))
 				|| isAttacked(attack, spotAt(3, y)) || isAttacked(attack, spotAt(4, y));
 	}
 
 	private boolean canNotShortCastling(int y, ArrayList<Piece> attack) {
-		return hasMoved(spotAt(8, y), 'R') || hasMoved(spotAt(5, y), 'K')
-				|| spotAt(6, y).occupied() || spotAt(7, y).occupied()
-				|| isAttacked(attack, spotAt(5, y)) || isAttacked(attack, spotAt(6, y))
+		return hasMoved(spotAt(8, y), 'R') || hasMoved(spotAt(5, y), 'K') || spotAt(6, y).occupied()
+				|| spotAt(7, y).occupied() || isAttacked(attack, spotAt(5, y)) || isAttacked(attack, spotAt(6, y))
 				|| isAttacked(attack, spotAt(7, y));
 	}
 
@@ -448,7 +451,7 @@ public class Chess {
 	public void takeOffBoard(Piece taken) {
 		Square p = taken.getP();
 		System.out.print(p);
-		if (p ==null)
+		if (p == null)
 			return;
 		taken.getP().setOccupied(null);
 		if (taken.getWb())
@@ -604,8 +607,7 @@ public class Chess {
 			type = 'P';
 		} else {
 			type = s.toUpperCase().charAt(0);
-			if (!(type == 'R' || type == 'N' || type == 'B' || type == 'Q'
-					|| type == 'K' || type == 'P'))
+			if (!(type == 'R' || type == 'N' || type == 'B' || type == 'Q' || type == 'K' || type == 'P'))
 				return "Please enter valid initial of chessman -- R(Root), N(Knight), B(Bishop), Q(Queen), K(King). If you omit it, it is assumed as Pawn.";
 		}
 
@@ -643,8 +645,7 @@ public class Chess {
 			if (movedChessman.canCapture(end, this))
 				return movedChessman.capture(end, chessmanTaken, this);
 			else
-				return "Illegal move! Please check the rule of "
-						+ movedChessman.getName() + "!";
+				return "Illegal move! Please check the rule of " + movedChessman.getName() + "!";
 		} else {
 			if (chessmanTaken != null) {
 				return "It works this time,but please use \"x\" if you want to take it next time. Thank you!\n"
@@ -653,8 +654,7 @@ public class Chess {
 			if (movedChessman.canMove(end, this))
 				return movedChessman.move(end, this);
 			else
-				return "Illegal move! Please check the rule of "
-						+ movedChessman.getName() + "!";
+				return "Illegal move! Please check the rule of " + movedChessman.getName() + "!";
 		}
 	}
 
@@ -667,8 +667,7 @@ public class Chess {
 	 */
 	public String figureOutTheAbbreviation(String s) {
 		char type = s.charAt(0);
-		if (type == 'R' || type == 'N' || type == 'B' || type == 'Q'
-				|| type == 'K' || type == 'P')
+		if (type == 'R' || type == 'N' || type == 'B' || type == 'Q' || type == 'K' || type == 'P')
 			s = s.substring(1);
 		else
 			type = 'P';
@@ -730,8 +729,7 @@ public class Chess {
 		if (canClaimDraw.isEmpty()) {
 			if (r.canAskFordraw(whoseTurn)) {
 				while (true) {
-					String command = JOptionPane
-							.showInputDialog("Do you agree draw?");
+					String command = JOptionPane.showInputDialog("Do you agree draw?");
 					if (command.isEmpty())
 						continue;
 					if (command.toLowerCase().startsWith("yes")) {
@@ -890,8 +888,7 @@ public class Chess {
 		for (Square[] j : spots) {
 			for (Square i : j) {
 				if (!i.occupiedBy(whoseTurn))
-					if (highLight.canMove(i, this)
-							|| highLight.canCapture(i, this))
+					if (highLight.canMove(i, this) || highLight.canCapture(i, this))
 						i.highLight();
 			}
 		}

@@ -46,7 +46,8 @@ public class Chess {
 		whoseTurn = true;
 		time = 1;
 		records = new ArrayList<Move>();
-		spots = new Square[8][8];
+		if (first)
+			spots = new Square[8][8];
 		white = new ArrayList<Piece>();
 		black = new ArrayList<Piece>();
 		r = new DrawRequest();

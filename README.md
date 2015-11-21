@@ -4,7 +4,9 @@ My wonderful java chess game
 A chess project created in java.
 
 To run this project, you can create a new java project in eclipse, copy files in the root folder into the project folder and others into the src folder.
-Simply run the Main to start the game.
+Simply run the Main to start the game, and then you can a start window.
+<img src="img/start.png">
+
 
 To make a move in the game, you can either click in the panel or type a command in the standard chess recording format in the console.
 This smart program is able to show you all those legal moves you can make and determine whether the game has end.

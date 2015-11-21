@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EventObject;
+import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,7 +24,7 @@ public class Chess {
 	private String canClaimDraw = "";
 	private Piece highLight;
 	private JLabel outLabel;
-	private Console outBox;
+	ChessGameViewer outBox;
 	private DrawRequest r;
 	private boolean gameHasEnded;
 
@@ -46,8 +48,7 @@ public class Chess {
 		whoseTurn = true;
 		time = 1;
 		records = new ArrayList<Move>();
-		if (first)
-			spots = new Square[8][8];
+		spots = new Square[8][8];
 		white = new ArrayList<Piece>();
 		black = new ArrayList<Piece>();
 		r = new DrawRequest();
@@ -100,11 +101,6 @@ public class Chess {
 			return new King('K', b, p);
 		else
 			return null;
-	}
-
-	protected void initializedOutPutMethod(JLabel j, Console a) {
-		outLabel = j;
-		outBox = a;
 	}
 
 	// ---------------------------------------------------------------------------
@@ -942,6 +938,25 @@ public class Chess {
 	 */
 	protected void printInLabel(String s) {
 		outLabel.setText(s);
+	}
+	
+	
+	
+	
+	
+	
+	    private List<ChessListener> listeners = new ArrayList<ChessListener>();
+
+	    public void addChessListener(ChessListener toAdd) {
+	        listeners.add(toAdd);
+	    }
+
+	    public void updateSquare(Square s) {
+	        System.out.println("Hello!!");
+	        // Notify everybody that may be interested.
+	        for (ChessListener hl : listeners)
+	            hl.updateSquare(new EventObject(s));
+	    }
 	}
 
 }

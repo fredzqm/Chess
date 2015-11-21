@@ -1,25 +1,28 @@
 import java.util.HashMap;
 
-public class ChessControl {
-
+public class ChessControl implements ChessGameViewerSource {
+	ChessGameViewer view;
+	Chess chess;
+	
+	/**
+	 * start my little chess game!!!!
+	 * 
+	 * @param args
+	 *            ignored
+	 */
 	public ChessControl() {
-		/**
-		 * start my little chess game!!!!
-		 * 
-		 * @param args
-		 *            ignored
-		 */
-		ChessGameViewer myGame = new ChessGameViewer();
-		Chess myChess = new Chess();
-		myGame.createConsoleBox(myChess);
-		myGame.createChessBoard(myChess);
-		myChess.initializedOutPutMethod(myGame.statusLabel, myGame.myConsole);
-		myGame.setVisible(true);
-		myGame.pack();
+		view = new ChessGameViewer(this);
+		chess = new Chess();
+//		myGame.createConsoleBox(chess);
+//		myGame.createChessBoard(chess);
+//		chess.initializedOutPutMethod(myGame.statusLabel, myGame.myConsole);
+		view.setVisible(true);
+		view.pack();
 
 	}
 
-	private static final HashMap<String, String> rules = new HashMap<String, String>() {
+	@SuppressWarnings("serial")
+	private final HashMap<String, String> rules = new HashMap<String, String>() {
 		{
 			put("castling",
 					"Only under those circumstances, you can castling\n"
@@ -54,7 +57,7 @@ public class ChessControl {
 	 * @param command
 	 * @return
 	 */
-	private static String rules(String command) {
+	private String rules(String command) {
 		if (rules.containsKey(command))
 			return rules.get(command);
 		return "You can get rules for castling, pawn, king, queen, rook, bishop, knight, En Passant, promotion";
@@ -69,7 +72,7 @@ public class ChessControl {
 	 *            the game class
 	 * @return the next output line
 	 */
-	protected static String handleCommand(String s, Chess chess) {
+	public String handleCommand(String s) {
 		if (s.toLowerCase().equals("print")) {
 			return chess.print();
 		} else if (s.toLowerCase().equals("restart")) {
@@ -107,7 +110,7 @@ public class ChessControl {
 				if (fullStr.startsWith("A"))
 					return fullStr;
 				else
-					return handleCommand(fullStr, chess);
+					return handleCommand(fullStr);
 			else
 				return "Incorrect format of abbreviation command.\n"
 						+ "You can omit the start spot of the move in the complete command.";
@@ -116,5 +119,48 @@ public class ChessControl {
 					+ "you can omit the \"P\" at the begining for a pawn." + "for casting, enter \"O-O\" or \"O-O-O\"\n"
 					+ "for examples, \"e2-e4\", \"Nb2-c3\" ";
 	}
+	
+	/**
+	 * print out the result in the box.
+	 */
+	protected void printInBox(String s) {
+		view.printOut(s);
+	}
+
+	/**
+	 * print out the temporal piece that is chosen in the box
+	 * 
+	 * @param s
+	 */
+	protected void printchosenPiece(String s) {
+		if (s.charAt(0) == 'P')
+			view.printTemp(s.substring(1));
+		else
+			view.printTemp(s);
+	}
+
+	/**
+	 * clean the temporal piece information, because the user suggests a illegal
+	 * move
+	 */
+	protected void printCleanTemp() {
+		view.cleanTemp();
+	}
+
+	/**
+	 * print out the outputs in the head label.
+	 * 
+	 * @param s
+	 */
+	protected void printInLabel(String s) {
+		view.setText(s);
+	}
+
+	@Override
+	public void click(int i, int j) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

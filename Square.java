@@ -1,9 +1,4 @@
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 
 /**
@@ -24,8 +19,9 @@ public class Square extends JLabel {
 	private int y;
 	private String name;
 	private Piece occupied;
-	private Color originalColor;
-	boolean highLight;
+	
+	// TODO:
+	private SquareLabel label;
 
 	/**
 	 * 
@@ -43,138 +39,94 @@ public class Square extends JLabel {
 		int row = 8 - j;
 		name = "" + col + row;
 		occupied = null;
-		setPreferredSize(new Dimension(Main.WIDTH, Main.WIDTH));
-		if ((i + j) % 2 != 0)
-			originalColor = Color.gray;
-		else
-			originalColor = Color.white;
-		setBackground(originalColor);
-		setBorder(BorderFactory.createLineBorder(Color.black, 1));
-		setOpaque(true);
-		addMouseListener(new Clicked(chess));
+		
+		label = new SquareLabel( i, j, chess.outBox.source) ;
 	}
 
 	// ------------------------------------------------------------------------------------------------------------------
-	// accessors
-	
-	public String toString() {
-		return name;
-	}
+		// accessors
+		
+		public String toString() {
+			return name;
+		}
 
-	public int X() {
-		return x;
-	}
+		public int X() {
+			return x;
+		}
 
-	public int Y() {
-		return y;
-	}
+		public int Y() {
+			return y;
+		}
 
-	/**
-	 * 
-	 * @return the piece at that square
-	 */
-	public Piece getPiece() {
-		return occupied;
-	}
-	/**
-	 * 
-	 * @return true if there is any piece occupy this squre
-	 */
-	public boolean occupied() {
-		return occupied != null;
-	}
+		/**
+		 * 
+		 * @return the piece at that square
+		 */
+		public Piece getPiece() {
+			return occupied;
+		}
+		/**
+		 * 
+		 * @return true if there is any piece occupy this squre
+		 */
+		public boolean occupied() {
+			return occupied != null;
+		}
 
-	/**
-	 * 
-	 * @param whoseTurn
-	 *            white or black
-	 * @return whether this square is ocupied by piece of that color.
-	 */
-	public boolean occupiedBy(boolean whoseTurn) {
-		if (occupied())
-			return whoseTurn == occupied.getWb();
-		else
-			return false;
-	}
-
-	public boolean isHighLight() {
-		return highLight;
-	}
-
-	// ------------------------------------------------------------------------------------------------------------------
-	// modifier
-
-	/**
-	 * set the occupied piece.
-	 * 
-	 * @param piece
-	 *            the piece
-	 */
-	public void setOccupied(Piece piece) {
-		occupied = piece;
-		upDatePiece();
-	}
-
-	/**
-	 * hight light this spot and set the back ground color to highlight color.
-	 */
-	public void highLight() {
-		highLight = true;
-		setBackground(HIGHLIGHT_COLOR);
-	}
-
-	public void deHighLight() {
-		highLight = false;
-		setBackground(originalColor);
-	}
-
-	/**
-	 * upDate the color and text of this JLabel.
-	 */
-	public void upDatePiece() {
-		if (occupied != null) {
-			setText("" + occupied.getType());
-			if (occupied.getWb())
-				setForeground(TEXT_COLOR_WHITE);
+		/**
+		 * 
+		 * @param whoseTurn
+		 *            white or black
+		 * @return whether this square is ocupied by piece of that color.
+		 */
+		public boolean occupiedBy(boolean whoseTurn) {
+			if (occupied())
+				return whoseTurn == occupied.getWb();
 			else
-				setForeground(TEXT_COLOR_BALCK);
-		} else {
-			setText("");
-		}
-	}
-	
-	/**
-	 * MouseListener to calls method in Chess to operate the input.
-	 * @author zhangq2
-	 *
-	 */
-	private class Clicked implements MouseListener {
-		Chess chess;
-
-		public Clicked(Chess chess) {
-			this.chess = chess;
+				return false;
 		}
 
-		@Override
-		public void mouseReleased(MouseEvent e) {
+		public boolean isHighLight() {
+			return label.highLight;
 		}
 
-		@Override
-		public void mousePressed(MouseEvent e) {
+		// ------------------------------------------------------------------------------------------------------------------
+		// modifier
+
+		/**
+		 * set the occupied piece.
+		 * 
+		 * @param piece
+		 *            the piece
+		 */
+		public void setOccupied(Piece piece) {
+			occupied = piece;
+			upDatePiece();
 		}
 
-		@Override
-		public void mouseExited(MouseEvent e) {
+		/**
+		 * hight light this spot and set the back ground color to highlight color.
+		 */
+		public void highLight() {
+			label.highLight();
 		}
 
-		@Override
-		public void mouseEntered(MouseEvent e) {
+		public void deHighLight() {
+			label.deHighLight();
 		}
 
-		@Override
-		public void mouseClicked(MouseEvent arg0) {
-			chess.click(Square.this);
+		/**
+		 * upDate the color and text of this JLabel.
+		 */
+		public void upDatePiece() {
+			if (occupied != null) {
+				setText("" + occupied.getType());
+				if (occupied.getWb())
+					setForeground(TEXT_COLOR_WHITE);
+				else
+					setForeground(TEXT_COLOR_BALCK);
+			} else {
+				setText("");
+			}
 		}
-	}
-
 }

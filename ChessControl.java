@@ -1,7 +1,7 @@
 import java.util.HashMap;
 
 public class ChessControl {
-	
+
 	public ChessControl() {
 		/**
 		 * start my little chess game!!!!
@@ -9,16 +9,16 @@ public class ChessControl {
 		 * @param args
 		 *            ignored
 		 */
-			ChessGameViewer myGame = new ChessGameViewer();
-			Chess myChess = new Chess();
-			myGame.createConsoleBox(myChess);
-			myGame.createChessBoard(myChess);
-			myChess.initializedOutPutMethod(myGame.statusLabel, myGame.myConsole);
-			myGame.setVisible(true);
-			myGame.pack();
-			
+		ChessGameViewer myGame = new ChessGameViewer();
+		Chess myChess = new Chess();
+		myGame.createConsoleBox(myChess);
+		myGame.createChessBoard(myChess);
+		myChess.initializedOutPutMethod(myGame.statusLabel, myGame.myConsole);
+		myGame.setVisible(true);
+		myGame.pack();
+
 	}
-	
+
 	private static final HashMap<String, String> rules = new HashMap<String, String>() {
 		{
 			put("castling",
@@ -116,6 +116,5 @@ public class ChessControl {
 					+ "you can omit the \"P\" at the begining for a pawn." + "for casting, enter \"O-O\" or \"O-O-O\"\n"
 					+ "for examples, \"e2-e4\", \"Nb2-c3\" ";
 	}
-
 
 }

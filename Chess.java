@@ -139,7 +139,18 @@ public class Chess {
 	public Collection<Square> getAllSquares(){
 		return list;
 	}
+	
+	public ArrayList<Piece> getWhite() {
+		return white;
+	}
 
+	public ArrayList<Piece> getBlack() {
+		return black;
+	}
+
+	public ArrayList<Move> getRecords(){
+		return records;
+	}
 	// ------------------------------------------------------------------------------------------------------
 	// methods to add records
 
@@ -441,7 +452,6 @@ public class Chess {
 	 */
 	public void takeOffBoard(Piece taken) {
 		Square p = taken.getP();
-		System.out.print(p);
 		if (p == null)
 			return;
 		taken.getP().setOccupied(null);
@@ -530,12 +540,13 @@ public class Chess {
 	 * 
 	 * @return
 	 */
-	public String undoPreviousRround() {
-		if (time == 1)
+	public String undoPreviousMove() {
+		if (time == 1 && whoseTurn)
 			return "It is already the start of Game";
 		undoLastMove();
-		undoLastMove();
-		time--;
+		if (whoseTurn)
+			time--;
+		whoseTurn = !whoseTurn;
 		return "Undo the Previous Move!";
 	}
 
@@ -581,133 +592,7 @@ public class Chess {
 		return "You cannot do castling, please check the rules for castling.";
 	}
 
-	/**
-	 * This method will be called, if the user types a command to make a move.
-	 * 
-	 * Interpret the command, and find out if it is legal to do make this move.
-	 * If it is, make this move.
-	 * 
-	 * @param s
-	 *            the input command
-	 * @return
-	 */
-	public String makeMove(String s) {
-		char type;
-		if (s.length() == 5) {
-			s = 'P' + s;
-			type = 'P';
-		} else {
-			type = s.toUpperCase().charAt(0);
-			if (!(type == 'R' || type == 'N' || type == 'B' || type == 'Q' || type == 'K' || type == 'P'))
-				return "Please enter valid initial of chessman -- R(Root), N(Knight), B(Bishop), Q(Queen), K(King). If you omit it, it is assumed as Pawn.";
-		}
-
-		s = s.toLowerCase();
-		Square start = getSquare(s.substring(1, 3));
-		if (start == null)
-			return "please enter a valid start Position";
-
-		boolean takeOrNot;
-		char action = s.charAt(3);
-		if (action == '-')
-			takeOrNot = false;
-		else if (s.charAt(3) == 'x')
-			takeOrNot = true;
-		else
-			return "Pleae enter \"-\" or \"x\" to indicate whether this move takes some piece or not.";
-
-		Square end = getSquare(s.substring(4));
-		if (end == null)
-			return "please enter a valid end Position";
-
-		Piece movedChessman = start.getPiece();
-		if (movedChessman == null) {
-			if (whoseTurn)
-				return "There should be a white chessman in the start Position!";
-			else
-				return "There should be a black chessman in the start Position!";
-		}
-		if (!(movedChessman.isType(type)))
-			return "The chessman in the start Position is not corret! \n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn";
-
-		Piece chessmanTaken = end.getPiece();
-
-		if (takeOrNot) {
-			if (movedChessman.canCapture(end))
-				return movedChessman.capture(end, chessmanTaken);
-			else
-				return "Illegal move! Please check the rule of " + movedChessman.getName() + "!";
-		} else {
-			if (chessmanTaken != null) {
-				return "It works this time,but please use \"x\" if you want to take it next time. Thank you!\n"
-						+ makeMove(s.replace('-', 'x'));
-			}
-			if (movedChessman.canMove(end))
-				return movedChessman.move(end);
-			else
-				return "Illegal move! Please check the rule of " + movedChessman.getName() + "!";
-		}
-	}
-
-	/**
-	 * Tranformed the abbreviated command to the complete one, or return error
-	 * if there is ambiguous about the abbreviated command.
-	 * 
-	 * @param s
-	 * @return
-	 */
-	public String figureOutTheAbbreviation(String s) {
-		char type = s.charAt(0);
-		if (type == 'R' || type == 'N' || type == 'B' || type == 'Q' || type == 'K' || type == 'P')
-			s = s.substring(1);
-		else
-			type = 'P';
-
-		boolean takeOrNot = (s.charAt(0) == 'x');
-
-		if (takeOrNot)
-			s = s.substring(1);
-
-		Square end = null;
-		if (s.length() == 2)
-			end = getSquare(s);
-		if (end == null)
-			return null;
-
-		ArrayList<Piece> possible = new ArrayList<Piece>();
-		ArrayList<Piece> set;
-
-		if (whoseTurn)
-			set = white;
-		else
-			set = black;
-
-		if (takeOrNot) {
-			for (Piece i : set) {
-				if (i.isType(type) && i.canCapture(end))
-					possible.add(i);
-			}
-		} else {
-			for (Piece i : set) {
-				if (i.isType(type) && i.canMove(end))
-					possible.add(i);
-			}
-		}
-		if (possible.size() == 0) {
-			return "Ambiguity: No one can reach that spot.";
-		} else if (possible.size() == 1) {
-			String newStr = "" + type;
-			newStr += possible.get(0).getP().toString();
-			if (takeOrNot)
-				newStr += "x";
-			else
-				newStr += "-";
-			newStr += end.toString();
-			return newStr;
-		} else {
-			return "Ambiguity: This can represent many different moves.";
-		}
-	}
+	
 
 	/**
 	 * Find out if it is legal to claim draw. If it is, ends the game and claim
@@ -833,109 +718,7 @@ public class Chess {
 		}
 	}
 
-	/**
-	 * this mehod will be called if the user click on the board. It will find
-	 * out whether the user has suggest a legal move, and provides proper
-	 * outputs.
-	 * 
-	 * @param spot
-	 *            the square that is clicked
-	 */
-	public void click(Square spot) {
-//		if (highLight != null) {
-//			if (spot.isHighLight() && !spot.equals(highLight.getP())) {
-//				String s = "";
-//
-//				if (highLight.canMove(spot, this))
-//					s = highLight.move(spot, this);
-//				else if (highLight.canCapture(spot, this))
-//					s = highLight.capture(spot, spot.getPiece(), this);
-//
-//				printchosenPiece(lastMoveOutPrint());
-//				printInBox("\n" + s);
-//				printInLabel(lastMoveDiscript());
-//			} else
-//				printCleanTemp();
-//			deHighLightWholeBoard();
-//		} else {
-//			if (spot.occupiedBy(whoseTurn)) {
-//				setHighLightPiece(spot.getPiece());
-//				printchosenPiece(spot.getPiece().getType() + spot.toString());
-//			}
-//		}
-	}
 
-
-	// ----------------------------------------------------------------------------------------------------------------
-	// all the methods to show the outputs
-//	/**
-//	 * when one possible piece is chosen, hightlight it and all the spots it can
-//	 * move to.
-//	 * 
-//	 * @param piece
-//	 */
-//	public void setHighLightPiece(Piece piece) {
-//		highLight = piece;
-//		piece.getP().highLight();
-//		for (Square[] j : spots) {
-//			for (Square i : j) {
-//				if (!i.occupiedBy(whoseTurn))
-//					if (highLight.canMove(i, this) || highLight.canCapture(i, this))
-//						i.highLight();
-//			}
-//		}
-//	}
-//
-//	/**
-//	 * dehightlight the whole board
-//	 */
-//	public void deHighLightWholeBoard() {
-//		highLight = null;
-//		for (Square[] j : spots) {
-//			for (Square i : j) {
-//				if (i.isHighLight())
-//					i.deHighLight();
-//			}
-//		}
-//	}
-//
-//	/**
-//	 * print out the result in the box.
-//	 */
-//	protected void printInBox(String s) {
-//		outBox.printOut(s);
-//	}
-//
-//	/**
-//	 * print out the temporal piece that is chosen in the box
-//	 * 
-//	 * @param s
-//	 */
-//	protected void printchosenPiece(String s) {
-//		if (s.charAt(0) == 'P')
-//			outBox.printTemp(s.substring(1));
-//		else
-//			outBox.printTemp(s);
-//	}
-//
-//	/**
-//	 * clean the temporal piece information, because the user suggests a illegal
-//	 * move
-//	 */
-//	protected void printCleanTemp() {
-//		outBox.cleanTemp();
-//	}
-//
-//	/**
-//	 * print out the outputs in the head label.
-//	 * 
-//	 * @param s
-//	 */
-//	protected void printInLabel(String s) {
-//		outLabel.setText(s);
-//	}
-
-	
 	public void addChessListener(ChessListener chessListener) {
 		listeners.add(chessListener);
 	}
@@ -958,5 +741,6 @@ public class Chess {
 		for (ChessListener listener : listeners)
 			listener.printInBox(str);
 	}
+
 	
 }

@@ -44,7 +44,7 @@ public class Pawn extends Piece {
 		return false;
 	}
 
-	public boolean canAttack(Square end, Chess chess) {
+	public boolean canAttack(Square end) {
 
 		if (spot == null)
 			return false;
@@ -61,18 +61,19 @@ public class Pawn extends Piece {
 		return false;
 	}
 
-	public boolean canCapture(Square end, Chess chess) {
-		if (!canAttack(end, chess))
+	public boolean canCapture(Square end) {
+		if (!canAttack(end))
 			return false;
 
 		if (end.occupiedBy(!wb))
-			return canAttack(end, chess) && end.occupiedBy(!wb)
+			return canAttack(end) && end.occupiedBy(!wb)
 					&& !chess.giveAwayKing(this, spot, end.getPiece(), end, wb);
 		else
 			return chess.canEnPassant(end);
 	}
 
-	public String capture(Square end, Piece taken, Chess chess) {
+	@Override
+	public String capture(Square end, Piece taken) {
 		String s = "";
 		if (taken == null) {
 			s = "En Passant! ";
@@ -83,6 +84,7 @@ public class Pawn extends Piece {
 		return s + makeMove(end, taken);
 	}
 
+	@Override
 	protected boolean canPromote(Square end) {
 		boolean promotion = false;
 		if (wb) {
@@ -95,7 +97,8 @@ public class Pawn extends Piece {
 		return promotion;
 	}
 
-	public Piece promotion(Square end, Chess chess) {
+	
+	public Piece promotion(Square end) {
 		chess.printInBox("Please choose one kind of piece to promote to -- Q, N, R, B");
 		String s = JOptionPane.showInputDialog("Promotion to !?");
 		if (!s.isEmpty()) {
@@ -110,7 +113,7 @@ public class Pawn extends Piece {
 			else if (a == 'N')
 				return new Knight('N', wb, end);
 		}
-		return promotion(end, chess);
+		return promotion(end);
 	}
 
 }

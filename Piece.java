@@ -168,7 +168,7 @@ public abstract class Piece implements Comparable<Piece> {
 	 *            whether it takes a piece or not
 	 * @return the output information it needs to print out in the box
 	 */
-	protected String makeMove(Square end, Piece taken) {
+	public String makeMove(Square end, Piece taken) {
 		if (taken != null)
 			chess.takeOffBoard(taken);
 		Square start = spot;

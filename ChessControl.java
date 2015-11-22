@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ChessControl implements ChessViewerControl, ChessListener {
@@ -52,7 +53,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		updateAll();
 	}
 
-	private void restart() {
+	public void restart() {
 		chess.removeChessListener(this);
 		chess = new Chess();
 		chess.addChessListener(this);
@@ -109,7 +110,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 					+ "enter 'rules for ....' to get help about the rules of chess.\n"
 					+ "    Castling, Pawn, King, Queen, Rook, Bishop, Knight, En Passant, Promotion.";
 		} else if (s.toLowerCase().equals("undo")) {
-			return chess.undoPreviousRround();
+			return chess.undoPreviousMove();
 		} else if (s.toLowerCase().equals("resign")) {
 			return chess.resign();
 		} else if (s.toLowerCase().equals("draw")) {
@@ -117,9 +118,9 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		} else if (s.toLowerCase().charAt(0) == 'o') {
 			return chess.castling(s);
 		} else if (s.length() == 6 || s.length() == 5) {
-			return chess.makeMove(s);
+			return makeMove(s);
 		} else if (s.length() < 5) {
-			String fullStr = chess.figureOutTheAbbreviation(s);
+			String fullStr = figureOutTheAbbreviation(s);
 			if (fullStr != null)
 				if (fullStr.startsWith("A"))
 					return fullStr;
@@ -134,6 +135,133 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 					+ "for examples, \"e2-e4\", \"Nb2-c3\" ";
 	}
 
+	/**
+	 * This method will be called, if the user types a command to make a move.
+	 * 
+	 * Interpret the command, and find out if it is legal to do make this move.
+	 * If it is, make this move.
+	 * 
+	 * @param s
+	 *            the input command
+	 * @return
+	 */
+	public String makeMove(String s) {
+		char type;
+		if (s.length() == 5) {
+			s = 'P' + s;
+			type = 'P';
+		} else {
+			type = s.toUpperCase().charAt(0);
+			if (!(type == 'R' || type == 'N' || type == 'B' || type == 'Q' || type == 'K' || type == 'P'))
+				return "Please enter valid initial of chessman -- R(Root), N(Knight), B(Bishop), Q(Queen), K(King). If you omit it, it is assumed as Pawn.";
+		}
+
+		s = s.toLowerCase();
+		Square start = chess.getSquare(s.substring(1, 3));
+		if (start == null)
+			return "please enter a valid start Position";
+
+		boolean takeOrNot;
+		char action = s.charAt(3);
+		if (action == '-')
+			takeOrNot = false;
+		else if (s.charAt(3) == 'x')
+			takeOrNot = true;
+		else
+			return "Pleae enter \"-\" or \"x\" to indicate whether this move takes some piece or not.";
+
+		Square end = chess.getSquare(s.substring(4));
+		if (end == null)
+			return "please enter a valid end Position";
+
+		Piece movedChessman = start.getPiece();
+		if (movedChessman == null) {
+			if (chess.getWhoseTurn())
+				return "There should be a white chessman in the start Position!";
+			else
+				return "There should be a black chessman in the start Position!";
+		}
+		if (!(movedChessman.isType(type)))
+			return "The chessman in the start Position is not corret! \n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn";
+
+		Piece chessmanTaken = end.getPiece();
+
+		if (takeOrNot) {
+			if (movedChessman.canCapture(end))
+				return movedChessman.capture(end, chessmanTaken);
+			else
+				return "Illegal move! Please check the rule of " + movedChessman.getName() + "!";
+		} else {
+			if (chessmanTaken != null) {
+				return "It works this time,but please use \"x\" if you want to take it next time. Thank you!\n"
+						+ makeMove(s.replace('-', 'x'));
+			}
+			if (movedChessman.canMove(end))
+				return movedChessman.move(end);
+			else
+				return "Illegal move! Please check the rule of " + movedChessman.getName() + "!";
+		}
+	}
+
+	/**
+	 * Tranformed the abbreviated command to the complete one, or return error
+	 * if there is ambiguous about the abbreviated command.
+	 * 
+	 * @param s
+	 * @return
+	 */
+	public String figureOutTheAbbreviation(String s) {
+		char type = s.charAt(0);
+		if (type == 'R' || type == 'N' || type == 'B' || type == 'Q' || type == 'K' || type == 'P')
+			s = s.substring(1);
+		else
+			type = 'P';
+
+		boolean takeOrNot = (s.charAt(0) == 'x');
+
+		if (takeOrNot)
+			s = s.substring(1);
+
+		Square end = null;
+		if (s.length() == 2)
+			end = chess.getSquare(s);
+		if (end == null)
+			return null;
+
+		ArrayList<Piece> possible = new ArrayList<Piece>();
+		ArrayList<Piece> set;
+
+		if (chess.getWhoseTurn())
+			set = chess.getWhite();
+		else
+			set = chess.getBlack();
+
+		if (takeOrNot) {
+			for (Piece i : set) {
+				if (i.isType(type) && i.canCapture(end))
+					possible.add(i);
+			}
+		} else {
+			for (Piece i : set) {
+				if (i.isType(type) && i.canMove(end))
+					possible.add(i);
+			}
+		}
+		if (possible.size() == 0) {
+			return "Ambiguity: No one can reach that spot.";
+		} else if (possible.size() == 1) {
+			String newStr = "" + type;
+			newStr += possible.get(0).getP().toString();
+			if (takeOrNot)
+				newStr += "x";
+			else
+				newStr += "-";
+			newStr += end.toString();
+			return newStr;
+		} else {
+			return "Ambiguity: This can represent many different moves.";
+		}
+	}
 	/**
 	 * print out the result in the box.
 	 */

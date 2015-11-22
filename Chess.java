@@ -1,9 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EventObject;
 import java.util.List;
 
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 /**
@@ -22,29 +20,20 @@ public class Chess {
 	private ArrayList<Piece> black;
 	private ArrayList<Move> records;
 	private String canClaimDraw = "";
-	private Piece highLight;
-	private JLabel outLabel;
-	ChessGameViewer outBox;
+    Piece highLight;
+//	private JLabel outLabel;
+//	private Console outBox;
 	private DrawRequest r;
 	private boolean gameHasEnded;
 
+	private List<ChessListener> listeners;
+	
 	// ----------------------------------------------------------------------------------------------------------------------------
 	// constructors and methods used to create and initializes the chess game.
 	/**
 	 * construct a default chess with start setting.
 	 */
 	public Chess() {
-		intialize(true);
-	}
-
-	/**
-	 * initialize the chess game.
-	 * 
-	 * @param first
-	 *            true if it is the first time, false if we want to restart
-	 *            (reinitialize) the game
-	 */
-	protected void intialize(boolean first) {
 		whoseTurn = true;
 		time = 1;
 		records = new ArrayList<Move>();
@@ -53,15 +42,13 @@ public class Chess {
 		black = new ArrayList<Piece>();
 		r = new DrawRequest();
 		gameHasEnded = false;
+		listeners = new ArrayList<>();
+		
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				Square t;
-				if (first) {
-					t = new Square(i, j, this);
+					t = new Square(i , j , this);
 					spots[i][j] = t;
-				} else {
-					t = spots[i][j];
-				}
 				int y = t.Y();
 				if (y == 1) {
 					white.add(startSet(t.X(), true, t));
@@ -102,6 +89,11 @@ public class Chess {
 		else
 			return null;
 	}
+
+//	protected void initializedOutPutMethod(JLabel j, Console a) {
+//		outLabel = j;
+//		outBox = a;
+//	}
 
 	// ---------------------------------------------------------------------------
 	// Accessors
@@ -848,28 +840,29 @@ public class Chess {
 	 *            the square that is clicked
 	 */
 	public void click(Square spot) {
-		if (highLight != null) {
-			if (spot.isHighLight() && !spot.equals(highLight.getP())) {
-				String s = "";
-
-				if (highLight.canMove(spot, this))
-					s = highLight.move(spot, this);
-				else if (highLight.canCapture(spot, this))
-					s = highLight.capture(spot, spot.getPiece(), this);
-
-				printchosenPiece(lastMoveOutPrint());
-				printInBox("\n" + s);
-				printInLabel(lastMoveDiscript());
-			} else
-				printCleanTemp();
-			deHighLightWholeBoard();
-		} else {
-			if (spot.occupiedBy(whoseTurn)) {
-				setHighLightPiece(spot.getPiece());
-				printchosenPiece(spot.getPiece().getType() + spot.toString());
-			}
-		}
+//		if (highLight != null) {
+//			if (spot.isHighLight() && !spot.equals(highLight.getP())) {
+//				String s = "";
+//
+//				if (highLight.canMove(spot, this))
+//					s = highLight.move(spot, this);
+//				else if (highLight.canCapture(spot, this))
+//					s = highLight.capture(spot, spot.getPiece(), this);
+//
+//				printchosenPiece(lastMoveOutPrint());
+//				printInBox("\n" + s);
+//				printInLabel(lastMoveDiscript());
+//			} else
+//				printCleanTemp();
+//			deHighLightWholeBoard();
+//		} else {
+//			if (spot.occupiedBy(whoseTurn)) {
+//				setHighLightPiece(spot.getPiece());
+//				printchosenPiece(spot.getPiece().getType() + spot.toString());
+//			}
+//		}
 	}
+
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// all the methods to show the outputs
@@ -879,7 +872,7 @@ public class Chess {
 	 * 
 	 * @param piece
 	 */
-	private void setHighLightPiece(Piece piece) {
+	public void setHighLightPiece(Piece piece) {
 		highLight = piece;
 		piece.getP().highLight();
 		for (Square[] j : spots) {
@@ -894,7 +887,7 @@ public class Chess {
 	/**
 	 * dehightlight the whole board
 	 */
-	private void deHighLightWholeBoard() {
+	public void deHighLightWholeBoard() {
 		highLight = null;
 		for (Square[] j : spots) {
 			for (Square i : j) {
@@ -903,60 +896,55 @@ public class Chess {
 			}
 		}
 	}
+//
+//	/**
+//	 * print out the result in the box.
+//	 */
+//	protected void printInBox(String s) {
+//		outBox.printOut(s);
+//	}
+//
+//	/**
+//	 * print out the temporal piece that is chosen in the box
+//	 * 
+//	 * @param s
+//	 */
+//	protected void printchosenPiece(String s) {
+//		if (s.charAt(0) == 'P')
+//			outBox.printTemp(s.substring(1));
+//		else
+//			outBox.printTemp(s);
+//	}
+//
+//	/**
+//	 * clean the temporal piece information, because the user suggests a illegal
+//	 * move
+//	 */
+//	protected void printCleanTemp() {
+//		outBox.cleanTemp();
+//	}
+//
+//	/**
+//	 * print out the outputs in the head label.
+//	 * 
+//	 * @param s
+//	 */
+//	protected void printInLabel(String s) {
+//		outLabel.setText(s);
+//	}
 
-	/**
-	 * print out the result in the box.
-	 */
-	protected void printInBox(String s) {
-		outBox.printOut(s);
+	
+	public void addChessListener(ChessListener chessListener) {
+		listeners.add(chessListener);
 	}
 
-	/**
-	 * print out the temporal piece that is chosen in the box
-	 * 
-	 * @param s
-	 */
-	protected void printchosenPiece(String s) {
-		if (s.charAt(0) == 'P')
-			outBox.printTemp(s.substring(1));
-		else
-			outBox.printTemp(s);
-	}
-
-	/**
-	 * clean the temporal piece information, because the user suggests a illegal
-	 * move
-	 */
-	protected void printCleanTemp() {
-		outBox.cleanTemp();
-	}
-
-	/**
-	 * print out the outputs in the head label.
-	 * 
-	 * @param s
-	 */
-	protected void printInLabel(String s) {
-		outLabel.setText(s);
+	public void updateSquare(Square square) {
+		for (ChessListener listener : listeners)
+			listener.updateSquare(square);
 	}
 	
-	
-	
-	
-	
-	
-	    private List<ChessListener> listeners = new ArrayList<ChessListener>();
-
-	    public void addChessListener(ChessListener toAdd) {
-	        listeners.add(toAdd);
-	    }
-
-	    public void updateSquare(Square s) {
-	        System.out.println("Hello!!");
-	        // Notify everybody that may be interested.
-	        for (ChessListener hl : listeners)
-	            hl.updateSquare(new EventObject(s));
-	    }
+	private void printInLabel(String str) {
+		for (ChessListener listener : listeners)
+			listener.printInLabel(str);
 	}
-
 }

@@ -1,5 +1,4 @@
-import java.awt.Color;
-import javax.swing.JLabel;
+
 
 /**
  * A class that represents the squares on the chess board.
@@ -9,19 +8,15 @@ import javax.swing.JLabel;
  * @author zhangq2
  *
  */
-@SuppressWarnings("serial")
-public class Square extends JLabel {
-	private static final Color HIGHLIGHT_COLOR = Color.yellow;
-	private static final Color TEXT_COLOR_BALCK = Color.black;
-	private static final Color TEXT_COLOR_WHITE = Color.red;
+public class Square {
 
+	private Chess chess ;
 	private int x;
 	private int y;
 	private String name;
 	private Piece occupied;
-	
-	// TODO:
-	private SquareLabel label;
+//	private Color originalColor;
+	boolean highLight;
 
 	/**
 	 * 
@@ -32,101 +27,113 @@ public class Square extends JLabel {
 	 * @param chess
 	 */
 	public Square(int i, int j, Chess chess) {
-		super("", JLabel.CENTER);
+		this.chess = chess;
 		x = i + 1;
 		y = 8 - j;
 		char col = (char) (97 + i);
 		int row = 8 - j;
 		name = "" + col + row;
 		occupied = null;
-		
-		label = new SquareLabel( i, j, chess.outBox.source) ;
+//		if ((i + j) % 2 != 0)
+//			originalColor = Color.gray;
+//		else
+//			originalColor = Color.white;
+//		setBackground(originalColor);
+//		setBorder(BorderFactory.createLineBorder(Color.black, 1));
+//		setOpaque(true);
+//		addMouseListener(new Clicked(chess));
 	}
 
 	// ------------------------------------------------------------------------------------------------------------------
-		// accessors
-		
-		public String toString() {
-			return name;
-		}
+	// accessors
+	
+	public String toString() {
+		return name;
+	}
 
-		public int X() {
-			return x;
-		}
+	public int X() {
+		return x;
+	}
 
-		public int Y() {
-			return y;
-		}
+	public int Y() {
+		return y;
+	}
 
-		/**
-		 * 
-		 * @return the piece at that square
-		 */
-		public Piece getPiece() {
-			return occupied;
-		}
-		/**
-		 * 
-		 * @return true if there is any piece occupy this squre
-		 */
-		public boolean occupied() {
-			return occupied != null;
-		}
+	/**
+	 * 
+	 * @return the piece at that square
+	 */
+	public Piece getPiece() {
+		return occupied;
+	}
+	/**
+	 * 
+	 * @return true if there is any piece occupy this squre
+	 */
+	public boolean occupied() {
+		return occupied != null;
+	}
 
-		/**
-		 * 
-		 * @param whoseTurn
-		 *            white or black
-		 * @return whether this square is ocupied by piece of that color.
-		 */
-		public boolean occupiedBy(boolean whoseTurn) {
-			if (occupied())
-				return whoseTurn == occupied.getWb();
-			else
-				return false;
-		}
+	/**
+	 * 
+	 * @param whoseTurn
+	 *            white or black
+	 * @return whether this square is ocupied by piece of that color.
+	 */
+	public boolean occupiedBy(boolean whoseTurn) {
+		if (occupied())
+			return whoseTurn == occupied.getWb();
+		else
+			return false;
+	}
 
-		public boolean isHighLight() {
-			return label.highLight;
-		}
+	public boolean isHighLight() {
+		return highLight;
+	}
 
-		// ------------------------------------------------------------------------------------------------------------------
-		// modifier
+	// ------------------------------------------------------------------------------------------------------------------
+	// modifier
 
-		/**
-		 * set the occupied piece.
-		 * 
-		 * @param piece
-		 *            the piece
-		 */
-		public void setOccupied(Piece piece) {
-			occupied = piece;
-			upDatePiece();
-		}
+	/**
+	 * set the occupied piece.
+	 * 
+	 * @param piece
+	 *            the piece
+	 */
+	public void setOccupied(Piece piece) {
+		occupied = piece;
+		upDatePiece();
+	}
 
-		/**
-		 * hight light this spot and set the back ground color to highlight color.
-		 */
-		public void highLight() {
-			label.highLight();
-		}
+	/**
+	 * hight light this spot and set the back ground color to highlight color.
+	 */
+	public void highLight() {
+		highLight = true;
+		upDatePiece();
+//		setBackground(HIGHLIGHT_COLOR);
+	}
 
-		public void deHighLight() {
-			label.deHighLight();
-		}
+	public void deHighLight() {
+		highLight = false;
+		upDatePiece();
+//		setBackground(originalColor);
+	}
 
-		/**
-		 * upDate the color and text of this JLabel.
-		 */
-		public void upDatePiece() {
-			if (occupied != null) {
-				setText("" + occupied.getType());
-				if (occupied.getWb())
-					setForeground(TEXT_COLOR_WHITE);
-				else
-					setForeground(TEXT_COLOR_BALCK);
-			} else {
-				setText("");
-			}
-		}
+	/**
+	 * upDate the color and text of this JLabel.
+	 */
+	public void upDatePiece() {
+		chess.updateSquare(this);
+//		if (occupied != null) {
+//			setText("" + occupied.getType());
+//			if (occupied.getWb())
+//				setForeground(TEXT_COLOR_WHITE);
+//			else
+//				setForeground(TEXT_COLOR_BALCK);
+//		} else {
+//			setText("");
+//		}
+	}
+	
 }

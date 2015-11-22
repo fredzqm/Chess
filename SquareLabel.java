@@ -2,96 +2,118 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 
-public class SquareLabel extends JLabel{
+/**
+ * A class that represents the squares on the chess board.
+ * 
+ * It is also the Jlabel that actually appears in the Frame.
+ * 
+ * @author zhangq2
+ *
+ */
+@SuppressWarnings("serial")
+public class SquareLabel extends JLabel {
+
+	static final int MWIDTH = 50;
+	
+	private static final Color HIGHLIGHT_COLOR = Color.yellow;
+	private static final Color TEXT_COLOR_BALCK = Color.black;
+	private static final Color TEXT_COLOR_WHITE = Color.red;
+
+//	private String name;
+	int x;
+	int y;
+	private Color originalColor;
+	boolean highLight;
+
+	public SquareLabel() {
+		super("", JLabel.CENTER);
+	}
 	
 	/**
-	 * A class that represents the squares on the chess board.
 	 * 
-	 * It is also the Jlabel that actually appears in the Frame.
-	 * 
-	 * @author zhangq2
-	 *
+	 * @param i
+	 *            file of this spot
+	 * @param j
+	 *            rank of this square
+	 * @param chess
 	 */
-	static final int MWIDTH = 50;
+	public SquareLabel(int i, int j, ChessViewerController chess) {
+		super("", JLabel.CENTER);
+		x = i;
+		y = 8 - j;
+		setPreferredSize(new Dimension(MWIDTH, MWIDTH));
+		if ((i + j) % 2 != 0)
+			originalColor = Color.gray;
+		else
+			originalColor = Color.white;
+		setBackground(originalColor);
+		setBorder(BorderFactory.createLineBorder(Color.black, 1));
+		setOpaque(true);
+		addMouseListener(new MouseAdapter(){
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				chess.click(SquareLabel.this);
+			}
+		});
+	}
 
-		private static final Color HIGHLIGHT_COLOR = Color.yellow;
-		private static final Color TEXT_COLOR_BALCK = Color.black;
-		private static final Color TEXT_COLOR_WHITE = Color.red;
+	// ------------------------------------------------------------------------------------------------------------------
+	// accessors
+	
+//	public String toString() {
+//		return name;
+//	}
+	public int X() {
+		return x;
+	}
 
-		private Color originalColor;
-		boolean highLight;
+	public int Y() {
+		return y;
+	}
 
-		public SquareLabel() {
-			super("", JLabel.CENTER);
-			setPreferredSize(new Dimension(MWIDTH, MWIDTH));
-		}
+	public boolean isHighLight() {
+		return highLight;
+	}
 
-		/**
-		 * 
-		 * @param i
-		 *            file of this spot
-		 * @param j
-		 *            rank of this square
-		 * @param chess
-		 */
-		public SquareLabel(int i, int j, ChessGameViewerSource chess) {
-			this();
-			if ((i + j) % 2 != 0)
-				originalColor = Color.gray;
-			else
-				originalColor = Color.white;
-			setBackground(originalColor);
-			
-			setBorder(BorderFactory.createLineBorder(Color.black, 1));
-			setOpaque(true);
-			addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseReleased(MouseEvent e) {
-					}
+	// ------------------------------------------------------------------------------------------------------------------
+	// modifier
 
-					@Override
-					public void mousePressed(MouseEvent e) {
-					}
+	/**
+	 * hight light this spot and set the back ground color to highlight color.
+	 */
+	private void highLight() {
+		highLight = true;
+		setBackground(HIGHLIGHT_COLOR);
+	}
 
-					@Override
-					public void mouseExited(MouseEvent e) {
-					}
+	private void deHighLight() {
+		highLight = false;
+		setBackground(originalColor);
+	}
 
-					@Override
-					public void mouseEntered(MouseEvent e) {
-					}
-
-					@Override
-					public void mouseClicked(MouseEvent arg0) {
-						chess.click(i , j);
-					}
-			});
-		}
-
-		// ------------------------------------------------------------------------------------------------------------------
-		// accessors
+	/**
+	 * upDate the color and text of this JLabel.
+	 */
+	public void upDatePiece(Square sq) {
 		
-
-		// ------------------------------------------------------------------------------------------------------------------
-		// modifier
-
-		/**
-		 * hight light this spot and set the back ground color to highlight color.
-		 */
-		public void highLight() {
-			highLight = true;
-			setBackground(HIGHLIGHT_COLOR);
+		if (sq.occupied()) {
+			setText("" + sq.getPiece().getType());
+			if (sq.occupiedBy(true))
+				setForeground(TEXT_COLOR_WHITE);
+			else
+				setForeground(TEXT_COLOR_BALCK);
+		} else {
+			setText("");
 		}
-
-		public void deHighLight() {
-			highLight = false;
-			setBackground(originalColor);
-		}
-
-
+		if (sq.isHighLight())
+			highLight();
+		else
+			deHighLight();
+	}
 	
 }

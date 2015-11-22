@@ -21,19 +21,17 @@ public class ChessGameViewer extends JFrame {
 	private static final int CONSOLE_FONT_SIZE = 20;
 	private static final Font FONT_CONSOLE = new Font("Serif", Font.PLAIN, CONSOLE_FONT_SIZE);
 
-	ChessGameViewerSource source;
+	ChessViewerController viewControl;
 	private JLabel statusLabel;
 	private SquareLabel[][] labels;
-//	private JPanel chessBoardSpace;
-//	private JPanel consolePanel;
 	
 	private JTextArea myConsole;
 	private String existence;
 	private String temp;
-	public ChessGameViewer(ChessGameViewerSource controller) {
+	public ChessGameViewer(ChessViewerController controller) {
 		super("The Great Chess Game");
 
-		this.source = controller;
+		this.viewControl = controller;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JPanel chessBoardSpace = new JPanel();
 		chessBoardSpace.setLayout(new FlowLayout());
@@ -51,17 +49,15 @@ public class ChessGameViewer extends JFrame {
 					if (i > 0)
 						s += (char) (i + 96);
 					labels[i][j].setText(s);
-					;
 					labels[i][j].setOpaque(false);
 				} else if (i == 0){
 					labels[i][j] = new SquareLabel();
 					String s = "";
 					s += (8 - j);
 					labels[i][j].setText(s);
-					;
 					labels[i][j].setOpaque(false);
 				} else {
-					labels[i][j] = new SquareLabel(i , 8 - j, controller);
+					labels[i][j] = new SquareLabel(i , j, controller);
 //					labels[i][j] = myChess.spotAt(i, 8 - j);
 				}
 				labels[i][j].setPreferredSize(new Dimension(WIDTH, WIDTH));
@@ -96,7 +92,7 @@ public class ChessGameViewer extends JFrame {
 					String input = myConsole.getText().substring(existence.length());
 					if (input.length() > 0) {
 						input = input.substring(0, input.length() - 1);
-						String feedback = source.handleCommand(input);
+						String feedback = viewControl.handleCommand(input);
 						existence = myConsole.getText();
 						printOut(feedback);
 					}
@@ -146,7 +142,7 @@ public class ChessGameViewer extends JFrame {
 		public void printOut(String outPut) {
 			existence = existence + temp;
 			temp = "";
-			setText(existence + outPut + "\n");
+			myConsole.setText(existence + outPut + "\n");
 			existence = myConsole.getText();
 		}
 
@@ -157,7 +153,7 @@ public class ChessGameViewer extends JFrame {
 		 * @param s
 		 */
 		public void printTemp(String s) {
-			setText(existence + s + "\n");
+			myConsole.setText(existence + s + "\n");
 			temp = s;
 		}
 
@@ -166,6 +162,15 @@ public class ChessGameViewer extends JFrame {
 		 */
 		public void cleanTemp() {
 			temp = "";
+		}
+
+		public void setText(String s) {
+			statusLabel.setText(s);
+		}
+
+		public void updateSquare(Square sq) {
+			
+			labels[sq.X()][8 - sq.Y()].upDatePiece(sq);
 		}
 
 //		@Override
@@ -180,11 +185,6 @@ public class ChessGameViewer extends JFrame {
 //		public void keyTyped(KeyEvent arg0) {
 //		}
 //	}
-
-	public void setText(String s) {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 }

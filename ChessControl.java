@@ -1,28 +1,9 @@
+import java.util.EventObject;
 import java.util.HashMap;
 
-public class ChessControl implements ChessGameViewerSource {
-	ChessGameViewer view;
-	Chess chess;
-	
-	/**
-	 * start my little chess game!!!!
-	 * 
-	 * @param args
-	 *            ignored
-	 */
-	public ChessControl() {
-		view = new ChessGameViewer(this);
-		chess = new Chess();
-//		myGame.createConsoleBox(chess);
-//		myGame.createChessBoard(chess);
-//		chess.initializedOutPutMethod(myGame.statusLabel, myGame.myConsole);
-		view.setVisible(true);
-		view.pack();
+public class ChessControl implements ChessViewerController , ChessListener{
 
-	}
-
-	@SuppressWarnings("serial")
-	private final HashMap<String, String> rules = new HashMap<String, String>() {
+	private final static HashMap<String, String> rules = new HashMap<String, String>() {
 		{
 			put("castling",
 					"Only under those circumstances, you can castling\n"
@@ -51,6 +32,33 @@ public class ChessControl implements ChessGameViewerSource {
 		}
 	};
 
+	ChessGameViewer view;
+	Chess chess;
+	
+	/**
+	 * start my little chess game!!!!
+	 * 
+	 * @param args
+	 *            ignored
+	 */
+	public ChessControl() {
+		chess = new Chess();
+		chess.addChessListener(this);
+		
+		view = new ChessGameViewer(this);
+		view.setVisible(true);
+		view.pack();
+		updateAll();
+	}
+
+	
+	private void updateAll() {
+		for(int i = 1 ; i <= 8 ; i ++)
+			for (int j = 1 ; j <= 8 ; j ++)
+				updateSquare(chess.spotAt(i, j));
+	}
+
+
 	/**
 	 * return the requested rules text.
 	 * 
@@ -76,7 +84,7 @@ public class ChessControl implements ChessGameViewerSource {
 		if (s.toLowerCase().equals("print")) {
 			return chess.print();
 		} else if (s.toLowerCase().equals("restart")) {
-			chess.intialize(false);
+//			chess.restart();
 			return "Start a new game!";
 		} else if (s.toLowerCase().startsWith("rules for ")) {
 			return rules(s.toLowerCase().substring(10));
@@ -152,15 +160,61 @@ public class ChessControl implements ChessGameViewerSource {
 	 * 
 	 * @param s
 	 */
-	protected void printInLabel(String s) {
+	public void printInLabel(String s) {
 		view.setText(s);
 	}
 
+
 	@Override
-	public void click(int i, int j) {
+	public void updateSquare(Square sq) {
+		view.updateSquare(sq);
+	}
+
+
+	@Override
+	public void highLight(EventObject eventObject) {
 		// TODO Auto-generated method stub
 		
 	}
 
+
+	@Override
+	public void dehighLight(EventObject eventObject) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	/**
+	 * this mehod will be called if the user click on the board. It will find
+	 * out whether the user has suggest a legal move, and provides proper
+	 * outputs.
+	 * 
+	 * @param spot
+	 *            the square that is clicked
+	 */
+	public void click(SquareLabel sql) {
+		Square spot = chess.spotAt(sql.X(), sql.Y());
+		if (chess.highLight != null) {
+			if (spot.isHighLight() && !spot.equals(chess.highLight.getP())) {
+				String s = "";
+				if (chess.highLight.canMove(spot, chess))
+					s = chess.highLight.move(spot, chess);
+				else if (chess.highLight.canCapture(spot, chess))
+					s = chess.highLight.capture(spot, spot.getPiece(), chess);
+
+				printchosenPiece(chess.lastMoveOutPrint());
+				printInBox("\n" + s);
+				printInLabel(chess.lastMoveDiscript());
+			} else
+				printCleanTemp();
+			chess.deHighLightWholeBoard();
+		} else {
+			if (spot.occupiedBy(chess.getWhoseTurn())) {
+				chess.setHighLightPiece(spot.getPiece());
+				printchosenPiece(spot.getPiece().getType() + spot.toString());
+			}
+		}
+	}
 
 }

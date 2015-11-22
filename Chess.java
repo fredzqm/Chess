@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -499,12 +500,22 @@ public class Chess {
 		lastMove.undo(this);
 		records.remove(records.size() - 1);
 	}
-
-	public void performMove(Piece piece, Square spot) {
+	
+	/**
+	 * perform command to move piece to certain spot
+	 * 
+	 * @param piece
+	 * @param spot
+	 * @return true if move is valid, false if not allowed by chess rule
+	 */
+	public boolean performMove(Piece piece, Square spot) {
 		if (piece.canMove(spot))
 			piece.move(spot);
 		else if (piece.canCapture(spot))
 			piece.capture(spot, spot.getPiece());
+		else
+			return false;
+		return true;
 	}
 
 	/**
@@ -518,37 +529,36 @@ public class Chess {
 	 * 
 	 * @return necessary information
 	 */
-	public String wrapMove() {
+	public void wrapMove() {
 		String s = "";
 		if (checkOrNot(whoseTurn)) {
 			s = "Check!! ";
 			if (checkMate()) {
 				if (whoseTurn) {
-					win(true, "WHITE Checkmates the BLACK, WHITE wins!!");
-					return "White wins! -- CHECKMATE!!/n";
+					win(true, "White wins! -- CHECKMATE!!",  "WHITE Checkmates the BLACK, WHITE wins!!");
+					return;
 				} else {
-					win(false, "BLACK Checkmates the WHITE, BLACK wins!!");
-					return "Black wins! -- CHECKMATE!!/n";
+					win(false, "Black wins! -- CHECKMATE!!", "BLACK Checkmates the WHITE, BLACK wins!!");
+					return;
 				}
 			}
 		} else {
 			if (checkMate()) {
-				draw("Draw due to Stalement.");
-				return "Draw -- Stalement!\n" ;
+				draw("Stalement" , "Draw due to Stalement.");
+				return;
+//				return "Draw -- Stalement!\n" ;
 //				+ print(); TODO: add this feature back when other things are fixed
 			}
 			canClaimDraw();
 			s = "" + canClaimDraw;
 		}
 		whoseTurn = !whoseTurn;
-		printInLabel(lastMoveDiscript());
-		s += "Next move -- ";
 		if (whoseTurn) {
 			time++;
-			return s + "white";
-		} else {
-			return s + "black";
 		}
+		
+		for (ChessListener listener : listeners)
+			listener.nextMove(whoseTurn);
 	}
 
 	// ----------------------------------------------------------------------------------------------------------
@@ -575,62 +585,24 @@ public class Chess {
 	/**
 	 * This method will be called if the user request to make a castling.
 	 * 
-	 * @param s
+	 * @param longOrShort
 	 * @return
 	 */
-	public String castling(String s) {
-		s = s.toLowerCase();
-		boolean longOrShort;
-		if (s.equals("o-o")) {
-			longOrShort = false;
-		} else if (s.equals("o-o-o")) {
-			longOrShort = true;
-		} else
-			return "For short castling, enter \"O-O\" and for long castling, enter \"O-O-O\".";
-
+	public boolean castling(boolean longOrShort) {
 		King king;
 		if (whoseTurn)
 			king = (King) white.get(0);
 		else
 			king = (King) black.get(0);
 
-		if (canCastling(king, longOrShort))
-			return king.castling(this, longOrShort);
-		return "You cannot do castling, please check the rules for castling.";
+		if (canCastling(king, longOrShort)){
+			king.castling(this, longOrShort);
+			return true;
+		}
+		return false;
 	}
 
 	
-
-	/**
-	 * Find out if it is legal to claim draw. If it is, ends the game and claim
-	 * draw, otherwise send a request for draw, and wait for the reply of
-	 * opponent.
-	 * 
-	 * @return
-	 */
-	public String askForDraw() {
-		if (canClaimDraw.isEmpty()) {
-			if (r.canAskFordraw(whoseTurn)) {
-				while (true) {
-					String command = JOptionPane.showInputDialog("Do you agree draw?");
-					if (command.isEmpty())
-						continue;
-					if (command.toLowerCase().startsWith("yes")) {
-						return draw("Draw by Agreement.");
-					} else if (command.toLowerCase().startsWith("no"))
-						break;
-				}
-				r.setRightToRequestDraw(whoseTurn);
-				return "Request declined";
-			} else {
-				return "You cannot request for draw again now.";
-			}
-
-		} else {
-			return draw(canClaimDraw);
-		}
-
-	}
 
 	/**
 	 * According to the chess law, no player can request for draw consecutively.
@@ -684,46 +656,16 @@ public class Chess {
 	 * 
 	 * @return
 	 */
-	public String resign() {
+	public void resign() {
 		if (whoseTurn) {
-			return win(false, "White resigns, Black wins.");
+			win(false, null , "White resigns, Black wins.");
 		} else {
-			return win(true, "Black resigns, White wins");
+			win(true, null,  "Black resigns, White wins");
 		}
 	}
 
 	// ---------------------------------------------------------------------------------------------------------------------------
 	// methods that end the game
-	/**
-	 * ends the game as draw
-	 * 
-	 * @param descript
-	 * @return
-	 */
-	private String draw(String descript) {
-		gameHasEnded = true;
-		records.get(records.size() - 1).draw(descript);
-		return "DRAW";
-	}
-
-	/**
-	 * ends the game when one player beats the other
-	 * 
-	 * @param who
-	 *            the winner
-	 * @param descrpt
-	 *            how he win
-	 * @return
-	 */
-	private String win(boolean who, String descrpt) {
-		gameHasEnded = true;
-		records.get(records.size() - 1).win(who, descrpt);
-		if (who) {
-			return "WHITE wins!";
-		} else {
-			return "BLACK wins!";
-		}
-	}
 
 
 	public void addChessListener(ChessListener chessListener) {
@@ -738,15 +680,83 @@ public class Chess {
 		for (ChessListener listener : listeners)
 			listener.updateSquare(square);
 	}
-	
-	public void printInLabel(String str) {
-		for (ChessListener listener : listeners)
-			listener.printInLabel(str);
+
+	public String getDrawClaim() {
+		return canClaimDraw;
 	}
 
-	public void printInBox(String str) {
+	/**
+	 * Find out if it is legal to claim draw. If it is, ends the game and claim
+	 * draw, otherwise send a request for draw, and wait for the reply of
+	 * opponent.
+	 * 
+	 * @return
+	 */
+	public int askForDraw() {
+		
+		if (canClaimDraw.isEmpty()) {
+			if (r.canAskFordraw(whoseTurn)) {
+				return 0;
+//				while (true) {
+//					String command = JOptionPane.showInputDialog("Do you agree draw?");
+//					if (command.isEmpty())
+//						continue;
+//					if (command.toLowerCase().startsWith("yes")) {
+//						draw("Draw by Agreement.");
+//					} else if (command.toLowerCase().startsWith("no"))
+//						break;
+//				}
+			} else {
+				return -1;
+			}
+		} else {
+			draw( "Draw" , canClaimDraw);
+			return 1;
+		}
+	}
+
+	public void setRightToRequestDraw() {
+		r.setRightToRequestDraw(whoseTurn);
+	}
+
+
+	
+	// methods that send message to control
+	
+	/**
+	 * ends the game as draw
+	 * 
+	 * @param descript
+	 * @return
+	 */
+	void draw(String outprint , String descript) {
+		gameHasEnded = true;
+		records.get(records.size() - 1).draw(descript);
+		
 		for (ChessListener listener : listeners)
-			listener.printInBox(str);
+			listener.draw(outprint , descript);
+	}
+
+	/**
+	 * ends the game when one player beats the other
+	 * 
+	 * @param who
+	 *            the winner
+	 * @param descrpt
+	 *            how he win
+	 * @return
+	 */
+	public void win(boolean who, String outprint ,  String descrpt) {
+		gameHasEnded = true;
+		records.get(records.size() - 1).win(who, descrpt);
+		
+		for (ChessListener listener : listeners)
+			listener.win(who , outprint , descrpt);
+	}
+
+	public void promotion() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.JOptionPane;
+
 public class ChessControl implements ChessViewerControl, ChessListener {
 
 	private final static HashMap<String, String> rules = new HashMap<String, String>() {
@@ -116,11 +118,11 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			} else if (c.equals("undo")) {
 				view.printOut(chess.undoPreviousMove());
 			} else if (c.equals("resign")) {
-				view.printOut(chess.resign());
+				chess.resign();
 			} else if (c.equals("draw")) {
-				view.printOut(chess.askForDraw());
+				askForDraw();
 			} else if (c.charAt(0) == 'o') {
-				view.printOut(chess.castling(c));
+				castling(c);
 			} else if (c.length() == 6 || c.length() == 5) {
 				makeMove(c);
 			} else if (c.length() < 5) {
@@ -142,8 +144,10 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	 */
 	public void printRecords() {
 		ArrayList<Move> records = chess.getRecords();
-		if (records.size() == 0)
+		if (records.size() == 0){
 			view.printOut("Game hasn't started yet.");
+			return;
+		}
 		StringBuilder s = new StringBuilder();
 		for (Move i : records) {
 			s.append(i.print());
@@ -211,28 +215,36 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			return;
 		}
 
-		Piece chessmanTaken = end.getPiece();
-		if (takeOrNot) {
-			if (!movedChessman.canCapture(end)) {
-				view.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
-				return;
-			}
-			// view.printOut(movedChessman.capture(end, chessmanTaken));
-		} else {
-			if (chessmanTaken != null) {
-				view.printOut("It works this time,but please use \"x\" if you want to take it next time. Thank you!");
-				// view.printOut(movedChessman.capture(end, chessmanTaken));
-			} else {
-				if (!movedChessman.canMove(end)) {
-					view.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
-					return;
-				}
-				// view.printOut(movedChessman.move(end));
-			}
+//		Piece chessmanTaken = end.getPiece();
+//		if (takeOrNot) {
+//			if (!movedChessman.canCapture(end)) {
+//				view.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
+//				return;
+//			}
+//			// view.printOut(movedChessman.capture(end, chessmanTaken));
+//		} else {
+//			if (chessmanTaken != null) {
+//				view.printOut("It works this time,but please use \"x\" if you want to take it next time. Thank you!");
+//				// view.printOut(movedChessman.capture(end, chessmanTaken));
+//			} else {
+//				if (!movedChessman.canMove(end)) {
+//					view.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
+//					return;
+//				}
+//				// view.printOut(movedChessman.move(end));
+//			}
+//		}
+		
+		
+		if (!chess.performMove(movedChessman, end)){
+			view.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
+			return;
 		}
-		performMove(movedChessman, end);
+		
 	}
 
+	
+	
 	/**
 	 * Tranformed the abbreviated command to the complete one, or return error
 	 * if there is ambiguous about the abbreviated command.
@@ -277,12 +289,74 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			view.printOut("Ambiguity: This can represent many different moves.");
 		}
 	}
-
+	
 	/**
-	 * print out the result in the box.
+	 * Find out if it is legal to claim draw. If it is, ends the game and claim
+	 * draw, otherwise send a request for draw, and wait for the reply of
+	 * opponent.
+	 * 
+	 * @return
 	 */
-	public void printInBox(String s) {
-		view.printOut(s);
+	public void askForDraw() {
+		int status = chess.askForDraw();
+		if (status == 0){
+			while (true) {
+				String command = JOptionPane.showInputDialog("Do you agree draw?");
+				if (command.isEmpty())
+					continue;
+				if (command.toLowerCase().startsWith("yes")) {
+					chess.draw( "Agreement to draw" , "Draw by Agreement.");
+					return;
+				} else if (command.toLowerCase().startsWith("no")){
+					chess.setRightToRequestDraw();
+					view.printOut("Request declined");
+					return;
+				}
+			}
+		}else if (status == -1){
+			view.printOut("You cannot request for draw again now.");
+//		}else if (status == 1){
+//			draw(outprint, descript);
+		}
+
+	}
+	
+//	public Piece promotion(){
+//		chess.printInBox("Please choose one kind of piece to promote to -- Q, N, R, B");
+//		String s = JOptionPane.showInputDialog("Promotion to !?");
+//		if (!s.isEmpty()) {
+//			s = s.toUpperCase();
+//			char a = s.charAt(0);
+//			if (a == 'Q')
+//				return new Queen('Q', wb, end);
+//			else if (a == 'R')
+//				return new Rook('R', wb, end);
+//			else if (a == 'B')
+//				return new Bishop('B', wb, end);
+//			else if (a == 'N')
+//				return new Knight('N', wb, end);
+//		}
+//		return promotion(end);
+//	}
+	/**
+	 * This method will be called if the user request to make a castling.
+	 * 
+	 * @param s
+	 * @return
+	 */
+	public void castling(String s) {
+		s = s.toLowerCase();
+		boolean longOrShort;
+		if (s.equals("o-o")) {
+			longOrShort = false;
+		} else if (s.equals("o-o-o")) {
+			longOrShort = true;
+		} else{
+			view.printOut("For short castling, enter \"O-O\" and for long castling, enter \"O-O-O\"." );
+			return ;
+		}
+		if (!chess.castling(longOrShort))
+			view.printOut("You cannot do castling, please check the rules for castling." );
 	}
 
 	/**
@@ -295,15 +369,6 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			view.printTemp(s.substring(1));
 		else
 			view.printTemp(s);
-	}
-
-	/**
-	 * print out the outputs in the head label.
-	 * 
-	 * @param s
-	 */
-	public void printInLabel(String s) {
-		view.setStatusLabelText(s);
 	}
 
 	@Override
@@ -327,14 +392,13 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		Square spot = labelToSquare(label);
 		if (chosen != null) {
 			if (label.isHighLight() && !spot.equals(chosen.getP())) {
-//				String s = 
-						performMove(chosen, spot);
-				view.cleanTemp();
-				view.printOut(chess.lastMoveOutPrint());
-//				view.printOut(s);
-				printInLabel(chess.lastMoveDiscript());
-			} else
-				view.cleanTemp();
+//				performMove(chosen, spot);
+				if (!chess.performMove(chosen, spot))
+					throw new RuntimeException("Illegal move of " + chosen.getName() + " did not correctly caught from UI!");
+//				view.printOut(chess.lastMoveOutPrint());
+//				view.setStatusLabelText(chess.lastMoveDiscript());
+			}else
+				view.cleanTemp();	
 			chosen = null;
 			view.deHighLightWholeBoard();
 		} else {
@@ -345,13 +409,10 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		}
 	}
 
-	private void performMove(Piece piece, Square spot) {
-//		if (piece.canMove(spot))
-//			piece.move(spot);
-//		else if (piece.canCapture(spot))
-//			piece.capture(spot, spot.getPiece());
-		chess.performMove( piece , spot);
-	}
+//	private void performMove(Piece movedChessman, Square end) {
+//		if (!chess.performMove(movedChessman, end))
+//			view.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
+//	}
 
 	/**
 	 * when one possible piece is chosen, highlight it and all the spots it can
@@ -375,6 +436,43 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 
 	private Square labelToSquare(SquareLabel sql) {
 		return chess.spotAt(sql.X(), sql.Y());
+	}
+
+	@Override
+	public void moveFeedback(Move m) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+
+	@Override
+	public void win(boolean whiteOrBlack,String outprint , String descript) {
+		view.setStatusLabelText(descript);
+		view.printOut(outprint);
+//		if (whiteOrBlack) {
+//			view.printOut("WHITE wins!!");
+//		} else {
+//			view.printOut("BLACK wins!!");
+//		}
+	}
+
+	@Override
+	public void draw(String outprint , String descript) {
+		view.setStatusLabelText(descript);
+		view.printOut(outprint);
+//		view.printOut("Draw.");
+	}
+
+	@Override
+	public void nextMove(boolean whoseTurn) {
+		view.setStatusLabelText(chess.lastMoveDiscript());
+		view.printOut(chess.lastMoveOutPrint());
+		if (whoseTurn) {
+			view.printOut("Next move -- white" );
+		} else {
+			view.printOut("Next move -- black" );
+		}
 	}
 
 }

@@ -140,8 +140,8 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @param chess
 	 * @return carry on the move
 	 */
-	public String move(Square end) {
-		return makeMove(end, null);
+	public void move(Square end) {
+		makeMove(end, null);
 	}
 
 	/**
@@ -152,8 +152,8 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @param chess
 	 * @return carry on the capture
 	 */
-	public String capture(Square end, Piece taken) {
-		return makeMove(end, taken);
+	public void capture(Square end, Piece taken) {
+		makeMove(end, taken);
 	}
 
 	/**
@@ -167,7 +167,7 @@ public abstract class Piece implements Comparable<Piece> {
 	 *            whether it takes a piece or not
 	 * @return the output information it needs to print out in the box
 	 */
-	public String makeMove(Square end, Piece taken) {
+	public void makeMove(Square end, Piece taken) {
 		if (taken != null)
 			chess.takeOffBoard(taken);
 		Square start = spot;
@@ -178,7 +178,7 @@ public abstract class Piece implements Comparable<Piece> {
 			moveTo(end);
 			chess.addRecord(this, start, taken, end);
 		}
-		return chess.wrapMove();
+		chess.wrapMove();
 	}
 
 	/**

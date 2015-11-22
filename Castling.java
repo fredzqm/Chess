@@ -59,4 +59,5 @@ public class Castling extends Move {
 			s += endGame;
 		return s;
 	}
+	
 }

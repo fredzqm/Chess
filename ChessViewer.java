@@ -82,9 +82,8 @@ public class ChessViewer extends JFrame {
 			@Override
 			public void keyReleased(KeyEvent arg0) {
 				if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-					int len = existence.length();
-					existence = myConsole.getText();
-					String input = existence.substring(len , existence.length() - 1);
+					String text = myConsole.getText();
+					String input = text.substring(existence.length() , text.length() - 1);
 					if (input.length() > 0) {
 						viewControl.handleCommand(input);
 					}
@@ -109,8 +108,10 @@ public class ChessViewer extends JFrame {
 	 * @param outPut
 	 */
 	public void printOut(String outPut) {
-		existence = existence + outPut + "\n";
-		myConsole.setText(existence);
+		if (outPut != null){
+			existence = existence + outPut + "\n";
+			myConsole.setText(existence);
+		}
 	}
 
 	/**

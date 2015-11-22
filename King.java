@@ -46,12 +46,12 @@ public class King extends Piece {
 				&& !chess.giveAwayKing(this, spot, null, end, wb);
 	}
 
-	public String move(Square end) {
+	public void move(Square end) {
 		if ((spot.X() - end.X()) > 1)
-			return castling(chess, true);
+			castling(chess, true);
 		else if (end.X() - spot.X() > 1)
-			return castling(chess, false);
-		return makeMove(end, null);
+			castling(chess, false);
+		makeMove(end, null);
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class King extends Piece {
 	 *            long castling or short castling
 	 * @return the output needed for box
 	 */
-	public String castling(Chess chess, boolean longOrShort) {
+	public void castling(Chess chess, boolean longOrShort) {
 		Square kingStart = spot;
 		Square kingEnd;
 		Square rookStart;
@@ -87,7 +87,8 @@ public class King extends Piece {
 				rookEnd);
 		moveTo(kingEnd);
 		rook.moveTo(rookEnd);
-		return "castling sucessful! " + chess.wrapMove();
+//		return "castling sucessful! " + // TODO: get those printed
+		chess.wrapMove();
 	}
 
 }

@@ -73,15 +73,14 @@ public class Pawn extends Piece {
 	}
 
 	@Override
-	public String capture(Square end, Piece taken) {
-		String s = "";
+	public void capture(Square end, Piece taken) {
 		if (taken == null) {
-			s = "En Passant! ";
+		//	s = "En Passant! ";  TODO: get those printed
 			taken = chess.spotAt(end.X(), spot.Y()).getPiece();
 			if (taken == null)
 				System.out.println("En Passant error!");
 		}
-		return s + makeMove(end, taken);
+		makeMove(end, taken);
 	}
 
 	@Override
@@ -98,22 +97,23 @@ public class Pawn extends Piece {
 	}
 
 	
-	public Piece promotion(Square end) {
-		chess.printInBox("Please choose one kind of piece to promote to -- Q, N, R, B");
-		String s = JOptionPane.showInputDialog("Promotion to !?");
-		if (!s.isEmpty()) {
-			s = s.toUpperCase();
-			char a = s.charAt(0);
-			if (a == 'Q')
-				return new Queen('Q', wb, end);
-			else if (a == 'R')
-				return new Rook('R', wb, end);
-			else if (a == 'B')
-				return new Bishop('B', wb, end);
-			else if (a == 'N')
-				return new Knight('N', wb, end);
-		}
-		return promotion(end);
-	}
+//	public Piece promotion(Square end) { //TODO: fixed promotion
+//		chess.promotion();
+//		chess.printInBox("Please choose one kind of piece to promote to -- Q, N, R, B");
+//		String s = JOptionPane.showInputDialog("Promotion to !?");
+//		if (!s.isEmpty()) {
+//			s = s.toUpperCase();
+//			char a = s.charAt(0);
+//			if (a == 'Q')
+//				return new Queen('Q', wb, end);
+//			else if (a == 'R')
+//				return new Rook('R', wb, end);
+//			else if (a == 'B')
+//				return new Bishop('B', wb, end);
+//			else if (a == 'N')
+//				return new Knight('N', wb, end);
+//		}
+//		return promotion(end);
+//	}
 
 }

@@ -178,7 +178,7 @@ public abstract class Piece implements Comparable<Piece> {
 			moveTo(end);
 			chess.addRecord(this, start, taken, end);
 		}
-		return chess.nextMove();
+		return chess.wrapMove();
 	}
 
 	/**

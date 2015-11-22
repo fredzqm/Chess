@@ -21,9 +21,6 @@ public class Chess {
 	private ArrayList<Piece> black;
 	private ArrayList<Move> records;
 	private String canClaimDraw = "";
-//    Piece highLight;
-//	private JLabel outLabel;
-//	private Console outBox;
 	private DrawRequest r;
 	private boolean gameHasEnded;
 
@@ -140,14 +137,6 @@ public class Chess {
 		return list;
 	}
 	
-	public ArrayList<Piece> getWhite() {
-		return white;
-	}
-
-	public ArrayList<Piece> getBlack() {
-		return black;
-	}
-
 	public ArrayList<Move> getRecords(){
 		return records;
 	}
@@ -211,6 +200,29 @@ public class Chess {
 	// -------------------------------------------------------------------------------------------------------------------
 	// find out about the condition of the game, (In check etc.)
 
+	
+	
+	public ArrayList<Piece> possibleMovers(char type, boolean takeOrNot, Square end) {
+		ArrayList<Piece> possible = new ArrayList<Piece>();
+		ArrayList<Piece> set;
+		if (getWhoseTurn())
+			set = white;
+		else
+			set = black;
+
+		if (takeOrNot) {
+			for (Piece i : set) {
+				if (i.isType(type) && i.canCapture(end))
+					possible.add(i);
+			}
+		} else {
+			for (Piece i : set) {
+				if (i.isType(type) && i.canMove(end))
+					possible.add(i);
+			}
+		}
+		return possible;
+	}
 	/**
 	 * find out whether a certain move will put your own king in check
 	 * 
@@ -488,6 +500,13 @@ public class Chess {
 		records.remove(records.size() - 1);
 	}
 
+	public void performMove(Piece piece, Square spot) {
+		if (piece.canMove(spot))
+			piece.move(spot);
+		else if (piece.canCapture(spot))
+			piece.capture(spot, spot.getPiece());
+	}
+
 	/**
 	 * After the smart program has decided that this move is legall and wants to
 	 * process this move, this method is called.
@@ -499,7 +518,7 @@ public class Chess {
 	 * 
 	 * @return necessary information
 	 */
-	public String nextMove() {
+	public String wrapMove() {
 		String s = "";
 		if (checkOrNot(whoseTurn)) {
 			s = "Check!! ";
@@ -521,8 +540,8 @@ public class Chess {
 			canClaimDraw();
 			s = "" + canClaimDraw;
 		}
-		printInLabel(lastMoveDiscript());
 		whoseTurn = !whoseTurn;
+		printInLabel(lastMoveDiscript());
 		s += "Next move -- ";
 		if (whoseTurn) {
 			time++;

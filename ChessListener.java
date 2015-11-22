@@ -8,4 +8,6 @@ public interface ChessListener extends EventListener {
 
 	void printInBox(String str);
 
+	void nextMove();
+
 }

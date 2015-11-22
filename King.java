@@ -87,7 +87,7 @@ public class King extends Piece {
 				rookEnd);
 		moveTo(kingEnd);
 		rook.moveTo(rookEnd);
-		return "castling sucessful! " + chess.nextMove();
+		return "castling sucessful! " + chess.wrapMove();
 	}
 
 }

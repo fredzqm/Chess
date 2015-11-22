@@ -28,7 +28,6 @@ public class ChessViewer extends JFrame {
 
 	private JTextArea myConsole;
 	private String existence;
-	private String temp;
 
 	public ChessViewer(ChessViewerControl controller) {
 		super("The Great Chess Game");
@@ -83,11 +82,9 @@ public class ChessViewer extends JFrame {
 			@Override
 			public void keyReleased(KeyEvent arg0) {
 				if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-					String con = myConsole.getText();
-					con = con.substring(0, con.length() - 1);
-					String input = con.substring(existence.length());
-					existence = con;
-					temp = "";
+					int len = existence.length();
+					existence = myConsole.getText();
+					String input = existence.substring(len , existence.length() - 1);
 					if (input.length() > 0) {
 						viewControl.handleCommand(input);
 					}
@@ -95,7 +92,6 @@ public class ChessViewer extends JFrame {
 			}
 		});
 		existence = myConsole.getText();
-		temp = "";
 		consolePanel.add(new JScrollPane(myConsole));
 
 		add(statusLabel, BorderLayout.NORTH);
@@ -113,10 +109,8 @@ public class ChessViewer extends JFrame {
 	 * @param outPut
 	 */
 	public void printOut(String outPut) {
-		existence = existence + temp + "\n";
-		temp = "";
-		myConsole.setText(existence + outPut + "\n");
-		existence = myConsole.getText();
+		existence = existence + outPut + "\n";
+		myConsole.setText(existence);
 	}
 
 	/**
@@ -127,15 +121,13 @@ public class ChessViewer extends JFrame {
 	 */
 	public void printTemp(String s) {
 		myConsole.setText(existence + s);
-		temp = s;
 	}
 
 	/**
-	 * earse the temporal string in the console
+	 * erase the temporal string in the console
 	 */
 	public void cleanTemp() {
 		myConsole.setText(existence);
-		temp = "";
 	}
 
 	public void setStatusLabelText(String s) {

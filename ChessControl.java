@@ -1,8 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.JLabel;
-
 public class ChessControl implements ChessViewerControl, ChessListener {
 
 	private final static HashMap<String, String> rules = new HashMap<String, String>() {
@@ -62,6 +60,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		chess.addChessListener(this);
 		chosen = null;
 
+		view.deHighLightWholeBoard();
 		view.setStatusLabelText("       Welcome to Another Wonderful Chess Game         ");
 		for (Square s : chess.getAllSquares())
 			updateSquare(s);
@@ -89,9 +88,6 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	 * @return the next output line
 	 */
 	public void handleCommand(String command) {
-		chosen = null;
-		view.deHighLightWholeBoard();
-
 		String c = command.toLowerCase();
 		if (c.equals("print")) {
 			printRecords();
@@ -105,40 +101,36 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			view.printOut(rules(c.substring(10)));
 		} else if (chess.hasEnd()) {
 			view.printOut(chess.lastMoveDiscript());
-		} else if (c.length() == 0) {
-			// ret = "";
-		} else if (c.equals("help")) {
-			view.printOut("Enter commands:\n" + "enter 'undo' to undo the previous round;\n"
-					+ "enter 'restart' to start a new game over;\n'" + "enter 'print' to print all the records;\n"
-					+ "enter 'resign' to give up;\n" + "enter 'draw' to request for draw;\n"
-					+ "enter complete or abbreviated algebraic chess notation to make a move;\n"
-					+ "enter 'rules for ....' to get help about the rules of chess.\n"
-					+ "    Castling, Pawn, King, Queen, Rook, Bishop, Knight, En Passant, Promotion.");
-		} else if (c.equals("undo")) {
-			view.printOut(chess.undoPreviousMove());
-		} else if (c.equals("resign")) {
-			view.printOut(chess.resign());
-		} else if (c.equals("draw")) {
-			view.printOut(chess.askForDraw());
-		} else if (c.charAt(0) == 'o') {
-			view.printOut(chess.castling(c));
-		} else if (c.length() == 6 || c.length() == 5) {
-			makeMove(c);
-		} else if (c.length() < 5) {
-			String fullStr = figureOutTheAbbreviation(c);
-			if (fullStr != null)
-				if (fullStr.startsWith("A"))
-					view.printOut(fullStr);
-				else
-					handleCommand(fullStr);
-			else
-				view.printOut("Incorrect format of abbreviation command.\n"
-						+ "You can omit the start spot of the move in the complete command.");
 		} else {
-			view.printOut(
-					"Please enter the move as (The type of chessman)(the start position)(its action)(the end position)\n"
-							+ "you can omit the \"P\" at the begining for a pawn."
-							+ "for casting, enter \"O-O\" or \"O-O-O\"\n" + "for examples, \"e2-e4\", \"Nb2-c3\" ");
+			chosen = null;
+			view.deHighLightWholeBoard();
+			if (c.length() == 0) {
+				// ret = "";
+			} else if (c.equals("help")) {
+				view.printOut("Enter commands:\n" + "enter 'undo' to undo the previous round;\n"
+						+ "enter 'restart' to start a new game over;\n'" + "enter 'print' to print all the records;\n"
+						+ "enter 'resign' to give up;\n" + "enter 'draw' to request for draw;\n"
+						+ "enter complete or abbreviated algebraic chess notation to make a move;\n"
+						+ "enter 'rules for ....' to get help about the rules of chess.\n"
+						+ "    Castling, Pawn, King, Queen, Rook, Bishop, Knight, En Passant, Promotion.");
+			} else if (c.equals("undo")) {
+				view.printOut(chess.undoPreviousMove());
+			} else if (c.equals("resign")) {
+				view.printOut(chess.resign());
+			} else if (c.equals("draw")) {
+				view.printOut(chess.askForDraw());
+			} else if (c.charAt(0) == 'o') {
+				view.printOut(chess.castling(c));
+			} else if (c.length() == 6 || c.length() == 5) {
+				makeMove(c);
+			} else if (c.length() < 5) {
+				abbreviation(c);
+			} else {
+				view.printOut(
+						"Please enter the move as (The type of chessman)(the start position)(its action)(the end position)\n"
+								+ "you can omit the \"P\" at the begining for a pawn."
+								+ "for casting, enter \"O-O\" or \"O-O-O\"\n" + "for examples, \"e2-e4\", \"Nb2-c3\" ");
+			}
 		}
 
 	}
@@ -156,6 +148,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		for (Move i : records) {
 			s.append(i.print());
 		}
+		s.deleteCharAt(s.length() - 1);
 		view.printOut(s.toString());
 	}
 
@@ -217,25 +210,27 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 					"The chessman in the start Position is not corret! \n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
 			return;
 		}
-		Piece chessmanTaken = end.getPiece();
 
+		Piece chessmanTaken = end.getPiece();
 		if (takeOrNot) {
-			if (movedChessman.canCapture(end)) {
-				view.printOut(movedChessman.capture(end, chessmanTaken));
-			} else {
+			if (!movedChessman.canCapture(end)) {
 				view.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
+				return;
 			}
+			// view.printOut(movedChessman.capture(end, chessmanTaken));
 		} else {
 			if (chessmanTaken != null) {
-				view.printOut("It works this time,but please use \"x\" if you want to take it next time. Thank you!\n");
-				makeMove(s.replace('-', 'x'));
+				view.printOut("It works this time,but please use \"x\" if you want to take it next time. Thank you!");
+				// view.printOut(movedChessman.capture(end, chessmanTaken));
 			} else {
-				if (movedChessman.canMove(end))
-					view.printOut(movedChessman.move(end));
-				else
+				if (!movedChessman.canMove(end)) {
 					view.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
+					return;
+				}
+				// view.printOut(movedChessman.move(end));
 			}
 		}
+		performMove(movedChessman, end);
 	}
 
 	/**
@@ -245,7 +240,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	 * @param s
 	 * @return
 	 */
-	public String figureOutTheAbbreviation(String s) {
+	public void abbreviation(String s) {
 		char type = Character.toUpperCase(s.charAt(0));
 		if (type == 'R' || type == 'N' || type == 'B' || type == 'Q' || type == 'K' || type == 'P')
 			s = s.substring(1);
@@ -260,30 +255,15 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		Square end = null;
 		if (s.length() == 2)
 			end = chess.getSquare(s);
-		if (end == null)
-			return null;
-
-		ArrayList<Piece> possible = new ArrayList<Piece>();
-		ArrayList<Piece> set;
-
-		if (chess.getWhoseTurn())
-			set = chess.getWhite();
-		else
-			set = chess.getBlack();
-
-		if (takeOrNot) {
-			for (Piece i : set) {
-				if (i.isType(type) && i.canCapture(end))
-					possible.add(i);
-			}
-		} else {
-			for (Piece i : set) {
-				if (i.isType(type) && i.canMove(end))
-					possible.add(i);
-			}
+		if (end == null) {
+			view.printOut("Incorrect format of abbreviation command.\n"
+					+ "You can omit the start spot of the move in the complete command.");
+			return;
 		}
+
+		ArrayList<Piece> possible = chess.possibleMovers(type, takeOrNot, end);
 		if (possible.size() == 0) {
-			return "Ambiguity: No one can reach that spot.";
+			view.printOut("Ambiguity: No one can reach that spot.");
 		} else if (possible.size() == 1) {
 			String newStr = "" + type;
 			newStr += possible.get(0).getP().toString();
@@ -292,9 +272,9 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			else
 				newStr += "-";
 			newStr += end.toString();
-			return newStr;
+			makeMove(newStr);
 		} else {
-			return "Ambiguity: This can represent many different moves.";
+			view.printOut("Ambiguity: This can represent many different moves.");
 		}
 	}
 
@@ -347,14 +327,11 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		Square spot = labelToSquare(label);
 		if (chosen != null) {
 			if (label.isHighLight() && !spot.equals(chosen.getP())) {
-				String s = "";
-				if (chosen.canMove(spot))
-					s = chosen.move(spot);
-				else if (chosen.canCapture(spot))
-					s = chosen.capture(spot, spot.getPiece());
-
-				printchosenPiece(chess.lastMoveOutPrint());
-				view.printOut(s);
+//				String s = 
+						performMove(chosen, spot);
+				view.cleanTemp();
+				view.printOut(chess.lastMoveOutPrint());
+//				view.printOut(s);
 				printInLabel(chess.lastMoveDiscript());
 			} else
 				view.cleanTemp();
@@ -366,6 +343,14 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 				printchosenPiece(spot.getPiece().getType() + spot.toString());
 			}
 		}
+	}
+
+	private void performMove(Piece piece, Square spot) {
+//		if (piece.canMove(spot))
+//			piece.move(spot);
+//		else if (piece.canCapture(spot))
+//			piece.capture(spot, spot.getPiece());
+		chess.performMove( piece , spot);
 	}
 
 	/**
@@ -391,40 +376,5 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	private Square labelToSquare(SquareLabel sql) {
 		return chess.spotAt(sql.X(), sql.Y());
 	}
-
-	// private String canClaimDraw = "";
-	// private Chess.DrawRequest r;
-	//
-	// /**
-	// * Find out if it is legal to claim draw. If it is, ends the game and
-	// claim
-	// * draw, otherwise send a request for draw, and wait for the reply of
-	// * opponent.
-	// *
-	// * @return
-	// */
-	// public String askForDraw() {
-	// if (canClaimDraw.isEmpty()) {
-	// if (r.canAskFordraw(chess.getWhoseTurn())) {
-	// while (true) {
-	// String command = JOptionPane.showInputDialog("Do you agree draw?");
-	// if (command.isEmpty())
-	// continue;
-	// if (command.toLowerCase().startsWith("yes")) {
-	// return chess.draw("Draw by Agreement.");
-	// } else if (command.toLowerCase().startsWith("no"))
-	// break;
-	// }
-	// r.setRightToRequestDraw(chess.getWhoseTurn());
-	// return "Request declined";
-	// } else {
-	// return "You cannot request for draw again now.";
-	// }
-	//
-	// } else {
-	// return chess.draw(canClaimDraw);
-	// }
-	//
-	// }
 
 }

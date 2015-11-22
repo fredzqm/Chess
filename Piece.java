@@ -28,7 +28,6 @@ public abstract class Piece implements Comparable<Piece> {
 		this.wb = wb;	
 		moveTo(p);
 		name = "";
-		spot.upDatePiece();
 	}
 
 	// ------------------------------------------------------------------------------------------------------------------------

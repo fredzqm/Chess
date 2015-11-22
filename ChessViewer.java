@@ -26,11 +26,11 @@ public class ChessViewer extends JFrame {
 	private JLabel statusLabel;
 	private SquareLabel[][] labels;
 	private ArrayList<SquareLabel> list;
-	
+
 	private JTextArea myConsole;
 	private String existence;
 	private String temp;
-	
+
 	public ChessViewer(ChessViewerControl controller) {
 		super("The Great Chess Game");
 
@@ -43,7 +43,7 @@ public class ChessViewer extends JFrame {
 		chessBoard.setSize(WIDTH * 9, WIDTH * 9);
 		chessBoard.setLayout(new GridLayout(9, 9));
 		chessBoard.setVisible(true);
-		
+
 		labels = new SquareLabel[9][9];
 		list = new ArrayList<>();
 		for (int j = 0; j < 9; j++) {
@@ -55,15 +55,15 @@ public class ChessViewer extends JFrame {
 						s += (char) (i + 96);
 					labels[i][j].setText(s);
 					labels[i][j].setOpaque(false);
-				} else if (i == 0){
+				} else if (i == 0) {
 					labels[i][j] = new SquareLabel();
 					String s = "";
 					s += (8 - j);
 					labels[i][j].setText(s);
 					labels[i][j].setOpaque(false);
 				} else {
-					labels[i][j] = new SquareLabel(i , j, controller);
-//					labels[i][j] = myChess.spotAt(i, 8 - j);
+					labels[i][j] = new SquareLabel(i, j, controller);
+					// labels[i][j] = myChess.spotAt(i, 8 - j);
 				}
 				labels[i][j].setPreferredSize(new Dimension(WIDTH, WIDTH));
 				labels[i][j].setFont(FONT_PIECE);
@@ -72,8 +72,7 @@ public class ChessViewer extends JFrame {
 			}
 		}
 		chessBoardSpace.add(chessBoard);
-		
-		
+
 		statusLabel = new JLabel("            Welcome to Wonderful Chess Game             ", JLabel.CENTER);
 		statusLabel.setFont(FONT_STATUS);
 		statusLabel.setVisible(true);
@@ -81,123 +80,99 @@ public class ChessViewer extends JFrame {
 		JPanel consolePanel = new JPanel();
 		consolePanel.setLayout(new FlowLayout());
 		consolePanel.setVisible(true);
-		myConsole = new JTextArea("Welcome to little Chess Game. Enter \"help\" for instructions.\n", 130 / CONSOLE_FONT_SIZE,
-				1000 / CONSOLE_FONT_SIZE);
+		myConsole = new JTextArea("Welcome to little Chess Game. Enter \"help\" for instructions.\n",
+				130 / CONSOLE_FONT_SIZE, 1000 / CONSOLE_FONT_SIZE);
 		myConsole.setFont(FONT_CONSOLE);
 		myConsole.addKeyListener(new KeyAdapter() {
-			
-			@Override
-			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
 			@Override
 			public void keyReleased(KeyEvent arg0) {
 				if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-					String input = myConsole.getText().substring(existence.length());
+					String con = myConsole.getText();
+					con = con.substring(0, con.length() - 1);
+					String input = con.substring(existence.length());
+					existence = con;
+					temp = "";
 					if (input.length() > 0) {
-						input = input.substring(0, input.length() - 1);
-						String feedback = viewControl.handleCommand(input);
-						existence = myConsole.getText();
-						printOut(feedback);
+						viewControl.handleCommand(input);
 					}
 				}
-			}
-			
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
 			}
 		});
 		existence = myConsole.getText();
 		temp = "";
 		consolePanel.add(new JScrollPane(myConsole));
-		
+
 		add(statusLabel, BorderLayout.NORTH);
 		add(chessBoardSpace, BorderLayout.CENTER);
 		add(consolePanel, BorderLayout.SOUTH);
 	}
 
-//	/**
-//	 * the console to make output
-//	 * 
-//	 * @author zhangq2
-//	 *
-//	 */
-//	@SuppressWarnings("serial")
-//	class Console extends JTextArea implements KeyListener {
-//
-//		/**
-//		 * creates a new console for this game
-//		 */
-//		public Console() {
-//			super("Welcome to little Chess Game. Enter \"help\" for instructions.\n", 130 / CONSOLE_FONT_SIZE,
-//					1000 / CONSOLE_FONT_SIZE);
-//			addKeyListener(this);
-//			existence = getText();
-//			temp = "";
-//		}
-//
-	public SquareLabel labelAt(int i , int j){
+	// /**
+	// * the console to make output
+	// *
+	// * @author zhangq2
+	// *
+	// */
+	// @SuppressWarnings("serial")
+	// class Console extends JTextArea implements KeyListener {
+	//
+	// /**
+	// * creates a new console for this game
+	// */
+	// public Console() {
+	// super("Welcome to little Chess Game. Enter \"help\" for instructions.\n",
+	// 130 / CONSOLE_FONT_SIZE,
+	// 1000 / CONSOLE_FONT_SIZE);
+	// addKeyListener(this);
+	// existence = getText();
+	// temp = "";
+	// }
+	//
+	public SquareLabel labelAt(int i, int j) {
 		return labels[i][8 - j];
 	}
-		/**
-		 * print out the outPut in the console.
-		 * 
-		 * @param outPut
-		 */
-		public void printOut(String outPut) {
-			existence = existence + temp;
-			temp = "";
-			myConsole.setText(existence + outPut + "\n");
-			existence = myConsole.getText();
-		}
 
-		/**
-		 * print out the temporal string in the console. This string can be
-		 * erase later.
-		 * 
-		 * @param s
-		 */
-		public void printTemp(String s) {
-			myConsole.setText(existence + s + "\n");
-			temp = s;
-		}
+	/**
+	 * print out the outPut in the console.
+	 * 
+	 * @param outPut
+	 */
+	public void printOut(String outPut) {
+		existence = existence + temp + "\n";
+		temp = "";
+		myConsole.setText(existence + outPut + "\n");
+		existence = myConsole.getText();
+	}
 
-		/**
-		 * earse the temporal string in the console
-		 */
-		public void cleanTemp() {
-			temp = "";
-		}
+	/**
+	 * print out the temporal string in the console. This string can be erase
+	 * later.
+	 * 
+	 * @param s
+	 */
+	public void printTemp(String s) {
+		myConsole.setText(existence + s);
+		temp = s;
+	}
 
-		public void setText(String s) {
-			statusLabel.setText(s);
-		}
+	/**
+	 * earse the temporal string in the console
+	 */
+	public void cleanTemp() {
+		myConsole.setText(existence);
+		temp = "";
+	}
 
-		public void updateSquare(Square sq) {
-//			labels[sq.X()][8 - sq.Y()]
-					labelAt(sq.X(), sq.Y()).upDatePiece(sq);
-		}
+	public void setText(String s) {
+		statusLabel.setText(s);
+	}
 
-		public ArrayList<SquareLabel> getAllLabels() {
-			return list;
-		}
+	public void updateSquare(Square sq) {
+		labelAt(sq.X(), sq.Y()).upDatePiece(sq);
+	}
 
-//		@Override
-//		public void keyPressed(KeyEvent arg0) {
-//			// TODO Auto-generated method stub
-//		}
-//
-//		@Override
-//		
-//
-//		@Override
-//		public void keyTyped(KeyEvent arg0) {
-//		}
-//	}
-
+	public ArrayList<SquareLabel> getAllLabels() {
+		return list;
+	}
 
 }

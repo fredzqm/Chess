@@ -14,7 +14,6 @@ public class Square {
 	private int y;
 	private String name;
 	private Piece occupied;
-//	private Color originalColor;
 
 	/**
 	 * 
@@ -32,14 +31,6 @@ public class Square {
 		int row = 8 - j;
 		name = "" + col + row;
 		occupied = null;
-//		if ((i + j) % 2 != 0)
-//			originalColor = Color.gray;
-//		else
-//			originalColor = Color.white;
-//		setBackground(originalColor);
-//		setBorder(BorderFactory.createLineBorder(Color.black, 1));
-//		setOpaque(true);
-//		addMouseListener(new Clicked(chess));
 	}
 
 	// ------------------------------------------------------------------------------------------------------------------
@@ -105,38 +96,7 @@ public class Square {
 	 */
 	public void setOccupied(Piece piece) {
 		occupied = piece;
-		upDatePiece();
-	}
-
-	/**
-	 * hight light this spot and set the back ground color to highlight color.
-	 */
-//	public void highLight() {
-//		highLight = true;
-//		upDatePiece();
-//		setBackground(HIGHLIGHT_COLOR);
-//	}
-
-//	public void deHighLight() {
-//		highLight = false;
-//		upDatePiece();
-//		setBackground(originalColor);
-//	}
-
-	/**
-	 * upDate the color and text of this JLabel.
-	 */
-	public void upDatePiece() {
 		chess.updateSquare(this);
-//		if (occupied != null) {
-//			setText("" + occupied.getType());
-//			if (occupied.getWb())
-//				setForeground(TEXT_COLOR_WHITE);
-//			else
-//				setForeground(TEXT_COLOR_BALCK);
-//		} else {
-//			setText("");
-//		}
 	}
-	
+
 }

@@ -515,7 +515,8 @@ public class Chess {
 		} else {
 			if (checkMate()) {
 				draw("Draw due to Stalement.");
-				return "Draw -- Stalement!\n" + print();
+				return "Draw -- Stalement!\n" ;
+//				+ print(); TODO: add this feature back when other things are fixed
 			}
 			canClaimDraw();
 			s = "" + canClaimDraw;
@@ -550,20 +551,7 @@ public class Chess {
 		return "Undo the Previous Move!";
 	}
 
-	/**
-	 * print out the records of the game in starndart chess recording language
-	 * 
-	 * @return records
-	 */
-	public String print() {
-		if (records.size() == 0)
-			return "Game hasn't started yet.";
-		String s = "";
-		for (Move i : records) {
-			s += i.print();
-		}
-		return s;
-	}
+	
 
 	/**
 	 * This method will be called if the user request to make a castling.

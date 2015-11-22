@@ -29,7 +29,7 @@ public class King extends Piece {
 		}
 	}
 
-	public boolean canMove(Square end, Chess chess) {
+	public boolean canMove(Square end) {
 		if (end.occupied())
 			return false;
 
@@ -46,7 +46,7 @@ public class King extends Piece {
 				&& !chess.giveAwayKing(this, spot, null, end, wb);
 	}
 
-	public String move(Square end, Chess chess) {
+	public String move(Square end) {
 		if ((spot.X() - end.X()) > 1)
 			return castling(chess, true);
 		else if (end.X() - spot.X() > 1)

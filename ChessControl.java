@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.JLabel;
+
 public class ChessControl implements ChessViewerControl, ChessListener {
 
 	private final static HashMap<String, String> rules = new HashMap<String, String>() {
@@ -50,7 +52,8 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		view = new ChessViewer(this);
 		view.setVisible(true);
 		view.pack();
-		updateAll();
+		for (Square s : chess.getAllSquares())
+			updateSquare(s);
 	}
 
 	public void restart() {
@@ -58,10 +61,8 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		chess = new Chess();
 		chess.addChessListener(this);
 		chosen = null;
-		updateAll();
-	}
 
-	private void updateAll() {
+		view.setStatusLabelText("       Welcome to Another Wonderful Chess Game         ");
 		for (Square s : chess.getAllSquares())
 			updateSquare(s);
 	}
@@ -88,6 +89,9 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	 * @return the next output line
 	 */
 	public void handleCommand(String command) {
+		chosen = null;
+		view.deHighLightWholeBoard();
+
 		String c = command.toLowerCase();
 		if (c.equals("print")) {
 			printRecords();
@@ -119,7 +123,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		} else if (c.charAt(0) == 'o') {
 			view.printOut(chess.castling(c));
 		} else if (c.length() == 6 || c.length() == 5) {
-			view.printOut(makeMove(c));
+			makeMove(c);
 		} else if (c.length() < 5) {
 			String fullStr = figureOutTheAbbreviation(c);
 			if (fullStr != null)
@@ -148,11 +152,11 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		ArrayList<Move> records = chess.getRecords();
 		if (records.size() == 0)
 			view.printOut("Game hasn't started yet.");
-		String s = "";
+		StringBuilder s = new StringBuilder();
 		for (Move i : records) {
-			s += i.print();
+			s.append(i.print());
 		}
-		view.printOut(s);
+		view.printOut(s.toString());
 	}
 
 	/**
@@ -165,61 +169,72 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	 *            the input command
 	 * @return
 	 */
-	public String makeMove(String s) {
+	public void makeMove(String s) {
 		char type;
 		if (s.length() == 5) {
 			s = 'P' + s;
 			type = 'P';
 		} else {
 			type = s.toUpperCase().charAt(0);
-			if (!(type == 'R' || type == 'N' || type == 'B' || type == 'Q' || type == 'K' || type == 'P'))
-				return "Please enter valid initial of chessman -- R(Root), N(Knight), B(Bishop), Q(Queen), K(King). If you omit it, it is assumed as Pawn.";
+			if (!(type == 'R' || type == 'N' || type == 'B' || type == 'Q' || type == 'K' || type == 'P')) {
+				view.printOut(
+						"Please enter valid initial of chessman -- R(Root), N(Knight), B(Bishop), Q(Queen), K(King). If you omit it, it is assumed as Pawn.");
+				return;
+			}
 		}
 
 		s = s.toLowerCase();
 		Square start = chess.getSquare(s.substring(1, 3));
-		if (start == null)
-			return "please enter a valid start Position";
-
+		if (start == null) {
+			view.printOut("please enter a valid start Position");
+			return;
+		}
 		boolean takeOrNot;
 		char action = s.charAt(3);
 		if (action == '-')
 			takeOrNot = false;
 		else if (s.charAt(3) == 'x')
 			takeOrNot = true;
-		else
-			return "Pleae enter \"-\" or \"x\" to indicate whether this move takes some piece or not.";
-
+		else {
+			view.printOut("Pleae enter \"-\" or \"x\" to indicate whether this move takes some piece or not.");
+			return;
+		}
 		Square end = chess.getSquare(s.substring(4));
-		if (end == null)
-			return "please enter a valid end Position";
-
+		if (end == null) {
+			view.printOut("please enter a valid end Position");
+			return;
+		}
 		Piece movedChessman = start.getPiece();
 		if (movedChessman == null) {
 			if (chess.getWhoseTurn())
-				return "There should be a white chessman in the start Position!";
+				view.printOut("There should be a white chessman in the start Position!");
 			else
-				return "There should be a black chessman in the start Position!";
+				view.printOut("There should be a black chessman in the start Position!");
+			return;
 		}
-		if (!(movedChessman.isType(type)))
-			return "The chessman in the start Position is not corret! \n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn";
-
+		if (!(movedChessman.isType(type))) {
+			view.printOut(
+					"The chessman in the start Position is not corret! \n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
+			return;
+		}
 		Piece chessmanTaken = end.getPiece();
 
 		if (takeOrNot) {
-			if (movedChessman.canCapture(end))
-				return movedChessman.capture(end, chessmanTaken);
-			else
-				return "Illegal move! Please check the rule of " + movedChessman.getName() + "!";
+			if (movedChessman.canCapture(end)) {
+				view.printOut(movedChessman.capture(end, chessmanTaken));
+			} else {
+				view.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
+			}
 		} else {
 			if (chessmanTaken != null) {
-				return "It works this time,but please use \"x\" if you want to take it next time. Thank you!\n"
-						+ makeMove(s.replace('-', 'x'));
+				view.printOut("It works this time,but please use \"x\" if you want to take it next time. Thank you!\n");
+				makeMove(s.replace('-', 'x'));
+			} else {
+				if (movedChessman.canMove(end))
+					view.printOut(movedChessman.move(end));
+				else
+					view.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
 			}
-			if (movedChessman.canMove(end))
-				return movedChessman.move(end);
-			else
-				return "Illegal move! Please check the rule of " + movedChessman.getName() + "!";
 		}
 	}
 
@@ -231,7 +246,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	 * @return
 	 */
 	public String figureOutTheAbbreviation(String s) {
-		char type = s.charAt(0);
+		char type = Character.toUpperCase(s.charAt(0));
 		if (type == 'R' || type == 'N' || type == 'B' || type == 'Q' || type == 'K' || type == 'P')
 			s = s.substring(1);
 		else
@@ -303,25 +318,21 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	}
 
 	/**
-	 * clean the temporal piece information, because the user suggests a illegal
-	 * move
-	 */
-	protected void printCleanTemp() {
-		view.cleanTemp();
-	}
-
-	/**
 	 * print out the outputs in the head label.
 	 * 
 	 * @param s
 	 */
 	public void printInLabel(String s) {
-		view.setText(s);
+		view.setStatusLabelText(s);
 	}
 
 	@Override
 	public void updateSquare(Square sq) {
-		view.updateSquare(sq);
+		if (sq.occupied()) {
+			view.showLabel(sq.X(), sq.Y(), sq.getPiece().getType(), sq.getPiece().getWb());
+		} else {
+			view.cleanLabel(sq.X(), sq.Y());
+		}
 	}
 
 	/**
@@ -343,11 +354,12 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 					s = chosen.capture(spot, spot.getPiece());
 
 				printchosenPiece(chess.lastMoveOutPrint());
-				printInBox(s);
+				view.printOut(s);
 				printInLabel(chess.lastMoveDiscript());
 			} else
-				printCleanTemp();
-			deHighLightWholeBoard();
+				view.cleanTemp();
+			chosen = null;
+			view.deHighLightWholeBoard();
 		} else {
 			if (spot.occupiedBy(chess.getWhoseTurn())) {
 				setChosenPiece(spot.getPiece());
@@ -378,16 +390,6 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 
 	private Square labelToSquare(SquareLabel sql) {
 		return chess.spotAt(sql.X(), sql.Y());
-	}
-
-	/**
-	 * dehighlight the whole board
-	 */
-	public void deHighLightWholeBoard() {
-		chosen = null;
-		for (SquareLabel i : view.getAllLabels())
-			if (i.isHighLight())
-				i.deHighLight();
 	}
 
 	// private String canClaimDraw = "";

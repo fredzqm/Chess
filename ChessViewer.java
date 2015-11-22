@@ -25,7 +25,6 @@ public class ChessViewer extends JFrame {
 	ChessViewerControl viewControl;
 	private JLabel statusLabel;
 	private SquareLabel[][] labels;
-	private ArrayList<SquareLabel> list;
 
 	private JTextArea myConsole;
 	private String existence;
@@ -45,7 +44,6 @@ public class ChessViewer extends JFrame {
 		chessBoard.setVisible(true);
 
 		labels = new SquareLabel[9][9];
-		list = new ArrayList<>();
 		for (int j = 0; j < 9; j++) {
 			for (int i = 0; i < 9; i++) {
 				if (j == 8) {
@@ -63,12 +61,10 @@ public class ChessViewer extends JFrame {
 					labels[i][j].setOpaque(false);
 				} else {
 					labels[i][j] = new SquareLabel(i, j, controller);
-					// labels[i][j] = myChess.spotAt(i, 8 - j);
 				}
 				labels[i][j].setPreferredSize(new Dimension(WIDTH, WIDTH));
 				labels[i][j].setFont(FONT_PIECE);
 				chessBoard.add(labels[i][j]);
-				list.add(labels[i][j]);
 			}
 		}
 		chessBoardSpace.add(chessBoard);
@@ -107,27 +103,6 @@ public class ChessViewer extends JFrame {
 		add(consolePanel, BorderLayout.SOUTH);
 	}
 
-	// /**
-	// * the console to make output
-	// *
-	// * @author zhangq2
-	// *
-	// */
-	// @SuppressWarnings("serial")
-	// class Console extends JTextArea implements KeyListener {
-	//
-	// /**
-	// * creates a new console for this game
-	// */
-	// public Console() {
-	// super("Welcome to little Chess Game. Enter \"help\" for instructions.\n",
-	// 130 / CONSOLE_FONT_SIZE,
-	// 1000 / CONSOLE_FONT_SIZE);
-	// addKeyListener(this);
-	// existence = getText();
-	// temp = "";
-	// }
-	//
 	public SquareLabel labelAt(int i, int j) {
 		return labels[i][8 - j];
 	}
@@ -163,16 +138,45 @@ public class ChessViewer extends JFrame {
 		temp = "";
 	}
 
-	public void setText(String s) {
+	public void setStatusLabelText(String s) {
 		statusLabel.setText(s);
 	}
 
-	public void updateSquare(Square sq) {
-		labelAt(sq.X(), sq.Y()).upDatePiece(sq);
+	/**
+	 * show the label at (x, y) in the chess board view
+	 * 
+	 * @param x
+	 * @param y
+	 * @param type
+	 *            type of piece to display
+	 * @param wb
+	 *            white or black
+	 */
+	public void showLabel(int x, int y, char type, boolean wb) {
+		labelAt(x, y).upDatePiece(type, wb);
 	}
 
-	public ArrayList<SquareLabel> getAllLabels() {
-		return list;
+	/**
+	 * clean the label at (x, y) in the chess board view
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public void cleanLabel(int x, int y) {
+		labelAt(x, y).setText("");
+	}
+
+	/**
+	 * dehighlight the whole board
+	 */
+	public void deHighLightWholeBoard() {
+		for (int i = 1; i <= 8; i++) {
+			for (int j = 1; j <= 8; j++) {
+				SquareLabel l = labelAt(i, j);
+				if (l.isHighLight())
+					l.deHighLight();
+			}
+		}
 	}
 
 }

@@ -1,5 +1,3 @@
-
-
 /**
  * A class that represents the squares on the chess board.
  * 

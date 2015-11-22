@@ -98,17 +98,13 @@ public class SquareLabel extends JLabel {
 	/**
 	 * upDate the color and text of this JLabel.
 	 */
-	public void upDatePiece(Square sq) {
-		
-		if (sq.occupied()) {
-			setText("" + sq.getPiece().getType());
-			if (sq.occupiedBy(true))
+	public void upDatePiece(char type, boolean wb) {
+			setText("" + type);
+			if (wb)
 				setForeground(TEXT_COLOR_WHITE);
 			else
 				setForeground(TEXT_COLOR_BALCK);
-		} else {
-			setText("");
-		}
+		
 	}
 	
 }

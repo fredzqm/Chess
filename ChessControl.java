@@ -31,7 +31,7 @@ public class ChessControl implements ChessViewerController, ChessListener {
 		}
 	};
 
-	ChessGameViewer view;
+	ChessViewer view;
 	Chess chess;
 	Piece highLight;
 
@@ -46,7 +46,7 @@ public class ChessControl implements ChessViewerController, ChessListener {
 		chess.addChessListener(this);
 		highLight = null;
 
-		view = new ChessGameViewer(this);
+		view = new ChessViewer(this);
 		view.setVisible(true);
 		view.pack();
 		updateAll();

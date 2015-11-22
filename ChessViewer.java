@@ -13,7 +13,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 @SuppressWarnings("serial")
-public class ChessGameViewer extends JFrame {
+public class ChessViewer extends JFrame {
 
 	private static final int WIDTH = 50;
 	private static final Font FONT_PIECE = new Font("Serif", Font.PLAIN, 40);
@@ -28,7 +28,7 @@ public class ChessGameViewer extends JFrame {
 	private JTextArea myConsole;
 	private String existence;
 	private String temp;
-	public ChessGameViewer(ChessViewerController controller) {
+	public ChessViewer(ChessViewerController controller) {
 		super("The Great Chess Game");
 
 		this.viewControl = controller;

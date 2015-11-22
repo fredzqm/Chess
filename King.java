@@ -18,7 +18,7 @@ public class King extends Piece {
 	}
 
 	@Override
-	public boolean legalPosition(Square end, Chess chess) {
+	public boolean legalPosition(Square end ) {
 		if (spot.equals(end))
 			return false;
 		if (Math.abs(spot.X() - end.X()) > 1
@@ -42,7 +42,7 @@ public class King extends Piece {
 					return true;
 			}
 		}
-		return legalPosition(end, chess)
+		return legalPosition(end)
 				&& !chess.giveAwayKing(this, spot, null, end, wb);
 	}
 
@@ -51,8 +51,7 @@ public class King extends Piece {
 			return castling(chess, true);
 		else if (end.X() - spot.X() > 1)
 			return castling(chess, false);
-
-		return makeMove(end, null, chess);
+		return makeMove(end, null);
 	}
 
 	/**

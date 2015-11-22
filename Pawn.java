@@ -21,7 +21,7 @@ public class Pawn extends Piece {
 	}
 
 	@Override
-	public boolean legalPosition(Square end, Chess chess) {
+	public boolean legalPosition(Square end) {
 
 		if (end.occupied() || spot == null)
 			return false;
@@ -80,7 +80,7 @@ public class Pawn extends Piece {
 			if (taken == null)
 				System.out.println("En Passant error!");
 		}
-		return s + makeMove(end, taken, chess);
+		return s + makeMove(end, taken);
 	}
 
 	protected boolean canPromote(Square end) {

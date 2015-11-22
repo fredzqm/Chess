@@ -18,7 +18,7 @@ public class Bishop extends Piece {
 	}
 
 	@Override
-	public boolean legalPosition(Square end, Chess chess) {
+	public boolean legalPosition(Square end) {
 		return legalPosition(spot, end, chess);
 	}
 	protected static boolean legalPosition(Square start , Square end, Chess chess){

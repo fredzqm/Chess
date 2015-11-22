@@ -6,7 +6,7 @@ import javax.management.RuntimeErrorException;
  *
  */
 public abstract class Piece implements Comparable<Piece> {
-
+	protected Chess chess;
 	protected char type;
 	protected int value;
 	protected boolean wb;
@@ -23,8 +23,9 @@ public abstract class Piece implements Comparable<Piece> {
 	 *            the square this piece is at initially.
 	 */
 	public Piece(char type, boolean wb, Square p) {
+		this.chess = p.getChess();
 		this.type = type;
-		this.wb = wb;
+		this.wb = wb;	
 		moveTo(p);
 		name = "";
 		spot.upDatePiece();
@@ -95,7 +96,7 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @return true if it is legal to move this piece to the end, regardless of
 	 *         the piece at the end position
 	 */
-	public abstract boolean legalPosition(Square end, Chess chess);
+	public abstract boolean legalPosition(Square end);
 
 	/**
 	 * 
@@ -103,10 +104,10 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @param chess
 	 * @return true if it is legal to move this piece to the end position
 	 */
-	public boolean canMove(Square end, Chess chess) {
+	public boolean canMove(Square end) {
 		if (end.occupied())
 			return false;
-		return legalPosition(end, chess)
+		return legalPosition(end)
 				&& !chess.giveAwayKing(this, spot, end.getPiece(), end, wb);
 	}
 
@@ -116,10 +117,10 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @param chess
 	 * @return true if it is attacking the end spot.
 	 */
-	public boolean canAttack(Square end, Chess chess) {
+	public boolean canAttack(Square end) {
 		if (spot == null)
 			return false;
-		return legalPosition(end, chess);
+		return legalPosition(end);
 	}
 
 	/**
@@ -128,8 +129,8 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @param chess
 	 * @return true if it is legal to capture the piece at the end
 	 */
-	public boolean canCapture(Square end, Chess chess) {
-		return canAttack(end, chess) && end.occupiedBy(!wb)
+	public boolean canCapture(Square end) {
+		return canAttack(end) && end.occupiedBy(!wb)
 				&& !chess.giveAwayKing(this, spot, end.getPiece(), end, wb);
 	}
 
@@ -140,8 +141,8 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @param chess
 	 * @return carry on the move
 	 */
-	public String move(Square end, Chess chess) {
-		return makeMove(end, null, chess);
+	public String move(Square end) {
+		return makeMove(end, null);
 	}
 
 	/**
@@ -152,8 +153,8 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @param chess
 	 * @return carry on the capture
 	 */
-	public String capture(Square end, Piece taken, Chess chess) {
-		return makeMove(end, taken, chess);
+	public String capture(Square end, Piece taken) {
+		return makeMove(end, taken);
 	}
 
 	/**
@@ -167,12 +168,12 @@ public abstract class Piece implements Comparable<Piece> {
 	 *            whether it takes a piece or not
 	 * @return the output information it needs to print out in the box
 	 */
-	protected String makeMove(Square end, Piece taken, Chess chess) {
+	protected String makeMove(Square end, Piece taken) {
 		if (taken != null)
 			chess.takeOffBoard(taken);
 		Square start = spot;
 		if (canPromote(end)) {
-			Piece promotionTo = promotion(end, chess);
+			Piece promotionTo = promotion(end);
 			chess.addPromotionRecord(this, start, taken, end, promotionTo);
 		} else {
 			moveTo(end);
@@ -204,7 +205,7 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @param chess
 	 * @return
 	 */
-	protected Piece promotion(Square end, Chess chess) {
+	protected Piece promotion(Square end) {
 		throw new RuntimeErrorException(new Error(
 				"It should never reaches this line!!."));
 	}

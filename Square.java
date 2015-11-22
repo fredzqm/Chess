@@ -9,7 +9,6 @@
  *
  */
 public class Square {
-
 	private Chess chess ;
 	private int x;
 	private int y;
@@ -66,6 +65,15 @@ public class Square {
 	public Piece getPiece() {
 		return occupied;
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Chess getChess() {
+		return chess;
+	}
+	
 	/**
 	 * 
 	 * @return true if there is any piece occupy this squre

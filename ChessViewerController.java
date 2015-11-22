@@ -5,5 +5,4 @@ public interface ChessViewerController {
 
 	public void click(SquareLabel squareLabel);
 	
-	
 }

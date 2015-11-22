@@ -18,7 +18,7 @@ public class Queen extends Piece {
 	}
 
 	@Override
-	public boolean legalPosition(Square end, Chess chess) {
+	public boolean legalPosition(Square end) {
 		return Bishop.legalPosition(spot, end, chess) || Rook.legalPosition(spot, end, chess);
 	}
 }

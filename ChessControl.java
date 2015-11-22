@@ -1,7 +1,6 @@
-import java.util.EventObject;
 import java.util.HashMap;
 
-public class ChessControl implements ChessViewerController , ChessListener{
+public class ChessControl implements ChessViewerController, ChessListener {
 
 	private final static HashMap<String, String> rules = new HashMap<String, String>() {
 		{
@@ -34,7 +33,8 @@ public class ChessControl implements ChessViewerController , ChessListener{
 
 	ChessGameViewer view;
 	Chess chess;
-	
+	Piece highLight;
+
 	/**
 	 * start my little chess game!!!!
 	 * 
@@ -44,7 +44,8 @@ public class ChessControl implements ChessViewerController , ChessListener{
 	public ChessControl() {
 		chess = new Chess();
 		chess.addChessListener(this);
-		
+		highLight = null;
+
 		view = new ChessGameViewer(this);
 		view.setVisible(true);
 		view.pack();
@@ -55,16 +56,14 @@ public class ChessControl implements ChessViewerController , ChessListener{
 		chess.removeChessListener(this);
 		chess = new Chess();
 		chess.addChessListener(this);
-		
+		highLight = null;
 		updateAll();
 	}
-	
-	private void updateAll() {
-		for(int i = 1 ; i <= 8 ; i ++)
-			for (int j = 1 ; j <= 8 ; j ++)
-				updateSquare(chess.spotAt(i, j));
-	}
 
+	private void updateAll() {
+		for (Square s : chess.getAllSquares())
+			updateSquare(s);
+	}
 
 	/**
 	 * return the requested rules text.
@@ -134,12 +133,11 @@ public class ChessControl implements ChessViewerController , ChessListener{
 					+ "you can omit the \"P\" at the begining for a pawn." + "for casting, enter \"O-O\" or \"O-O-O\"\n"
 					+ "for examples, \"e2-e4\", \"Nb2-c3\" ";
 	}
-	
 
 	/**
 	 * print out the result in the box.
 	 */
-	protected void printInBox(String s) {
+	public void printInBox(String s) {
 		view.printOut(s);
 	}
 
@@ -172,24 +170,9 @@ public class ChessControl implements ChessViewerController , ChessListener{
 		view.setText(s);
 	}
 
-
 	@Override
 	public void updateSquare(Square sq) {
 		view.updateSquare(sq);
-	}
-
-
-	@Override
-	public void highLight(EventObject eventObject) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void dehighLight(EventObject eventObject) {
-		// TODO Auto-generated method stub
-		
 	}
 
 
@@ -203,26 +186,51 @@ public class ChessControl implements ChessViewerController , ChessListener{
 	 */
 	public void click(SquareLabel sql) {
 		Square spot = chess.spotAt(sql.X(), sql.Y());
-		if (chess.highLight != null) {
-			if (spot.isHighLight() && !spot.equals(chess.highLight.getP())) {
+		if (highLight != null) {
+			if (spot.isHighLight() && !spot.equals(highLight.getP())) {
 				String s = "";
-				if (chess.highLight.canMove(spot, chess))
-					s = chess.highLight.move(spot, chess);
-				else if (chess.highLight.canCapture(spot, chess))
-					s = chess.highLight.capture(spot, spot.getPiece(), chess);
+				if (highLight.canMove(spot))
+					s = highLight.move(spot);
+				else if (highLight.canCapture(spot))
+					s = highLight.capture(spot, spot.getPiece());
 
 				printchosenPiece(chess.lastMoveOutPrint());
 				printInBox("\n" + s);
 				printInLabel(chess.lastMoveDiscript());
 			} else
 				printCleanTemp();
-			chess.deHighLightWholeBoard();
+			deHighLightWholeBoard();
 		} else {
 			if (spot.occupiedBy(chess.getWhoseTurn())) {
-				chess.setHighLightPiece(spot.getPiece());
+				setHighLightPiece(spot.getPiece());
 				printchosenPiece(spot.getPiece().getType() + spot.toString());
 			}
 		}
+	}
+
+	/**
+	 * when one possible piece is chosen, highlight it and all the spots it can
+	 * move to.
+	 * 
+	 * @param piece
+	 */
+	public void setHighLightPiece(Piece piece) {
+		highLight = piece;
+		piece.getP().highLight();
+		for (Square i : chess.getAllSquares())
+			if (!i.occupiedBy(chess.getWhoseTurn()))
+				if (highLight.canMove(i) || highLight.canCapture(i))
+					i.highLight();
+	}
+
+	/**
+	 * dehighlight the whole board
+	 */
+	public void deHighLightWholeBoard() {
+		highLight = null;
+		for (Square i : chess.getAllSquares())
+			if (i.isHighLight())
+				i.deHighLight();
 	}
 
 }

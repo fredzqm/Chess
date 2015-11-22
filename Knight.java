@@ -18,7 +18,7 @@ public class Knight extends Piece {
 	}
 
 	@Override
-	public boolean legalPosition(Square end, Chess chess) {
+	public boolean legalPosition(Square end) {
 		if (spot.equals(end))
 			return false;
 		int a = Math.abs(spot.X() - end.X());

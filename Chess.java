@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,13 +21,14 @@ public class Chess {
 	private ArrayList<Piece> black;
 	private ArrayList<Move> records;
 	private String canClaimDraw = "";
-    Piece highLight;
+//    Piece highLight;
 //	private JLabel outLabel;
 //	private Console outBox;
 	private DrawRequest r;
 	private boolean gameHasEnded;
 
 	private List<ChessListener> listeners;
+	private Collection<Square> list;
 	
 	// ----------------------------------------------------------------------------------------------------------------------------
 	// constructors and methods used to create and initializes the chess game.
@@ -43,12 +45,12 @@ public class Chess {
 		r = new DrawRequest();
 		gameHasEnded = false;
 		listeners = new ArrayList<>();
+		list = new ArrayList<Square>();
 		
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				Square t;
-					t = new Square(i , j , this);
-					spots[i][j] = t;
+				Square t = new Square(i , j , this);
+				spots[i][j] = t;
 				int y = t.Y();
 				if (y == 1) {
 					white.add(startSet(t.X(), true, t));
@@ -59,6 +61,7 @@ public class Chess {
 				} else if (y == 8) {
 					black.add(startSet(t.X(), false, t));
 				}
+				list.add(t);
 			}
 		}
 		Collections.sort(white);
@@ -89,11 +92,6 @@ public class Chess {
 		else
 			return null;
 	}
-
-//	protected void initializedOutPutMethod(JLabel j, Console a) {
-//		outLabel = j;
-//		outBox = a;
-//	}
 
 	// ---------------------------------------------------------------------------
 	// Accessors
@@ -136,6 +134,10 @@ public class Chess {
 	 */
 	public Square spotAt(int i, int j) {
 		return spots[i - 1][8 - j];
+	}
+	
+	public Collection<Square> getAllSquares(){
+		return list;
 	}
 
 	// ------------------------------------------------------------------------------------------------------
@@ -249,7 +251,7 @@ public class Chess {
 	 */
 	private boolean isAttacked(ArrayList<Piece> attack, Square p) {
 		for (Piece i : attack) {
-			if (i.canAttack(p, this))
+			if (i.canAttack(p))
 				return true;
 		}
 		return false;
@@ -273,7 +275,7 @@ public class Chess {
 		for (Piece i : inCheck) {
 			for (Square[] r : spots) {
 				for (Square p : r) {
-					if (i.canMove(p, this) || i.canCapture(p, this))
+					if (i.canMove(p) || i.canCapture(p))
 						return false;
 				}
 			}
@@ -631,8 +633,8 @@ public class Chess {
 		Piece chessmanTaken = end.getPiece();
 
 		if (takeOrNot) {
-			if (movedChessman.canCapture(end, this))
-				return movedChessman.capture(end, chessmanTaken, this);
+			if (movedChessman.canCapture(end))
+				return movedChessman.capture(end, chessmanTaken);
 			else
 				return "Illegal move! Please check the rule of " + movedChessman.getName() + "!";
 		} else {
@@ -640,8 +642,8 @@ public class Chess {
 				return "It works this time,but please use \"x\" if you want to take it next time. Thank you!\n"
 						+ makeMove(s.replace('-', 'x'));
 			}
-			if (movedChessman.canMove(end, this))
-				return movedChessman.move(end, this);
+			if (movedChessman.canMove(end))
+				return movedChessman.move(end);
 			else
 				return "Illegal move! Please check the rule of " + movedChessman.getName() + "!";
 		}
@@ -682,12 +684,12 @@ public class Chess {
 
 		if (takeOrNot) {
 			for (Piece i : set) {
-				if (i.isType(type) && i.canCapture(end, this))
+				if (i.isType(type) && i.canCapture(end))
 					possible.add(i);
 			}
 		} else {
 			for (Piece i : set) {
-				if (i.isType(type) && i.canMove(end, this))
+				if (i.isType(type) && i.canMove(end))
 					possible.add(i);
 			}
 		}
@@ -866,36 +868,36 @@ public class Chess {
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// all the methods to show the outputs
-	/**
-	 * when one possible piece is chosen, hightlight it and all the spots it can
-	 * move to.
-	 * 
-	 * @param piece
-	 */
-	public void setHighLightPiece(Piece piece) {
-		highLight = piece;
-		piece.getP().highLight();
-		for (Square[] j : spots) {
-			for (Square i : j) {
-				if (!i.occupiedBy(whoseTurn))
-					if (highLight.canMove(i, this) || highLight.canCapture(i, this))
-						i.highLight();
-			}
-		}
-	}
-
-	/**
-	 * dehightlight the whole board
-	 */
-	public void deHighLightWholeBoard() {
-		highLight = null;
-		for (Square[] j : spots) {
-			for (Square i : j) {
-				if (i.isHighLight())
-					i.deHighLight();
-			}
-		}
-	}
+//	/**
+//	 * when one possible piece is chosen, hightlight it and all the spots it can
+//	 * move to.
+//	 * 
+//	 * @param piece
+//	 */
+//	public void setHighLightPiece(Piece piece) {
+//		highLight = piece;
+//		piece.getP().highLight();
+//		for (Square[] j : spots) {
+//			for (Square i : j) {
+//				if (!i.occupiedBy(whoseTurn))
+//					if (highLight.canMove(i, this) || highLight.canCapture(i, this))
+//						i.highLight();
+//			}
+//		}
+//	}
+//
+//	/**
+//	 * dehightlight the whole board
+//	 */
+//	public void deHighLightWholeBoard() {
+//		highLight = null;
+//		for (Square[] j : spots) {
+//			for (Square i : j) {
+//				if (i.isHighLight())
+//					i.deHighLight();
+//			}
+//		}
+//	}
 //
 //	/**
 //	 * print out the result in the box.
@@ -947,10 +949,14 @@ public class Chess {
 			listener.updateSquare(square);
 	}
 	
-	private void printInLabel(String str) {
+	public void printInLabel(String str) {
 		for (ChessListener listener : listeners)
 			listener.printInLabel(str);
 	}
 
+	public void printInBox(String str) {
+		for (ChessListener listener : listeners)
+			listener.printInBox(str);
+	}
 	
 }

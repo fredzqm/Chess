@@ -19,7 +19,7 @@ public class Rook extends Piece {
 	}
 
 	@Override
-	public boolean legalPosition(Square end, Chess chess) {
+	public boolean legalPosition(Square end) {
 		return legalPosition(spot, end, chess);
 	}
 

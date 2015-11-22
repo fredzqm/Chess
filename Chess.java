@@ -937,7 +937,11 @@ public class Chess {
 	public void addChessListener(ChessListener chessListener) {
 		listeners.add(chessListener);
 	}
-
+	
+	public void removeChessListener(ChessControl chessControl) {
+		listeners.remove(chessControl);
+	}
+	
 	public void updateSquare(Square square) {
 		for (ChessListener listener : listeners)
 			listener.updateSquare(square);
@@ -947,4 +951,6 @@ public class Chess {
 		for (ChessListener listener : listeners)
 			listener.printInLabel(str);
 	}
+
+	
 }

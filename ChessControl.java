@@ -51,6 +51,13 @@ public class ChessControl implements ChessViewerController , ChessListener{
 		updateAll();
 	}
 
+	private void restart() {
+		chess.removeChessListener(this);
+		chess = new Chess();
+		chess.addChessListener(this);
+		
+		updateAll();
+	}
 	
 	private void updateAll() {
 		for(int i = 1 ; i <= 8 ; i ++)
@@ -84,7 +91,7 @@ public class ChessControl implements ChessViewerController , ChessListener{
 		if (s.toLowerCase().equals("print")) {
 			return chess.print();
 		} else if (s.toLowerCase().equals("restart")) {
-//			chess.restart();
+			restart();
 			return "Start a new game!";
 		} else if (s.toLowerCase().startsWith("rules for ")) {
 			return rules(s.toLowerCase().substring(10));
@@ -128,6 +135,7 @@ public class ChessControl implements ChessViewerController , ChessListener{
 					+ "for examples, \"e2-e4\", \"Nb2-c3\" ";
 	}
 	
+
 	/**
 	 * print out the result in the box.
 	 */

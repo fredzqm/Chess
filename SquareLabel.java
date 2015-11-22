@@ -42,7 +42,7 @@ public class SquareLabel extends JLabel {
 	 *            rank of this square
 	 * @param chess
 	 */
-	public SquareLabel(int i, int j, ChessViewerController chess) {
+	public SquareLabel(int i, int j, ChessViewerControl chess) {
 		super("", JLabel.CENTER);
 		x = i;
 		y = 8 - j;
@@ -86,12 +86,12 @@ public class SquareLabel extends JLabel {
 	/**
 	 * hight light this spot and set the back ground color to highlight color.
 	 */
-	private void highLight() {
+	public void highLight() {
 		highLight = true;
 		setBackground(HIGHLIGHT_COLOR);
 	}
 
-	private void deHighLight() {
+	public void deHighLight() {
 		highLight = false;
 		setBackground(originalColor);
 	}
@@ -110,10 +110,6 @@ public class SquareLabel extends JLabel {
 		} else {
 			setText("");
 		}
-		if (sq.isHighLight())
-			highLight();
-		else
-			deHighLight();
 	}
 	
 }

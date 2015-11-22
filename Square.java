@@ -15,7 +15,6 @@ public class Square {
 	private String name;
 	private Piece occupied;
 //	private Color originalColor;
-	boolean highLight;
 
 	/**
 	 * 
@@ -95,10 +94,6 @@ public class Square {
 			return false;
 	}
 
-	public boolean isHighLight() {
-		return highLight;
-	}
-
 	// ------------------------------------------------------------------------------------------------------------------
 	// modifier
 
@@ -116,17 +111,17 @@ public class Square {
 	/**
 	 * hight light this spot and set the back ground color to highlight color.
 	 */
-	public void highLight() {
-		highLight = true;
-		upDatePiece();
+//	public void highLight() {
+//		highLight = true;
+//		upDatePiece();
 //		setBackground(HIGHLIGHT_COLOR);
-	}
+//	}
 
-	public void deHighLight() {
-		highLight = false;
-		upDatePiece();
+//	public void deHighLight() {
+//		highLight = false;
+//		upDatePiece();
 //		setBackground(originalColor);
-	}
+//	}
 
 	/**
 	 * upDate the color and text of this JLabel.

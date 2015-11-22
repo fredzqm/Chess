@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,14 +22,16 @@ public class ChessViewer extends JFrame {
 	private static final int CONSOLE_FONT_SIZE = 20;
 	private static final Font FONT_CONSOLE = new Font("Serif", Font.PLAIN, CONSOLE_FONT_SIZE);
 
-	ChessViewerController viewControl;
+	ChessViewerControl viewControl;
 	private JLabel statusLabel;
 	private SquareLabel[][] labels;
+	private ArrayList<SquareLabel> list;
 	
 	private JTextArea myConsole;
 	private String existence;
 	private String temp;
-	public ChessViewer(ChessViewerController controller) {
+	
+	public ChessViewer(ChessViewerControl controller) {
 		super("The Great Chess Game");
 
 		this.viewControl = controller;
@@ -40,7 +43,9 @@ public class ChessViewer extends JFrame {
 		chessBoard.setSize(WIDTH * 9, WIDTH * 9);
 		chessBoard.setLayout(new GridLayout(9, 9));
 		chessBoard.setVisible(true);
+		
 		labels = new SquareLabel[9][9];
+		list = new ArrayList<>();
 		for (int j = 0; j < 9; j++) {
 			for (int i = 0; i < 9; i++) {
 				if (j == 8) {
@@ -63,6 +68,7 @@ public class ChessViewer extends JFrame {
 				labels[i][j].setPreferredSize(new Dimension(WIDTH, WIDTH));
 				labels[i][j].setFont(FONT_PIECE);
 				chessBoard.add(labels[i][j]);
+				list.add(labels[i][j]);
 			}
 		}
 		chessBoardSpace.add(chessBoard);
@@ -134,11 +140,14 @@ public class ChessViewer extends JFrame {
 //			temp = "";
 //		}
 //
-//		/**
-//		 * print out the outPut in the console.
-//		 * 
-//		 * @param outPut
-//		 */
+	public SquareLabel labelAt(int i , int j){
+		return labels[i][8 - j];
+	}
+		/**
+		 * print out the outPut in the console.
+		 * 
+		 * @param outPut
+		 */
 		public void printOut(String outPut) {
 			existence = existence + temp;
 			temp = "";
@@ -169,8 +178,12 @@ public class ChessViewer extends JFrame {
 		}
 
 		public void updateSquare(Square sq) {
-			
-			labels[sq.X()][8 - sq.Y()].upDatePiece(sq);
+//			labels[sq.X()][8 - sq.Y()]
+					labelAt(sq.X(), sq.Y()).upDatePiece(sq);
+		}
+
+		public ArrayList<SquareLabel> getAllLabels() {
+			return list;
 		}
 
 //		@Override

@@ -1,5 +1,5 @@
 
-public interface ChessViewerController {
+public interface ChessViewerControl {
 
 	public String handleCommand(String command);
 

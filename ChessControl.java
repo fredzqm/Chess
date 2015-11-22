@@ -1,6 +1,6 @@
 import java.util.HashMap;
 
-public class ChessControl implements ChessViewerController, ChessListener {
+public class ChessControl implements ChessViewerControl, ChessListener {
 
 	private final static HashMap<String, String> rules = new HashMap<String, String>() {
 		{
@@ -184,10 +184,10 @@ public class ChessControl implements ChessViewerController, ChessListener {
 	 * @param spot
 	 *            the square that is clicked
 	 */
-	public void click(SquareLabel sql) {
-		Square spot = chess.spotAt(sql.X(), sql.Y());
+	public void click(SquareLabel label) {
+		Square spot = labelToSquare(label);
 		if (highLight != null) {
-			if (spot.isHighLight() && !spot.equals(highLight.getP())) {
+			if (label.isHighLight() && !spot.equals(highLight.getP())) {
 				String s = "";
 				if (highLight.canMove(spot))
 					s = highLight.move(spot);
@@ -208,6 +208,8 @@ public class ChessControl implements ChessViewerController, ChessListener {
 		}
 	}
 
+
+
 	/**
 	 * when one possible piece is chosen, highlight it and all the spots it can
 	 * move to.
@@ -216,19 +218,29 @@ public class ChessControl implements ChessViewerController, ChessListener {
 	 */
 	public void setHighLightPiece(Piece piece) {
 		highLight = piece;
-		piece.getP().highLight();
+		squareToLabel(piece.getP()).highLight();
 		for (Square i : chess.getAllSquares())
 			if (!i.occupiedBy(chess.getWhoseTurn()))
-				if (highLight.canMove(i) || highLight.canCapture(i))
-					i.highLight();
+				if (highLight.canMove(i) || highLight.canCapture(i)){
+					squareToLabel(i).highLight();
+				}
 	}
+
+	private SquareLabel squareToLabel(Square sqr) {
+		return view.labelAt(sqr.X(), sqr.Y());
+	}
+	
+	private Square labelToSquare(SquareLabel sql) {
+		return chess.spotAt(sql.X(), sql.Y());
+	}
+	
 
 	/**
 	 * dehighlight the whole board
 	 */
 	public void deHighLightWholeBoard() {
 		highLight = null;
-		for (Square i : chess.getAllSquares())
+		for (SquareLabel i : view.getAllLabels())
 			if (i.isHighLight())
 				i.deHighLight();
 	}

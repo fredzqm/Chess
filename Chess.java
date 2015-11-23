@@ -210,7 +210,7 @@ public class Chess {
 			set = black;
 
 		for (Piece i : set) {
-			if (i.isType(type) && (i.canCapture(end) || i.canMove(end)))
+			if (i.isType(type) && (i.canGo(end)))
 				possible.add(i);
 		}
 		return possible;
@@ -291,7 +291,7 @@ public class Chess {
 		for (Piece i : inCheck) {
 			for (Square[] r : spots) {
 				for (Square p : r) {
-					if (i.canMove(p) || i.canCapture(p))
+					if (i.canGo(p))
 						return false;
 				}
 			}
@@ -483,6 +483,23 @@ public class Chess {
 		}
 	}
 
+	// ----------------------------------------------------------------------------------------------------------
+	// Methods to deal with the commands and requested moves by the user.
+	
+//	/**
+//	 * This method is called if the user enter a command to undo his move. It
+//	 * will undo two moves.
+//	 * 
+//	 * @return
+//	 */
+//	public String undoPreviousMove() {
+//		if (time == 1 && whoseTurn)
+//			return "It is already the start of Game";
+//		undoLastMove();
+//		
+//		return "Undo the Previous Move!";
+//	}
+
 	/**
 	 * changes the records and the chessboard, so everything will return back to
 	 * the state of previous round.
@@ -492,6 +509,9 @@ public class Chess {
 			return false;
 		Move lastMove = records.remove(records.size() - 1);
 		lastMove.undo(this);
+		if (whoseTurn)
+			time--;
+		whoseTurn = !whoseTurn;
 		return true;
 	}
 
@@ -558,22 +578,6 @@ public class Chess {
 
 	// ----------------------------------------------------------------------------------------------------------
 	// Methods to deal with the commands and requested moves by the user.
-
-	/**
-	 * This method is called if the user enter a command to undo his move. It
-	 * will undo two moves.
-	 * 
-	 * @return
-	 */
-	public String undoPreviousMove() {
-		if (time == 1 && whoseTurn)
-			return "It is already the start of Game";
-		undoLastMove();
-		if (whoseTurn)
-			time--;
-		whoseTurn = !whoseTurn;
-		return "Undo the Previous Move!";
-	}
 
 	/**
 	 * This method will be called if the user request to make a castling.

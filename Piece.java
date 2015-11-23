@@ -100,6 +100,9 @@ public abstract class Piece implements Comparable<Piece> {
 				&& !chess.giveAwayKing(this, spot, end.getPiece(), end, wb);
 	}
 
+	public boolean canGo(Square end){
+		return  canMove(end) || canCapture(end);
+	}
 	/**
 	 * 
 	 * @param end
@@ -200,7 +203,7 @@ public abstract class Piece implements Comparable<Piece> {
 	}
 
 	public static Class<?extends Piece> getType(char c){
-		switch (c) {
+		switch (Character.toUpperCase(c)) {
 		case 'P':return Pawn.class;
 		case 'R':return Rook.class;
 		case 'N':return Knight.class;

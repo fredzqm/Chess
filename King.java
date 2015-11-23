@@ -5,7 +5,7 @@
  */
 public class King extends Piece {
 	private final int VALUE = 100;
-	
+
 	/**
 	 * constructs a King with initial square
 	 * 
@@ -13,16 +13,15 @@ public class King extends Piece {
 	 * @param wb
 	 * @param Position
 	 */
-	public King( boolean wb, Square Position) {
+	public King(boolean wb, Square Position) {
 		super(wb, Position);
 	}
 
 	@Override
-	public boolean legalPosition(Square end ) {
+	public boolean legalPosition(Square end) {
 		if (spot.equals(end))
 			return false;
-		if (Math.abs(spot.X() - end.X()) > 1
-				|| Math.abs(spot.Y() - end.Y()) > 1)
+		if (Math.abs(spot.X() - end.X()) > 1 || Math.abs(spot.Y() - end.Y()) > 1)
 			return false;
 		else {
 			return true;
@@ -42,16 +41,27 @@ public class King extends Piece {
 					return true;
 			}
 		}
-		return legalPosition(end)
-				&& !chess.giveAwayKing(this, spot, null, end, wb);
+		return legalPosition(end) && !chess.giveAwayKing(this, spot, null, end, wb);
 	}
 
-	public void move(Square end) {
-		if ((spot.X() - end.X()) > 1)
-			castling(chess, true);
-		else if (end.X() - spot.X() > 1)
-			castling(chess, false);
-		makeMove(end, null);
+	public void makeMove(Square end, Piece taken) {
+		if (taken == null) {
+			if ((spot.X() - end.X()) > 1)
+				castling(chess, true);
+			else if (end.X() - spot.X() > 1)
+				castling(chess, false);
+		}
+		if (taken != null)
+			chess.takeOffBoard(taken);
+		Square start = spot;
+		if (canPromote(end)) {
+			Piece promotionTo = promotion(end);
+			chess.addPromotionRecord(this, start, taken, end, promotionTo);
+		} else {
+			moveTo(end);
+			chess.addRecord(this, start, taken, end);
+		}
+		chess.wrapMove();
 	}
 
 	/**
@@ -83,11 +93,10 @@ public class King extends Piece {
 			rookEnd = chess.spotAt(6, y);
 			rook = chess.spotAt(8, y).getPiece();
 		}
-		chess.addRecord(this, kingStart, kingEnd, (Rook) rook, rookStart,
-				rookEnd);
+		chess.addRecord(this, kingStart, kingEnd, (Rook) rook, rookStart, rookEnd);
 		moveTo(kingEnd);
 		rook.moveTo(rookEnd);
-//		return "castling sucessful! " + // TODO: get those printed
+		// return "castling sucessful! " + // TODO: get those printed
 		chess.wrapMove();
 	}
 
@@ -95,7 +104,7 @@ public class King extends Piece {
 	public int getValue() {
 		return VALUE;
 	}
-	
+
 	@Override
 	public char getType() {
 		return 'K';

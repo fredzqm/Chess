@@ -87,6 +87,10 @@ public abstract class Piece implements Comparable<Piece> {
 	 */
 	public abstract boolean legalPosition(Square end);
 
+	public boolean canGo(Square end){
+		return  canMove(end) || canCapture(end);
+	}
+
 	/**
 	 * 
 	 * @param end
@@ -100,9 +104,6 @@ public abstract class Piece implements Comparable<Piece> {
 				&& !chess.giveAwayKing(this, spot, end.getPiece(), end, wb);
 	}
 
-	public boolean canGo(Square end){
-		return  canMove(end) || canCapture(end);
-	}
 	/**
 	 * 
 	 * @param end
@@ -126,28 +127,6 @@ public abstract class Piece implements Comparable<Piece> {
 				&& !chess.giveAwayKing(this, spot, end.getPiece(), end, wb);
 	}
 
-	/**
-	 * Overiden in Pawn class
-	 * 
-	 * @param end
-	 * @param chess
-	 * @return carry on the move
-	 */
-	public void move(Square end) {
-		makeMove(end, null);
-	}
-
-	/**
-	 * Overiden in Pawn class
-	 * 
-	 * @param end
-	 * @param taken
-	 * @param chess
-	 * @return carry on the capture
-	 */
-	public void capture(Square end, Piece taken) {
-		makeMove(end, taken);
-	}
 
 	/**
 	 * 
@@ -212,5 +191,9 @@ public abstract class Piece implements Comparable<Piece> {
 		case 'K':return King.class;
 		default:return Piece.class;
 		}
+	}
+	
+	public String toString(){
+		return getName()+" at "+getP();
 	}
 }

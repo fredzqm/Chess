@@ -136,6 +136,9 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	 * @return
 	 */
 	private boolean makeMove(String s) {
+		if (checkCastling(s))
+			return true; 
+		
 		Pattern p = Pattern.compile("([prnbqk])?([a-h])?([1-8])?.*?([a-h][1-8]).*");
 		Matcher m = p.matcher(s);
 		if (m.matches()){
@@ -166,7 +169,9 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 					view.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
 //				return;
 			} else{
+				System.out.println(" " + type+" " + end);
 				ArrayList<Piece> possible = chess.possibleMovers(type, end);
+				System.out.println(possible);
 				if (possible.size() == 0) {
 					view.printOut("Fail to guess move: No one can reach that spot.");
 				} else if (possible.size() == 1) {
@@ -256,6 +261,20 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 //			return;
 //		}
 
+	}
+
+	private boolean checkCastling(String s) {
+		boolean lors;
+		if (s.equals("o-o")) {
+			lors = false;
+		} else if (s.equals("o-o-o")) {
+			lors = true;
+		}else
+			return false;
+		
+		if (!chess.castling(lors))
+			view.printOut("You cannot do castling, please check the rules for castling.");
+		return true;
 	}
 
 	/**
@@ -350,27 +369,6 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	// return new Knight('N', wb, end);
 	// }
 	// return promotion(end);
-
-	/**
-	 * This method will be called if the user request to make a castling.
-	 * 
-	 * @param s
-	 * @return
-	 */
-	public void castling(String s) { // TODO: fix castling
-		s = s.toLowerCase();
-		boolean longOrShort;
-		if (s.equals("o-o")) {
-			longOrShort = false;
-		} else if (s.equals("o-o-o")) {
-			longOrShort = true;
-		} else {
-			view.printOut("For short castling, enter \"O-O\" and for long castling, enter \"O-O-O\".");
-			return;
-		}
-		if (!chess.castling(longOrShort))
-			view.printOut("You cannot do castling, please check the rules for castling.");
-	}
 
 	/**
 	 * print out the temporal piece that is chosen in the box

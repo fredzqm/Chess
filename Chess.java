@@ -515,6 +515,29 @@ public class Chess {
 		return true;
 	}
 
+	// ----------------------------------------------------------------------------------------------------------
+	// Methods to deal with the commands and requested moves by the user.
+	
+	/**
+	 * This method will be called if the user request to make a castling.
+	 * 
+	 * @param longOrShort
+	 * @return
+	 */
+	public boolean castling(boolean longOrShort) {
+		King king;
+		if (whoseTurn)
+			king = (King) white.get(0);
+		else
+			king = (King) black.get(0);
+	
+		if (canCastling(king, longOrShort)) {
+			king.castling(this, longOrShort);
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * perform command to move piece to certain spot
 	 * 
@@ -523,10 +546,12 @@ public class Chess {
 	 * @return true if move is valid, false if not allowed by chess rule
 	 */
 	public boolean performMove(Piece piece, Square spot) {
-		if (piece.canMove(spot))
-			piece.move(spot);
-		else if (piece.canCapture(spot))
-			piece.capture(spot, spot.getPiece());
+//		if (piece.canMove(spot))
+//			piece.move(spot);
+//		else if (piece.canCapture(spot))
+//			piece.capture(spot, spot.getPiece());
+		if (piece.canGo(spot))
+			piece.makeMove(spot, spot.getPiece());
 		else
 			return false;
 		return true;
@@ -567,6 +592,7 @@ public class Chess {
 			canClaimDraw();
 			s = "" + canClaimDraw;
 		}
+		
 		whoseTurn = !whoseTurn;
 		if (whoseTurn) {
 			time++;
@@ -578,26 +604,6 @@ public class Chess {
 
 	// ----------------------------------------------------------------------------------------------------------
 	// Methods to deal with the commands and requested moves by the user.
-
-	/**
-	 * This method will be called if the user request to make a castling.
-	 * 
-	 * @param longOrShort
-	 * @return
-	 */
-	public boolean castling(boolean longOrShort) {
-		King king;
-		if (whoseTurn)
-			king = (King) white.get(0);
-		else
-			king = (King) black.get(0);
-
-		if (canCastling(king, longOrShort)) {
-			king.castling(this, longOrShort);
-			return true;
-		}
-		return false;
-	}
 
 	/**
 	 * According to the chess law, no player can request for draw consecutively.

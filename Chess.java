@@ -27,7 +27,7 @@ public class Chess {
 
 	private List<ChessListener> listeners;
 	private Collection<Square> list;
-	
+
 	// ----------------------------------------------------------------------------------------------------------------------------
 	// constructors and methods used to create and initializes the chess game.
 	/**
@@ -44,10 +44,10 @@ public class Chess {
 		gameHasEnded = false;
 		listeners = new ArrayList<>();
 		list = new ArrayList<Square>();
-		
+
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				Square t = new Square(i , j , this);
+				Square t = new Square(i, j, this);
 				spots[i][j] = t;
 				int y = t.Y();
 				if (y == 1) {
@@ -133,12 +133,12 @@ public class Chess {
 	public Square spotAt(int i, int j) {
 		return spots[i - 1][8 - j];
 	}
-	
-	public Collection<Square> getAllSquares(){
+
+	public Collection<Square> getAllSquares() {
 		return list;
 	}
-	
-	public ArrayList<Move> getRecords(){
+
+	public ArrayList<Move> getRecords() {
 		return records.getArrayList();
 	}
 	// ------------------------------------------------------------------------------------------------------
@@ -201,9 +201,7 @@ public class Chess {
 	// -------------------------------------------------------------------------------------------------------------------
 	// find out about the condition of the game, (In check etc.)
 
-	
-	
-	public ArrayList<Piece> possibleMovers(char type, boolean takeOrNot, Square end) {
+	public ArrayList<Piece> possibleMovers(char type, Square end) {
 		ArrayList<Piece> possible = new ArrayList<Piece>();
 		ArrayList<Piece> set;
 		if (getWhoseTurn())
@@ -211,19 +209,13 @@ public class Chess {
 		else
 			set = black;
 
-		if (takeOrNot) {
-			for (Piece i : set) {
-				if (i.isType(type) && i.canCapture(end))
-					possible.add(i);
-			}
-		} else {
-			for (Piece i : set) {
-				if (i.isType(type) && i.canMove(end))
-					possible.add(i);
-			}
+		for (Piece i : set) {
+			if (i.isType(type) && (i.canCapture(end) || i.canMove(end)))
+				possible.add(i);
 		}
 		return possible;
 	}
+
 	/**
 	 * find out whether a certain move will put your own king in check
 	 * 
@@ -502,7 +494,7 @@ public class Chess {
 		lastMove.undo(this);
 		return true;
 	}
-	
+
 	/**
 	 * perform command to move piece to certain spot
 	 * 
@@ -537,7 +529,7 @@ public class Chess {
 			s = "Check!! ";
 			if (checkMate()) {
 				if (whoseTurn) {
-					win(true, "White wins! -- CHECKMATE!!",  "WHITE Checkmates the BLACK, WHITE wins!!");
+					win(true, "White wins! -- CHECKMATE!!", "WHITE Checkmates the BLACK, WHITE wins!!");
 					return;
 				} else {
 					win(false, "Black wins! -- CHECKMATE!!", "BLACK Checkmates the WHITE, BLACK wins!!");
@@ -546,10 +538,11 @@ public class Chess {
 			}
 		} else {
 			if (checkMate()) {
-				draw("Stalement" , "Draw due to Stalement.");
+				draw("Stalement", "Draw due to Stalement.");
 				return;
-//				return "Draw -- Stalement!\n" ;
-//				+ print(); TODO: add this feature back when other things are fixed
+				// return "Draw -- Stalement!\n" ;
+				// + print(); TODO: add this feature back when other things are
+				// fixed
 			}
 			canClaimDraw();
 			s = "" + canClaimDraw;
@@ -558,7 +551,7 @@ public class Chess {
 		if (whoseTurn) {
 			time++;
 		}
-		
+
 		for (ChessListener listener : listeners)
 			listener.nextMove(whoseTurn);
 	}
@@ -582,8 +575,6 @@ public class Chess {
 		return "Undo the Previous Move!";
 	}
 
-	
-
 	/**
 	 * This method will be called if the user request to make a castling.
 	 * 
@@ -597,14 +588,12 @@ public class Chess {
 		else
 			king = (King) black.get(0);
 
-		if (canCastling(king, longOrShort)){
+		if (canCastling(king, longOrShort)) {
 			king.castling(this, longOrShort);
 			return true;
 		}
 		return false;
 	}
-
-	
 
 	/**
 	 * According to the chess law, no player can request for draw consecutively.
@@ -660,24 +649,23 @@ public class Chess {
 	 */
 	public void resign() {
 		if (whoseTurn) {
-			win(false, null , "White resigns, Black wins.");
+			win(false, null, "White resigns, Black wins.");
 		} else {
-			win(true, null,  "Black resigns, White wins");
+			win(true, null, "Black resigns, White wins");
 		}
 	}
 
 	// ---------------------------------------------------------------------------------------------------------------------------
 	// methods that end the game
 
-
 	public void addChessListener(ChessListener chessListener) {
 		listeners.add(chessListener);
 	}
-	
+
 	public void removeChessListener(ChessControl chessControl) {
 		listeners.remove(chessControl);
 	}
-	
+
 	public void updateSquare(Square square) {
 		for (ChessListener listener : listeners)
 			listener.updateSquare(square);
@@ -695,24 +683,25 @@ public class Chess {
 	 * @return
 	 */
 	public int askForDraw() {
-		
+
 		if (canClaimDraw.isEmpty()) {
 			if (r.canAskFordraw(whoseTurn)) {
 				return 0;
-//				while (true) {
-//					String command = JOptionPane.showInputDialog("Do you agree draw?");
-//					if (command.isEmpty())
-//						continue;
-//					if (command.toLowerCase().startsWith("yes")) {
-//						draw("Draw by Agreement.");
-//					} else if (command.toLowerCase().startsWith("no"))
-//						break;
-//				}
+				// while (true) {
+				// String command = JOptionPane.showInputDialog("Do you agree
+				// draw?");
+				// if (command.isEmpty())
+				// continue;
+				// if (command.toLowerCase().startsWith("yes")) {
+				// draw("Draw by Agreement.");
+				// } else if (command.toLowerCase().startsWith("no"))
+				// break;
+				// }
 			} else {
 				return -1;
 			}
 		} else {
-			draw( "Draw" , canClaimDraw);
+			draw("Draw", canClaimDraw);
 			return 1;
 		}
 	}
@@ -721,22 +710,20 @@ public class Chess {
 		r.setRightToRequestDraw(whoseTurn);
 	}
 
-
-	
 	// methods that send message to control
-	
+
 	/**
 	 * ends the game as draw
 	 * 
 	 * @param descript
 	 * @return
 	 */
-	protected void draw(String outprint , String descript) {
+	protected void draw(String outprint, String descript) {
 		gameHasEnded = true;
 		records.draw(descript);
-		
+
 		for (ChessListener listener : listeners)
-			listener.draw(outprint , descript);
+			listener.draw(outprint, descript);
 	}
 
 	/**
@@ -748,18 +735,17 @@ public class Chess {
 	 *            how he win
 	 * @return
 	 */
-	public void win(boolean who, String outprint ,  String descrpt) {
+	public void win(boolean who, String outprint, String descrpt) {
 		gameHasEnded = true;
 		records.win(who, descrpt);
-		
+
 		for (ChessListener listener : listeners)
-			listener.win(who , outprint , descrpt);
+			listener.win(who, outprint, descrpt);
 	}
 
 	public void promotion() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	
 }

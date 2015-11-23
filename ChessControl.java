@@ -273,18 +273,18 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			return;
 		}
 
-		ArrayList<Piece> possible = chess.possibleMovers(type, takeOrNot, end);
+		ArrayList<Piece> possible = chess.possibleMovers(type, end);
 		if (possible.size() == 0) {
 			view.printOut("Ambiguity: No one can reach that spot.");
 		} else if (possible.size() == 1) {
-			String newStr = "" + type;
-			newStr += possible.get(0).getP().toString();
-			if (takeOrNot)
-				newStr += "x";
-			else
-				newStr += "-";
-			newStr += end.toString();
-			makeMove(newStr);
+//			String newStr = "" + type;
+//			newStr += possible.get(0).getP().toString();
+//			if (takeOrNot)
+//				newStr += "x";
+//			else
+//				newStr += "-";
+//			newStr += end.toString();
+			chess.performMove(possible.get(0), end);
 		} else {
 			view.printOut("Ambiguity: This can represent many different moves.");
 		}
@@ -403,7 +403,13 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			view.deHighLightWholeBoard();
 		} else {
 			if (spot.occupiedBy(chess.getWhoseTurn())) {
-				setChosenPiece(spot.getPiece());
+				chosen = spot.getPiece();
+				squareToLabel(chosen.getP()).highLight();
+				for (Square i : chess.getAllSquares())
+					if (!i.occupiedBy(chess.getWhoseTurn()))
+						if (chosen.canMove(i) || chosen.canCapture(i)) {
+							squareToLabel(i).highLight();
+						}
 				printchosenPiece(spot.getPiece().getType() + spot.toString());
 			}
 		}}

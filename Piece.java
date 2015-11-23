@@ -151,42 +151,9 @@ public abstract class Piece implements Comparable<Piece> {
 		if (taken != null)
 			chess.takeOffBoard(taken);
 		Square start = spot;
-		if (canPromote(end)) {
-			Piece promotionTo = promotion(end);
-			chess.addPromotionRecord(this, start, taken, end, promotionTo);
-		} else {
-			moveTo(end);
-			chess.addRecord(this, start, taken, end);
-		}
+		moveTo(end);
+		chess.addRecord(this, start, taken, end);
 		chess.wrapMove();
-	}
-
-	/**
-	 * This method is overriden by Pawn. It can return true only if this is a
-	 * pawn. It will examine whether Pawn has reach the eighth rank and eligible
-	 * for promotion.
-	 * 
-	 * @param end
-	 * @return whether this piece can promote after this move.
-	 */
-	protected boolean canPromote(Square end) {
-		return false;
-	}
-
-	/**
-	 * 
-	 * This method should only be called if this is a pawn, and it needs to promote.
-	 * 
-	 * It chooses one kind of piece to promote to, and return the new created
-	 * piece.
-	 * 
-	 * @param end
-	 * @param chess
-	 * @return
-	 */
-	protected Piece promotion(Square end) {
-		throw new RuntimeErrorException(new Error(
-				"It should never reaches this line!!."));
 	}
 
 	public static Class<?extends Piece> getType(char c){

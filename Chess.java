@@ -755,13 +755,15 @@ public class Chess {
 			listener.win(who, outprint, descrpt);
 	}
 
-	public void promotion() {
-		// TODO Auto-generated method stub
-
-	}
-
 	public int getTime() {
 		return time;
+	}
+
+	public Piece promotion(boolean wb , Square end) {
+		for (ChessListener listener : listeners){
+			return listener.promote(wb , end);
+		}
+		throw new ChessGameException("OOOOps!");
 	}
 
 }

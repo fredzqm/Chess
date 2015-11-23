@@ -8,8 +8,8 @@ import javax.swing.JOptionPane;
 public class ChessControl implements ChessViewerControl, ChessListener {
 
 	public static final String ERROR_MESSAGE = "Please enter the move as (The type of chessman)(the start position)(its action)(the end position)\n"
-			+ "you can omit the \"P\" at the begining for a pawn."
-			+ "for casting, enter \"O-O\" or \"O-O-O\"\n" + "for examples, \"e2-e4\", \"Nb2-c3\" ";
+			+ "you can omit the \"P\" at the begining for a pawn." + "for casting, enter \"O-O\" or \"O-O-O\"\n"
+			+ "for examples, \"e2-e4\", \"Nb2-c3\" ";
 
 	public static final String HELP_MESSAGE = "Enter commands:\n" + "enter 'undo' to undo the previous round;\n"
 			+ "enter 'restart' to start a new game over;\n'" + "enter 'print' to print all the records;\n"
@@ -137,101 +137,108 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	 */
 	private boolean makeMove(String s) {
 		if (checkCastling(s))
-			return true; 
-		
+			return true;
+
 		Pattern p = Pattern.compile("([prnbqk])?([a-h])?([1-8])?.*?([a-h][1-8]).*");
 		Matcher m = p.matcher(s);
-		if (m.matches()){
+		if (m.matches()) {
 			Class<? extends Piece> type = m.group(1) == null ? Pawn.class : Piece.getType(m.group(1).charAt(0));
-			if(type == Piece.class){
-				view.printOut("Please enter valid initial of chessman -- R(Root), N(Knight), B(Bishop), Q(Queen), K(King). If you omit it, it is assumed as Pawn.");
-//				return true;
+			if (type == Piece.class) {
+				view.printOut(
+						"Please enter valid initial of chessman -- R(Root), N(Knight), B(Bishop), Q(Queen), K(King). If you omit it, it is assumed as Pawn.");
+				// return true;
 			}
 			Square start = null;
-			if ( (m.group(2) !=null) && ( m.group(3) !=null )){
+			if ((m.group(2) != null) && (m.group(3) != null)) {
 				start = chess.getSquare(m.group(2) + m.group(3));
 			}
 			Square end = chess.getSquare(m.group(4));
-			
-			
-			if (start != null){
+
+			if (start != null) {
 				Piece movedChessman = start.getPiece();
 				if (movedChessman == null) {
 					if (chess.getWhoseTurn())
 						view.printOut("There should be a white chessman in the start Position!");
 					else
 						view.printOut("There should be a black chessman in the start Position!");
-				}else if (!(movedChessman.isType(type))) {
+				} else if (!(movedChessman.isType(type))) {
 					view.printOut(
 							"The chessman in the start Position is not corret! \n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
 				}
-				if (!chess.performMove( movedChessman , end))
+				if (!chess.performMove(movedChessman, end))
 					view.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
-//				return;
-			} else{
-				System.out.println(" " + type+" " + end);
+				// return;
+			} else {
+				System.out.println(" " + type + " " + end);
 				ArrayList<Piece> possible = chess.possibleMovers(type, end);
 				System.out.println(possible);
 				if (possible.size() == 0) {
 					view.printOut("Fail to guess move: No one can reach that spot.");
 				} else if (possible.size() == 1) {
-					if(!chess.performMove(possible.get(0), end))
+					if (!chess.performMove(possible.get(0), end))
 						throw new RuntimeException("OOOOO!");
 				} else {
 					view.printOut("Fail to guess move: There is ambiguity, multiple possible moves.");
 				}
-				
+
 			}
 			return true;
 		}
 		return false;
-//		char type;
-//		if (s.length() == 5) {
-//			s = 'P' + s;
-//			type = 'P';
-//		} else {
-//			type = s.toUpperCase().charAt(0);
-//			if (!(type == 'R' || type == 'N' || type == 'B' || type == 'Q' || type == 'K' || type == 'P')) {
-//				view.printOut(
-//						"Please enter valid initial of chessman -- R(Root), N(Knight), B(Bishop), Q(Queen), K(King). If you omit it, it is assumed as Pawn.");
-//				return false;
-//			}
-//		}
-//
-//		s = s.toLowerCase();
-//		Square start = chess.getSquare(s.substring(1, 3));
-//		if (start == null) {
-//			view.printOut("please enter a valid start Position");
-//			return;
-//		}
-//		boolean takeOrNot;
-//		char action = s.charAt(3);
-//		if (action == '-')
-//			takeOrNot = false;
-//		else if (s.charAt(3) == 'x')
-//			takeOrNot = true;
-//		else {
-//			view.printOut("Pleae enter \"-\" or \"x\" to indicate whether this move takes some piece or not.");
-//			return;
-//		}
-//		Square end = chess.getSquare(s.substring(4));
-//		if (end == null) {
-//			view.printOut("please enter a valid end Position");
-//			return;
-//		}
-//		Piece movedChessman = start.getPiece();
-//		if (movedChessman == null) {
-//			if (chess.getWhoseTurn())
-//				view.printOut("There should be a white chessman in the start Position!");
-//			else
-//				view.printOut("There should be a black chessman in the start Position!");
-//			return;
-//		}
-//		if (!(movedChessman.isType(Piece.getType(type)))) {
-//			view.printOut(
-//					"The chessman in the start Position is not corret! \n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
-//			return;
-//		}
+		// char type;
+		// if (s.length() == 5) {
+		// s = 'P' + s;
+		// type = 'P';
+		// } else {
+		// type = s.toUpperCase().charAt(0);
+		// if (!(type == 'R' || type == 'N' || type == 'B' || type == 'Q' ||
+		// type == 'K' || type == 'P')) {
+		// view.printOut(
+		// "Please enter valid initial of chessman -- R(Root), N(Knight),
+		// B(Bishop), Q(Queen), K(King). If you omit it, it is assumed as
+		// Pawn.");
+		// return false;
+		// }
+		// }
+		//
+		// s = s.toLowerCase();
+		// Square start = chess.getSquare(s.substring(1, 3));
+		// if (start == null) {
+		// view.printOut("please enter a valid start Position");
+		// return;
+		// }
+		// boolean takeOrNot;
+		// char action = s.charAt(3);
+		// if (action == '-')
+		// takeOrNot = false;
+		// else if (s.charAt(3) == 'x')
+		// takeOrNot = true;
+		// else {
+		// view.printOut("Pleae enter \"-\" or \"x\" to indicate whether this
+		// move takes some piece or not.");
+		// return;
+		// }
+		// Square end = chess.getSquare(s.substring(4));
+		// if (end == null) {
+		// view.printOut("please enter a valid end Position");
+		// return;
+		// }
+		// Piece movedChessman = start.getPiece();
+		// if (movedChessman == null) {
+		// if (chess.getWhoseTurn())
+		// view.printOut("There should be a white chessman in the start
+		// Position!");
+		// else
+		// view.printOut("There should be a black chessman in the start
+		// Position!");
+		// return;
+		// }
+		// if (!(movedChessman.isType(Piece.getType(type)))) {
+		// view.printOut(
+		// "The chessman in the start Position is not corret! \n R(Root),
+		// N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
+		// return;
+		// }
 
 		// Piece chessmanTaken = end.getPiece();
 		// if (takeOrNot) {
@@ -256,10 +263,11 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		// }
 		// }
 
-//		if (!chess.performMove(movedChessman, end)) {
-//			view.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
-//			return;
-//		}
+		// if (!chess.performMove(movedChessman, end)) {
+		// view.printOut("Illegal move! Please check the rule of " +
+		// movedChessman.getName() + "!");
+		// return;
+		// }
 
 	}
 
@@ -269,9 +277,9 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			lors = false;
 		} else if (s.equals("o-o-o")) {
 			lors = true;
-		}else
+		} else
 			return false;
-		
+
 		if (!chess.castling(lors))
 			view.printOut("You cannot do castling, please check the rules for castling.");
 		return true;
@@ -399,7 +407,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		squareToLabel(piece.getP()).highLight();
 		for (Square i : chess.getAllSquares())
 			if (!i.occupiedBy(chess.getWhoseTurn()))
-				if (chosen.canGo(i)!=null) {
+				if (chosen.canGo(i) != null) {
 					squareToLabel(i).highLight();
 				}
 	}
@@ -446,7 +454,8 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 				chess.resign();
 			} else if (c.equals("draw")) {
 				askForDraw();
-			} else if (!makeMove(c)) { // makeMove return true if the move is performed
+			} else if (!makeMove(c)) { // makeMove return true if the move is
+										// performed
 				view.printOut(ERROR_MESSAGE);
 			}
 		}
@@ -469,7 +478,8 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			if (chosen != null) {
 				if (label.isHighLight() && !spot.equals(chosen.getP())) {
 					if (!chess.performMove(chosen, spot))
-						throw new ChessGameException("Illegal move of " + chosen.getName() + " did not correctly caught from UI!");
+						throw new ChessGameException(
+								"Illegal move of " + chosen.getName() + " did not correctly caught from UI!");
 				} else
 					view.cleanTemp();
 				chosen = null;
@@ -480,7 +490,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 					squareToLabel(chosen.getP()).highLight();
 					for (Square i : chess.getAllSquares())
 						if (!i.occupiedBy(chess.getWhoseTurn()))
-							if (chosen.canGo(i)!=null)
+							if (chosen.canGo(i) != null)
 								squareToLabel(i).highLight();
 
 					if (spot.getPiece().isType(Pawn.class))
@@ -538,4 +548,24 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 
 	}
 
+	@Override
+	public Piece promote(boolean wb, Square end) {
+		while (true) {
+			view.printOut("Please choose one kind of piece to promote to -- Q, N,R, B");
+			String s = JOptionPane.showInputDialog("Promotion to !?");
+			if (!s.isEmpty()) {
+				s = s.toUpperCase();
+				char a = s.charAt(0);
+				if (a == 'Q')
+					return new Queen(wb, end);
+				else if (a == 'R')
+					return new Rook(wb, end);
+				else if (a == 'B')
+					return new Bishop(wb, end);
+				else if (a == 'N')
+					return new Knight(wb, end);
+
+			}
+		}
+	}
 }

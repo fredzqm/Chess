@@ -140,7 +140,7 @@ public class Pawn extends Piece {
 			chess.takeOffBoard(taken);
 		Square start = spot;
 		if (canPromote(end)) {
-			Piece promotionTo = promotion(end);
+			Piece promotionTo = chess.promotion( wb , end);
 			chess.addPromotionRecord(this, start, taken, end, promotionTo);
 		} else {
 			moveTo(end);
@@ -149,7 +149,6 @@ public class Pawn extends Piece {
 		chess.wrapMove();
 	}
 
-	@Override
 	protected boolean canPromote(Square end) {
 		boolean promotion = false;
 		if (wb) {
@@ -171,24 +170,6 @@ public class Pawn extends Piece {
 	public char getType() {
 		return 'P';
 	}
-	// public Piece promotion(Square end) { //TODO: fixed promotion
-	// chess.promotion();
-	// chess.printInBox("Please choose one kind of piece to promote to -- Q, N,
-	// R, B");
-	// String s = JOptionPane.showInputDialog("Promotion to !?");
-	// if (!s.isEmpty()) {
-	// s = s.toUpperCase();
-	// char a = s.charAt(0);
-	// if (a == 'Q')
-	// return new Queen('Q', wb, end);
-	// else if (a == 'R')
-	// return new Rook('R', wb, end);
-	// else if (a == 'B')
-	// return new Bishop('B', wb, end);
-	// else if (a == 'N')
-	// return new Knight('N', wb, end);
-	// }
-	// return promotion(end);
-	// }
+	 
 
 }

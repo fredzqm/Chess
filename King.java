@@ -57,13 +57,8 @@ public class King extends Piece {
 		if (taken != null)
 			chess.takeOffBoard(taken);
 		Square start = spot;
-		if (canPromote(end)) {
-			Piece promotionTo = promotion(end);
-			chess.addPromotionRecord(this, start, taken, end, promotionTo);
-		} else {
-			moveTo(end);
-			chess.addRecord(this, start, taken, end);
-		}
+		moveTo(end);
+		chess.addRecord(this, start, taken, end);
 		chess.wrapMove();
 	}
 

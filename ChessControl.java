@@ -469,8 +469,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			if (chosen != null) {
 				if (label.isHighLight() && !spot.equals(chosen.getP())) {
 					if (!chess.performMove(chosen, spot))
-						throw new RuntimeException(
-								"Illegal move of " + chosen.getName() + " did not correctly caught from UI!");
+						throw new ChessGameException("Illegal move of " + chosen.getName() + " did not correctly caught from UI!");
 				} else
 					view.cleanTemp();
 				chosen = null;

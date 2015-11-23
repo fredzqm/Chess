@@ -52,6 +52,7 @@ public class King extends Piece {
 				castling(chess, true);
 			else if (end.X() - spot.X() > 1)
 				castling(chess, false);
+			return;
 		}
 		if (taken != null)
 			chess.takeOffBoard(taken);

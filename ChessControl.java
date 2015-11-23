@@ -321,23 +321,23 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 
 	}
 	
-//	public Piece promotion(){
-//		chess.printInBox("Please choose one kind of piece to promote to -- Q, N, R, B");
-//		String s = JOptionPane.showInputDialog("Promotion to !?");
-//		if (!s.isEmpty()) {
-//			s = s.toUpperCase();
-//			char a = s.charAt(0);
-//			if (a == 'Q')
-//				return new Queen('Q', wb, end);
-//			else if (a == 'R')
-//				return new Rook('R', wb, end);
-//			else if (a == 'B')
-//				return new Bishop('B', wb, end);
-//			else if (a == 'N')
-//				return new Knight('N', wb, end);
-//		}
-//		return promotion(end);
+	
+//	chess.printInBox("Please choose one kind of piece to promote to -- Q, N, R, B");
+//	String s = JOptionPane.showInputDialog("Promotion to !?");
+//	if (!s.isEmpty()) {
+//		s = s.toUpperCase();
+//		char a = s.charAt(0);
+//		if (a == 'Q')
+//			return new Queen('Q', wb, end);
+//		else if (a == 'R')
+//			return new Rook('R', wb, end);
+//		else if (a == 'B')
+//			return new Bishop('B', wb, end);
+//		else if (a == 'N')
+//			return new Knight('N', wb, end);
 //	}
+//	return promotion(end);
+	
 	/**
 	 * This method will be called if the user request to make a castling.
 	 * 
@@ -389,14 +389,14 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	 *            the square that is clicked
 	 */
 	public void click(SquareLabel label) {
+		if (chess.hasEnd()){
+			view.printOut("Game is already over! Type restart to start a new game");
+		}else{
 		Square spot = labelToSquare(label);
 		if (chosen != null) {
 			if (label.isHighLight() && !spot.equals(chosen.getP())) {
-//				performMove(chosen, spot);
 				if (!chess.performMove(chosen, spot))
 					throw new RuntimeException("Illegal move of " + chosen.getName() + " did not correctly caught from UI!");
-//				view.printOut(chess.lastMoveOutPrint());
-//				view.setStatusLabelText(chess.lastMoveDiscript());
 			}else
 				view.cleanTemp();	
 			chosen = null;
@@ -406,7 +406,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 				setChosenPiece(spot.getPiece());
 				printchosenPiece(spot.getPiece().getType() + spot.toString());
 			}
-		}
+		}}
 	}
 
 //	private void performMove(Piece movedChessman, Square end) {
@@ -438,13 +438,6 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		return chess.spotAt(sql.X(), sql.Y());
 	}
 
-	@Override
-	public void moveFeedback(Move m) {
-		// TODO Auto-generated method stub
-
-	}
-
-
 
 	@Override
 	public void win(boolean whiteOrBlack,String outprint , String descript) {
@@ -467,12 +460,19 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	@Override
 	public void nextMove(boolean whoseTurn) {
 		view.setStatusLabelText(chess.lastMoveDiscript());
+		view.cleanTemp();
 		view.printOut(chess.lastMoveOutPrint());
 		if (whoseTurn) {
 			view.printOut("Next move -- white" );
 		} else {
 			view.printOut("Next move -- black" );
 		}
+	}
+
+	@Override
+	public void endOfGame(EndGame end) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

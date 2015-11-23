@@ -80,7 +80,7 @@ public class Move {
 	 * 
 	 * @return the words that will appear in the top label of the window
 	 */
-	public String getDiscript() {
+	public String getDescript() {
 
 		if (endGame != null)
 			return endGame;

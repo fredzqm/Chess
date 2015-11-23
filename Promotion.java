@@ -42,7 +42,7 @@ public class Promotion extends Move {
 		return true;
 	}
 
-	public String getDiscript() {
+	public String getDescript() {
 		String s = "";
 		if (wb)
 			s += "White ";

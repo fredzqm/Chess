@@ -1,4 +1,4 @@
-import javax.swing.JOptionPane;
+
 
 /**
  * Pawn in the chess

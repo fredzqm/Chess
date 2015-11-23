@@ -20,7 +20,7 @@ public class Chess {
 	private Square[][] spots;
 	private ArrayList<Piece> white;
 	private ArrayList<Piece> black;
-	private ArrayList<Move> records;
+	private Record records;
 	private String canClaimDraw = "";
 	private DrawRequest r;
 	private boolean gameHasEnded;
@@ -36,7 +36,7 @@ public class Chess {
 	public Chess() {
 		whoseTurn = true;
 		time = 1;
-		records = new ArrayList<Move>();
+		records = new Record();
 		spots = new Square[8][8];
 		white = new ArrayList<Piece>();
 		black = new ArrayList<Piece>();
@@ -139,7 +139,7 @@ public class Chess {
 	}
 	
 	public ArrayList<Move> getRecords(){
-		return records;
+		return records.getArrayList();
 	}
 	// ------------------------------------------------------------------------------------------------------
 	// methods to add records
@@ -437,7 +437,7 @@ public class Chess {
 	 *         or as part of the records.
 	 */
 	public String lastMoveOutPrint() {
-		return records.get(records.size() - 1).outPrint();
+		return records.lastOutPrint();
 	}
 
 	/**
@@ -448,7 +448,7 @@ public class Chess {
 	public String lastMoveDiscript() {
 		if (records.size() == 0)
 			return "Welcome to Greate Chess Game!";
-		return records.get(records.size() - 1).getDiscript();
+		return records.lastDescript();
 	}
 
 	// --------------------------------------------------------------------------------------------------------------
@@ -495,10 +495,12 @@ public class Chess {
 	 * changes the records and the chessboard, so everything will return back to
 	 * the state of previous round.
 	 */
-	public void undoLastMove() {
-		Move lastMove = records.get(records.size() - 1);
+	public boolean undoLastMove() {
+		if (records.isEmpty())
+			return false;
+		Move lastMove = records.remove(records.size() - 1);
 		lastMove.undo(this);
-		records.remove(records.size() - 1);
+		return true;
 	}
 	
 	/**
@@ -729,9 +731,9 @@ public class Chess {
 	 * @param descript
 	 * @return
 	 */
-	void draw(String outprint , String descript) {
+	protected void draw(String outprint , String descript) {
 		gameHasEnded = true;
-		records.get(records.size() - 1).draw(descript);
+		records.draw(descript);
 		
 		for (ChessListener listener : listeners)
 			listener.draw(outprint , descript);
@@ -748,7 +750,7 @@ public class Chess {
 	 */
 	public void win(boolean who, String outprint ,  String descrpt) {
 		gameHasEnded = true;
-		records.get(records.size() - 1).win(who, descrpt);
+		records.win(who, descrpt);
 		
 		for (ChessListener listener : listeners)
 			listener.win(who , outprint , descrpt);

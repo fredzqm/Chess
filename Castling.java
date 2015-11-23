@@ -44,7 +44,7 @@ public class Castling extends Move {
 	public boolean notQuiet(){
 		return false;
 	}
-	public String getDiscript() {
+	public String getDescript() {
 		String s = "";
 		if (wb)
 			s += "White ";

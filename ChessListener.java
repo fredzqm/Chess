@@ -8,8 +8,8 @@ public interface ChessListener extends EventListener {
 	
 	void draw(String outprint , String descript);
 
-	void moveFeedback(Move m);
-
+	void endOfGame(EndGame end);
+	
 	void nextMove(boolean whoseTurn);
 	
 }

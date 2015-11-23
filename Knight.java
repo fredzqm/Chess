@@ -4,6 +4,8 @@
  *
  */
 public class Knight extends Piece {
+	private final int VALUE = 3;
+	
 	/**
 	 * constructs a Knight with initial square
 	 * 
@@ -11,10 +13,8 @@ public class Knight extends Piece {
 	 * @param wb
 	 * @param Position
 	 */
-	public Knight(char type, boolean wb, Square Position) {
-		super(type, wb, Position);
-		name = "Knight";
-		value = 3;
+	public Knight(boolean wb, Square Position) {
+		super( wb, Position);
 	}
 
 	@Override
@@ -27,5 +27,15 @@ public class Knight extends Piece {
 			return true;
 		else
 			return false;
+	}
+	
+	@Override
+	public int getValue() {
+		return VALUE;
+	}
+	
+	@Override
+	public char getType() {
+		return 'N';
 	}
 }

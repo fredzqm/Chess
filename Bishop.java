@@ -5,16 +5,15 @@
  *
  */
 public class Bishop extends Piece {
+	private final int VALUE = 4;
+	
 	/**
 	 * constructs a Bishop with initial square
-	 * @param type
 	 * @param wb
 	 * @param Position
 	 */
-	public Bishop(char type, boolean wb, Square Position) {
-		super(type, wb, Position);
-		name  = "Bishop" ;
-		value = 4 ;
+	public Bishop( boolean wb, Square Position) {
+		super(wb, Position);
 	}
 
 	@Override
@@ -37,4 +36,15 @@ public class Bishop extends Piece {
 		}
 		return false;
 	}
+
+	@Override
+	public int getValue() {
+		return VALUE;
+	}
+
+	@Override
+	public char getType() {
+		return 'B';
+	}
+
 }

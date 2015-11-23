@@ -53,9 +53,9 @@ public class Chess {
 				if (y == 1) {
 					white.add(startSet(t.X(), true, t));
 				} else if (y == 2) {
-					white.add(new Pawn('P', true, t));
+					white.add(new Pawn(true, t));
 				} else if (y == 7) {
-					black.add(new Pawn('P', false, t));
+					black.add(new Pawn(false, t));
 				} else if (y == 8) {
 					black.add(startSet(t.X(), false, t));
 				}
@@ -78,15 +78,15 @@ public class Chess {
 	 */
 	private Piece startSet(int x, boolean b, Square p) {
 		if (x == 1 || x == 8)
-			return new Rook('R', b, p);
+			return new Rook(b, p);
 		else if (x == 2 || x == 7)
-			return new Knight('N', b, p);
+			return new Knight( b, p);
 		else if (x == 3 || x == 6)
-			return new Bishop('B', b, p);
+			return new Bishop( b, p);
 		else if (x == 4)
-			return new Queen('Q', b, p);
+			return new Queen( b, p);
 		else if (x == 5)
-			return new King('K', b, p);
+			return new King( b, p);
 		else
 			return null;
 	}
@@ -201,7 +201,7 @@ public class Chess {
 	// -------------------------------------------------------------------------------------------------------------------
 	// find out about the condition of the game, (In check etc.)
 
-	public ArrayList<Piece> possibleMovers(char type, Square end) {
+	public ArrayList<Piece> possibleMovers(Class<? extends Piece> type, Square end) {
 		ArrayList<Piece> possible = new ArrayList<Piece>();
 		ArrayList<Piece> set;
 		if (getWhoseTurn())
@@ -393,13 +393,13 @@ public class Chess {
 	}
 
 	private boolean canNotLongCastling(int y, ArrayList<Piece> attack) {
-		return hasMoved(spotAt(1, y), 'R') || hasMoved(spotAt(5, y), 'K') || spotAt(2, y).occupied()
+		return hasMoved(spotAt(1, y), Rook.class) || hasMoved(spotAt(5, y), King.class) || spotAt(2, y).occupied()
 				|| spotAt(3, y).occupied() || spotAt(4, y).occupied() || isAttacked(attack, spotAt(5, y))
 				|| isAttacked(attack, spotAt(3, y)) || isAttacked(attack, spotAt(4, y));
 	}
 
 	private boolean canNotShortCastling(int y, ArrayList<Piece> attack) {
-		return hasMoved(spotAt(8, y), 'R') || hasMoved(spotAt(5, y), 'K') || spotAt(6, y).occupied()
+		return hasMoved(spotAt(8, y), Rook.class ) || hasMoved(spotAt(5, y), King.class) || spotAt(6, y).occupied()
 				|| spotAt(7, y).occupied() || isAttacked(attack, spotAt(5, y)) || isAttacked(attack, spotAt(6, y))
 				|| isAttacked(attack, spotAt(7, y));
 	}
@@ -413,7 +413,7 @@ public class Chess {
 	 * @return true if the original piece has ever moved or be taken since the
 	 *         game started.
 	 */
-	private boolean hasMoved(Square original, char type) {
+	private boolean hasMoved(Square original, Class<? extends Piece> type) {
 		if (!original.occupied() || !original.getPiece().isType(type))
 			return true;
 		for (Move i : records) {

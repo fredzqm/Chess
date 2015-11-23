@@ -7,33 +7,27 @@ import javax.management.RuntimeErrorException;
  */
 public abstract class Piece implements Comparable<Piece> {
 	protected Chess chess;
-	protected char type;
-	protected int value;
 	protected boolean wb;
-	protected String name;
 	protected Square spot;
 
 	/**
 	 * 
-	 * @param type
-	 *            the type of piece, including P, B, N, R, Q, K
 	 * @param wb
 	 *            whether this piece is white or black
 	 * @param p
 	 *            the square this piece is at initially.
 	 */
-	public Piece(char type, boolean wb, Square p) {
+	public Piece( boolean wb, Square p) {
 		this.chess = p.getChess();
-		this.type = type;
 		this.wb = wb;	
 		moveTo(p);
-		name = "";
 	}
 
 	// ------------------------------------------------------------------------------------------------------------------------
 	// accessors
-	public String getName() {
-		return name;
+	
+	public String getName(){
+		return getClass().getName();
 	}
 
 	public Square getP() {
@@ -44,24 +38,20 @@ public abstract class Piece implements Comparable<Piece> {
 		return wb;
 	}
 
-	public char getType() {
-		return type;
+	public abstract char getType();
+
+	public boolean isType(Class<? extends Piece> p) {
+		return getClass() == p;
 	}
 
-	public boolean isType(char c) {
-		return type == c;
-	}
-
-	public boolean equals(Piece a) {
-		return type == a.type && wb == a.wb && spot.equals(a.spot);
-	}
+	public abstract int getValue();
 
 	/**
 	 * this method is implemented for the sort method in the constructor of
 	 * chess.
 	 */
 	public int compareTo(Piece a) {
-		return (a.value - value);
+		return (a.getValue() - getValue());
 	}
 
 	public int getX() {
@@ -209,4 +199,15 @@ public abstract class Piece implements Comparable<Piece> {
 				"It should never reaches this line!!."));
 	}
 
+	public static Class<?extends Piece> getType(char c){
+		switch (c) {
+		case 'P':return Pawn.class;
+		case 'R':return Rook.class;
+		case 'N':return Knight.class;
+		case 'B':return Bishop.class;
+		case 'Q':return Queen.class;
+		case 'K':return King.class;
+		default:return Piece.class;
+		}
+	}
 }

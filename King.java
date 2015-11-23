@@ -4,6 +4,8 @@
  *
  */
 public class King extends Piece {
+	private final int VALUE = 100;
+	
 	/**
 	 * constructs a King with initial square
 	 * 
@@ -11,10 +13,8 @@ public class King extends Piece {
 	 * @param wb
 	 * @param Position
 	 */
-	public King(char type, boolean wb, Square Position) {
-		super(type, wb, Position);
-		name = "King";
-		value = 100;
+	public King( boolean wb, Square Position) {
+		super(wb, Position);
 	}
 
 	@Override
@@ -91,4 +91,13 @@ public class King extends Piece {
 		chess.wrapMove();
 	}
 
+	@Override
+	public int getValue() {
+		return VALUE;
+	}
+	
+	@Override
+	public char getType() {
+		return 'K';
+	}
 }

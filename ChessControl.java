@@ -209,7 +209,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 				view.printOut("There should be a black chessman in the start Position!");
 			return;
 		}
-		if (!(movedChessman.isType(type))) {
+		if (!(movedChessman.isType(Piece.getType(type)))) {
 			view.printOut(
 					"The chessman in the start Position is not corret! \n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
 			return;
@@ -273,7 +273,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			return;
 		}
 
-		ArrayList<Piece> possible = chess.possibleMovers(type, end);
+		ArrayList<Piece> possible = chess.possibleMovers(Piece.getType(type), end);
 		if (possible.size() == 0) {
 			view.printOut("Ambiguity: No one can reach that spot.");
 		} else if (possible.size() == 1) {

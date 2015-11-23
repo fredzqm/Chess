@@ -51,7 +51,7 @@ public class Move {
 	 */
 	public String outPrint() {
 		String s = "";
-		if (moved.getType() != 'P')
+		if (moved.isType(Pawn.class))
 			s += moved.getType();
 		s += start.toString();
 		if (taken == null)
@@ -125,7 +125,7 @@ public class Move {
 	 *         castling
 	 */
 	public boolean canEnPassant(Square p) {
-		return moved.isType('P')
+		return moved.isType(Pawn.class)
 				&& (start.X() == p.X() && end.X() == p.X() && (start.Y() + end
 						.Y()) == (p.Y() * 2));
 	}
@@ -140,7 +140,7 @@ public class Move {
 		if (taken != null) {
 			chess.putBackToBoard(taken, end);
 			//check if this move is a En Passant, if it is move the taken Pawn to where it supposed to go
-			if (moved.isType('P') && taken.isType('P'))
+			if (moved.isType(Pawn.class) && taken.isType(Pawn.class))
 				if (chess.canEnPassantFromUndoMethod(end))
 					taken.moveTo(chess.spotAt(end.X(), 3 + end.Y()/3));
 		}
@@ -171,7 +171,7 @@ public class Move {
 	 * @return true if this move can be redo over and over again later.
 	 */
 	public boolean notQuiet() {
-		return taken != null || moved.isType('P');
+		return taken != null || moved.isType(Pawn.class);
 	}
 
 	/**

@@ -7,17 +7,16 @@
  *
  */
 public class Pawn extends Piece {
+	private final int VALUE = 1;
+	
 	/**
 	 * constructs a Pawn with initial square
 	 * 
-	 * @param type
 	 * @param wb
 	 * @param p
 	 */
-	public Pawn(char type, boolean wb, Square p) {
-		super(type, wb, p);
-		name = "Pawn";
-		value = 1;
+	public Pawn( boolean wb, Square p) {
+		super(wb, p);
 	}
 
 	@Override
@@ -96,7 +95,15 @@ public class Pawn extends Piece {
 		return promotion;
 	}
 
+	@Override
+	public int getValue() {
+		return VALUE;
+	}
 	
+	@Override
+	public char getType() {
+		return 'P';
+	}
 //	public Piece promotion(Square end) { //TODO: fixed promotion
 //		chess.promotion();
 //		chess.printInBox("Please choose one kind of piece to promote to -- Q, N, R, B");

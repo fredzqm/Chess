@@ -4,7 +4,8 @@
  *
  */
 public class Rook extends Piece {
-
+	private final int VALUE = 5;
+	
 	/**
 	 * constructs a Rook with initial square
 	 * 
@@ -12,10 +13,8 @@ public class Rook extends Piece {
 	 * @param wb
 	 * @param Position
 	 */
-	public Rook(char type, boolean wb, Square Position) {
-		super(type, wb, Position);
-		name = "Rook";
-		value = 5;
+	public Rook( boolean wb, Square Position) {
+		super(wb, Position);
 	}
 
 	@Override
@@ -43,6 +42,16 @@ public class Rook extends Piece {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public int getValue() {
+		return VALUE;
+	}
+	
+	@Override
+	public char getType() {
+		return 'R';
 	}
 
 }

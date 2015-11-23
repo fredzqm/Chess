@@ -18,30 +18,32 @@ public class King extends Piece {
 	}
 
 	@Override
-	public boolean legalPosition(Square end) {
+	public Move legalPosition(Square end) {
 		if (spot.equals(end))
-			return false;
+			return null;
 		if (Math.abs(spot.X() - end.X()) > 1 || Math.abs(spot.Y() - end.Y()) > 1)
-			return false;
+			return null;
 		else {
-			return true;
+			return new Move(this, spot, end.getPiece(), end, chess.getTime());
 		}
 	}
 
-	public boolean canMove(Square end) {
+	@Override
+	protected Move canMove(Square end) {
 		if (end.occupied())
-			return false;
+			return null;
 
 		if (getX() == 5 && getY() == end.Y()) {
 			if (end.X() == 3) {
-				if (chess.canCastling(this, true))
-					return true;
+				return chess.canCastling(this, true) ;
 			} else if (end.X() == 7) {
-				if (chess.canCastling(this, false))
-					return true;
+				return chess.canCastling(this, false) ;
 			}
 		}
-		return legalPosition(end) && !chess.giveAwayKing(this, spot, null, end, wb);
+		
+		if (chess.giveAwayKing(this, spot, null, end, wb))
+			return null;
+		return legalPosition(end) ;
 	}
 
 	public void makeMove(Square end, Piece taken) {

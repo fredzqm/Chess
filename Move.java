@@ -16,18 +16,47 @@ public class Move {
 	protected String endGame;
 	protected int result;
 
+	
 	/**
 	 * constructs a record
 	 * 
 	 * @param moved
 	 *            the piece moved
 	 * @param start
-	 *            the start positon of this move
+	 *            the start position of this move
 	 * @param taken
 	 *            the piece that is captured, null if there is nothing
-	 *            caputured.
+	 *            captured.
 	 * @param end
-	 *            the end positon of this movce
+	 *            the end position of this move
+	 * @param time
+	 *            which round this move happens
+	 * @param checkOrNot
+	 *            whether this move check the opponent
+	 */
+	public Move(Piece moved, Square start, Piece taken, Square end, int time) {
+		this.time = time;
+		wb = moved.getWb();
+		this.moved = moved;
+		this.start = start;
+		this.taken = taken;
+		this.end = end;
+		endGame = null;
+		result = 0;
+	}
+	
+	/**
+	 * constructs a record
+	 * 
+	 * @param moved
+	 *            the piece moved
+	 * @param start
+	 *            the start position of this move
+	 * @param taken
+	 *            the piece that is captured, null if there is nothing
+	 *            captured.
+	 * @param end
+	 *            the end position of this move
 	 * @param time
 	 *            which round this move happens
 	 * @param checkOrNot

@@ -18,15 +18,15 @@ public class Knight extends Piece {
 	}
 
 	@Override
-	public boolean legalPosition(Square end) {
+	public Move legalPosition(Square end) {
 		if (spot.equals(end))
-			return false;
+			return null;
 		int a = Math.abs(spot.X() - end.X());
 		int b = Math.abs(spot.Y() - end.Y());
 		if (a + b == 3 && (a != 0 && b != 0))
-			return true;
+			return new Move(this, spot, end.getPiece(), end, chess.getTime());
 		else
-			return false;
+			return null;
 	}
 	
 	@Override

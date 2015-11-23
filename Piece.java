@@ -85,10 +85,19 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @return true if it is legal to move this piece to the end, regardless of
 	 *         the piece at the end position
 	 */
-	public abstract boolean legalPosition(Square end);
+	public abstract Move legalPosition(Square end);
 
-	public boolean canGo(Square end){
-		return  canMove(end) || canCapture(end);
+	public Move canGo(Square end){
+		Move move =  canMove(end) ;
+		Move capture =  canCapture(end);
+		if (move != null && capture == null)
+			return move;
+		else if (move==null && capture !=null)
+			return capture;
+		else if (move!=null && capture != null)	
+			throw new RuntimeException();
+		else
+			return null;
 	}
 
 	/**
@@ -97,23 +106,10 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @param chess
 	 * @return true if it is legal to move this piece to the end position
 	 */
-	public boolean canMove(Square end) {
-		if (end.occupied())
-			return false;
-		return legalPosition(end)
-				&& !chess.giveAwayKing(this, spot, end.getPiece(), end, wb);
-	}
-
-	/**
-	 * 
-	 * @param end
-	 * @param chess
-	 * @return true if it is attacking the end spot.
-	 */
-	public boolean canAttack(Square end) {
-		if (spot == null)
-			return false;
-		return legalPosition(end);
+	protected Move canMove(Square end) {
+		if (end.occupied() || chess.giveAwayKing(this, spot, end.getPiece(), end, wb))
+			return null;
+		return legalPosition(end) ;
 	}
 
 	/**
@@ -122,11 +118,23 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @param chess
 	 * @return true if it is legal to capture the piece at the end
 	 */
-	public boolean canCapture(Square end) {
-		return canAttack(end) && end.occupiedBy(!wb)
-				&& !chess.giveAwayKing(this, spot, end.getPiece(), end, wb);
+	protected Move canCapture(Square end) {
+		if ( ! end.occupiedBy(!wb) || chess.giveAwayKing(this, spot, end.getPiece(), end, wb) )
+			return null;
+		return canAttack(end) ;
 	}
 
+	/**
+	 * 
+	 * @param end
+	 * @param chess
+	 * @return true if it is attacking the end spot.
+	 */
+	protected Move canAttack(Square end) {
+		if (spot == null)
+			return null;
+		return legalPosition(end);
+	}
 
 	/**
 	 * 

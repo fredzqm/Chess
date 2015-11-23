@@ -1,10 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-
-import javax.swing.JOptionPane;
 
 /**
  * It is the system for a chess game. It has fields to store the condition of
@@ -80,13 +77,13 @@ public class Chess {
 		if (x == 1 || x == 8)
 			return new Rook(b, p);
 		else if (x == 2 || x == 7)
-			return new Knight( b, p);
+			return new Knight(b, p);
 		else if (x == 3 || x == 6)
-			return new Bishop( b, p);
+			return new Bishop(b, p);
 		else if (x == 4)
-			return new Queen( b, p);
+			return new Queen(b, p);
 		else if (x == 5)
-			return new King( b, p);
+			return new King(b, p);
 		else
 			return null;
 	}
@@ -210,7 +207,7 @@ public class Chess {
 			set = black;
 
 		for (Piece i : set) {
-			if (i.isType(type) && (i.canGo(end)))
+			if (i.isType(type) && (i.canGo(end) != null))
 				possible.add(i);
 		}
 		return possible;
@@ -267,7 +264,7 @@ public class Chess {
 	 */
 	private boolean isAttacked(ArrayList<Piece> attack, Square p) {
 		for (Piece i : attack) {
-			if (i.canAttack(p))
+			if (i.canAttack(p) != null)
 				return true;
 		}
 		return false;
@@ -291,7 +288,7 @@ public class Chess {
 		for (Piece i : inCheck) {
 			for (Square[] r : spots) {
 				for (Square p : r) {
-					if (i.canGo(p))
+					if (i.canGo(p) != null)
 						return false;
 				}
 			}
@@ -362,7 +359,7 @@ public class Chess {
 	 * @return true, if that move was an En Passant move.
 	 */
 	public boolean canEnPassantFromUndoMethod(Square end) {
-		return records.get(records.size() - 2).canEnPassant(end);
+		return records.get(records.size() - 2).canEnPassant(end) ;
 	}
 
 	/**
@@ -379,17 +376,22 @@ public class Chess {
 	 *            castling happens on the King side.
 	 * @return true if it is legal to make the castling of this side right now
 	 */
-	public boolean canCastling(King k, boolean longOrShort) {
+	public Move canCastling(King k, boolean longOrShort) {
 		ArrayList<Piece> attack;
 		if (k.getWb()) {
 			attack = black;
 		} else {
 			attack = white;
 		}
-		if (longOrShort)
-			return !canNotLongCastling(k.getY(), attack);
-		else
-			return !canNotShortCastling(k.getY(), attack);
+		if (longOrShort) {
+			if (canNotLongCastling(k.getY(), attack))
+				return null;
+			return new Castling(k, k.getP(), spotAt(3, k.getY()), (Rook)(spotAt(1, k.getY()).getPiece()) , spotAt(1, k.getY()), time);
+		} else {
+			if (canNotShortCastling(k.getY(), attack))
+				return null;
+			return new Castling(k, k.getP(), spotAt(7, k.getY()), (Rook)(spotAt(8, k.getY()).getPiece()) , spotAt(8, k.getY()), time);
+		}
 	}
 
 	private boolean canNotLongCastling(int y, ArrayList<Piece> attack) {
@@ -399,7 +401,7 @@ public class Chess {
 	}
 
 	private boolean canNotShortCastling(int y, ArrayList<Piece> attack) {
-		return hasMoved(spotAt(8, y), Rook.class ) || hasMoved(spotAt(5, y), King.class) || spotAt(6, y).occupied()
+		return hasMoved(spotAt(8, y), Rook.class) || hasMoved(spotAt(5, y), King.class) || spotAt(6, y).occupied()
 				|| spotAt(7, y).occupied() || isAttacked(attack, spotAt(5, y)) || isAttacked(attack, spotAt(6, y))
 				|| isAttacked(attack, spotAt(7, y));
 	}
@@ -485,20 +487,20 @@ public class Chess {
 
 	// ----------------------------------------------------------------------------------------------------------
 	// Methods to deal with the commands and requested moves by the user.
-	
-//	/**
-//	 * This method is called if the user enter a command to undo his move. It
-//	 * will undo two moves.
-//	 * 
-//	 * @return
-//	 */
-//	public String undoPreviousMove() {
-//		if (time == 1 && whoseTurn)
-//			return "It is already the start of Game";
-//		undoLastMove();
-//		
-//		return "Undo the Previous Move!";
-//	}
+
+	// /**
+	// * This method is called if the user enter a command to undo his move. It
+	// * will undo two moves.
+	// *
+	// * @return
+	// */
+	// public String undoPreviousMove() {
+	// if (time == 1 && whoseTurn)
+	// return "It is already the start of Game";
+	// undoLastMove();
+	//
+	// return "Undo the Previous Move!";
+	// }
 
 	/**
 	 * changes the records and the chessboard, so everything will return back to
@@ -517,7 +519,7 @@ public class Chess {
 
 	// ----------------------------------------------------------------------------------------------------------
 	// Methods to deal with the commands and requested moves by the user.
-	
+
 	/**
 	 * This method will be called if the user request to make a castling.
 	 * 
@@ -530,8 +532,8 @@ public class Chess {
 			king = (King) white.get(0);
 		else
 			king = (King) black.get(0);
-	
-		if (canCastling(king, longOrShort)) {
+
+		if (canCastling(king, longOrShort) != null ) {
 			king.castling(this, longOrShort);
 			return true;
 		}
@@ -546,11 +548,11 @@ public class Chess {
 	 * @return true if move is valid, false if not allowed by chess rule
 	 */
 	public boolean performMove(Piece piece, Square spot) {
-//		if (piece.canMove(spot))
-//			piece.move(spot);
-//		else if (piece.canCapture(spot))
-//			piece.capture(spot, spot.getPiece());
-		if (piece.canGo(spot))
+		// if (piece.canMove(spot))
+		// piece.move(spot);
+		// else if (piece.canCapture(spot))
+		// piece.capture(spot, spot.getPiece());
+		if (piece.canGo(spot) != null)
 			piece.makeMove(spot, spot.getPiece());
 		else
 			return false;
@@ -569,9 +571,9 @@ public class Chess {
 	 * @return necessary information
 	 */
 	public void wrapMove() {
-		String s = "";
+		// String s = "";
 		if (checkOrNot(whoseTurn)) {
-			s = "Check!! ";
+			// s = "Check!! ";
 			if (checkMate()) {
 				if (whoseTurn) {
 					win(true, "White wins! -- CHECKMATE!!", "WHITE Checkmates the BLACK, WHITE wins!!");
@@ -590,9 +592,9 @@ public class Chess {
 				// fixed
 			}
 			canClaimDraw();
-			s = "" + canClaimDraw;
+			// s = "" + canClaimDraw;
 		}
-		
+
 		whoseTurn = !whoseTurn;
 		if (whoseTurn) {
 			time++;
@@ -756,6 +758,10 @@ public class Chess {
 	public void promotion() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public int getTime() {
+		return time;
 	}
 
 }

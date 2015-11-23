@@ -399,7 +399,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		squareToLabel(piece.getP()).highLight();
 		for (Square i : chess.getAllSquares())
 			if (!i.occupiedBy(chess.getWhoseTurn()))
-				if (chosen.canGo(i)) {
+				if (chosen.canGo(i)!=null) {
 					squareToLabel(i).highLight();
 				}
 	}
@@ -481,7 +481,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 					squareToLabel(chosen.getP()).highLight();
 					for (Square i : chess.getAllSquares())
 						if (!i.occupiedBy(chess.getWhoseTurn()))
-							if (chosen.canGo(i))
+							if (chosen.canGo(i)!=null)
 								squareToLabel(i).highLight();
 
 					if (spot.getPiece().isType(Pawn.class))

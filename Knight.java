@@ -4,6 +4,8 @@
  *
  */
 public class Knight extends Piece {
+	private final int VALUE = 3;
+	
 	/**
 	 * constructs a Knight with initial square
 	 * 
@@ -11,21 +13,29 @@ public class Knight extends Piece {
 	 * @param wb
 	 * @param Position
 	 */
-	public Knight(char type, boolean wb, Square Position) {
-		super(type, wb, Position);
-		name = "Knight";
-		value = 3;
+	public Knight(boolean wb, Square Position) {
+		super( wb, Position);
 	}
 
 	@Override
-	public boolean legalPosition(Square end) {
+	public Move legalPosition(Square end) {
 		if (spot.equals(end))
-			return false;
+			return null;
 		int a = Math.abs(spot.X() - end.X());
 		int b = Math.abs(spot.Y() - end.Y());
 		if (a + b == 3 && (a != 0 && b != 0))
-			return true;
+			return new Move(this, spot, end.getPiece(), end, chess.getTime());
 		else
-			return false;
+			return null;
+	}
+	
+	@Override
+	public int getValue() {
+		return VALUE;
+	}
+	
+	@Override
+	public char getType() {
+		return 'N';
 	}
 }

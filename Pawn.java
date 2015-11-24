@@ -1,5 +1,4 @@
 
-
 /**
  * Pawn in the chess
  * 
@@ -7,24 +6,29 @@
  *
  */
 public class Pawn extends Piece {
+	private final int VALUE = 1;
+
 	/**
 	 * constructs a Pawn with initial square
 	 * 
-	 * @param type
 	 * @param wb
 	 * @param p
 	 */
-	public Pawn(char type, boolean wb, Square p) {
-		super(type, wb, p);
-		name = "Pawn";
-		value = 1;
+	public Pawn(boolean wb, Square p) {
+		super(wb, p);
 	}
 
 	@Override
-	public boolean legalPosition(Square end) {
+	public Move legalPosition(Square end) {
+		if (legalPosition(spot, end, chess, getWb()))
+			return new Move(this, spot, end.getPiece(), end, chess.getTime());
+		return null;
+	}
 
+	public static boolean legalPosition(Square spot, Square end, Chess chess, boolean wb) {
 		if (end.occupied() || spot == null)
 			return false;
+
 		if (spot.X() == end.X()) {
 			if (wb) {
 				if (end.Y() - spot.Y() == 1)
@@ -44,11 +48,15 @@ public class Pawn extends Piece {
 		return false;
 	}
 
-	public boolean canAttack(Square end) {
+	protected Move canAttack(Square end) {
+		if (legalPostionCapture(end))
+			return new Move(this, spot, end.getPiece(), end, chess.getTime());
+		return null;
+	}
 
+	private boolean legalPostionCapture(Square end) {
 		if (spot == null)
 			return false;
-
 		if (Math.abs(end.X() - spot.X()) == 1) {
 			if (wb) {
 				if (end.Y() - spot.Y() == 1)
@@ -61,29 +69,26 @@ public class Pawn extends Piece {
 		return false;
 	}
 
-	public boolean canCapture(Square end) {
-		if (!canAttack(end))
-			return false;
+	protected Move canCapture(Square end) {
+		// if (!canAttack(end))
+		// return false;
+		Move capture = canAttack(end);
+		if (capture == null)
+			return null;
 
-		if (end.occupiedBy(!wb))
-			return canAttack(end) && end.occupiedBy(!wb)
-					&& !chess.giveAwayKing(this, spot, end.getPiece(), end, wb);
-		else
-			return chess.canEnPassant(end);
-	}
-
-	@Override
-	public void capture(Square end, Piece taken) {
-		if (taken == null) {
-		//	s = "En Passant! ";  TODO: get those printed
-			taken = chess.spotAt(end.X(), spot.Y()).getPiece();
-			if (taken == null)
-				System.out.println("En Passant error!");
+		if (end.occupiedBy(!wb)) {
+			if (chess.giveAwayKing(this, spot, end.getPiece(), end, wb))
+				return null;
+			return capture;
+		} else {
+			if (chess.canEnPassant(end))
+				return new EnPassant(this, spot, chess.spotAt(end.X(), spot.Y()).getPiece(), end, chess.getTime());
+			return null;
 		}
-		makeMove(end, taken);
+		// TODO: will it be necessary to create an En passant move class
+		// return chess.canEnPassant(end);
 	}
 
-	@Override
 	protected boolean canPromote(Square end) {
 		boolean promotion = false;
 		if (wb) {
@@ -96,24 +101,15 @@ public class Pawn extends Piece {
 		return promotion;
 	}
 
-	
-//	public Piece promotion(Square end) { //TODO: fixed promotion
-//		chess.promotion();
-//		chess.printInBox("Please choose one kind of piece to promote to -- Q, N, R, B");
-//		String s = JOptionPane.showInputDialog("Promotion to !?");
-//		if (!s.isEmpty()) {
-//			s = s.toUpperCase();
-//			char a = s.charAt(0);
-//			if (a == 'Q')
-//				return new Queen('Q', wb, end);
-//			else if (a == 'R')
-//				return new Rook('R', wb, end);
-//			else if (a == 'B')
-//				return new Bishop('B', wb, end);
-//			else if (a == 'N')
-//				return new Knight('N', wb, end);
-//		}
-//		return promotion(end);
-//	}
+	@Override
+	public int getValue() {
+		return VALUE;
+	}
+
+	@Override
+	public char getType() {
+		return 'P';
+	}
+	 
 
 }

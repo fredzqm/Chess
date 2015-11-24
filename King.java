@@ -4,6 +4,8 @@
  *
  */
 public class King extends Piece {
+	private final int VALUE = 100;
+
 	/**
 	 * constructs a King with initial square
 	 * 
@@ -11,47 +13,37 @@ public class King extends Piece {
 	 * @param wb
 	 * @param Position
 	 */
-	public King(char type, boolean wb, Square Position) {
-		super(type, wb, Position);
-		name = "King";
-		value = 100;
+	public King(boolean wb, Square Position) {
+		super(wb, Position);
 	}
 
 	@Override
-	public boolean legalPosition(Square end ) {
+	public Move legalPosition(Square end) {
 		if (spot.equals(end))
-			return false;
-		if (Math.abs(spot.X() - end.X()) > 1
-				|| Math.abs(spot.Y() - end.Y()) > 1)
-			return false;
+			return null;
+		if (Math.abs(spot.X() - end.X()) > 1 || Math.abs(spot.Y() - end.Y()) > 1)
+			return null;
 		else {
-			return true;
+			return new Move(this, spot, end.getPiece(), end, chess.getTime());
 		}
 	}
 
-	public boolean canMove(Square end) {
+	@Override
+	protected Move canMove(Square end) {
 		if (end.occupied())
-			return false;
+			return null;
 
 		if (getX() == 5 && getY() == end.Y()) {
 			if (end.X() == 3) {
-				if (chess.canCastling(this, true))
-					return true;
+				return chess.canCastling(this, true) ;
 			} else if (end.X() == 7) {
-				if (chess.canCastling(this, false))
-					return true;
+				return chess.canCastling(this, false) ;
 			}
 		}
-		return legalPosition(end)
-				&& !chess.giveAwayKing(this, spot, null, end, wb);
-	}
-
-	public void move(Square end) {
-		if ((spot.X() - end.X()) > 1)
-			castling(chess, true);
-		else if (end.X() - spot.X() > 1)
-			castling(chess, false);
-		makeMove(end, null);
+		
+		if (chess.giveAwayKing(this, spot, null, end, wb))
+			return null;
+		return legalPosition(end) ;
 	}
 
 	/**
@@ -83,12 +75,20 @@ public class King extends Piece {
 			rookEnd = chess.spotAt(6, y);
 			rook = chess.spotAt(8, y).getPiece();
 		}
-		chess.addRecord(this, kingStart, kingEnd, (Rook) rook, rookStart,
-				rookEnd);
+		chess.addRecord(this, kingStart, kingEnd, (Rook) rook, rookStart, rookEnd);
 		moveTo(kingEnd);
 		rook.moveTo(rookEnd);
-//		return "castling sucessful! " + // TODO: get those printed
-		chess.wrapMove();
+		// return "castling sucessful! " + // TODO: get those printed
+//		chess.wrapMove();
 	}
 
+	@Override
+	public int getValue() {
+		return VALUE;
+	}
+
+	@Override
+	public char getType() {
+		return 'K';
+	}
 }

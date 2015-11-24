@@ -11,5 +11,7 @@ public interface ChessListener extends EventListener {
 	void endOfGame(EndGame end);
 	
 	void nextMove(boolean whoseTurn);
+
+	Piece promote(boolean wb , Square end);
 	
 }

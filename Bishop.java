@@ -5,21 +5,22 @@
  *
  */
 public class Bishop extends Piece {
+	private final int VALUE = 4;
+	
 	/**
 	 * constructs a Bishop with initial square
-	 * @param type
 	 * @param wb
 	 * @param Position
 	 */
-	public Bishop(char type, boolean wb, Square Position) {
-		super(type, wb, Position);
-		name  = "Bishop" ;
-		value = 4 ;
+	public Bishop( boolean wb, Square Position) {
+		super(wb, Position);
 	}
 
 	@Override
-	public boolean legalPosition(Square end) {
-		return legalPosition(spot, end, chess);
+	public Move legalPosition(Square end) {
+		if ( legalPosition(spot, end, chess))
+			return new Move(this, spot, end.getPiece(), end, chess.getTime());
+		return null;
 	}
 	protected static boolean legalPosition(Square start , Square end, Chess chess){
 		if (start.equals(end))
@@ -37,4 +38,15 @@ public class Bishop extends Piece {
 		}
 		return false;
 	}
+
+	@Override
+	public int getValue() {
+		return VALUE;
+	}
+
+	@Override
+	public char getType() {
+		return 'B';
+	}
+
 }

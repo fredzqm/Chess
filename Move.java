@@ -22,19 +22,44 @@ public class Move {
 	 * @param moved
 	 *            the piece moved
 	 * @param start
-	 *            the start positon of this move
+	 *            the start position of this move
 	 * @param taken
-	 *            the piece that is captured, null if there is nothing
-	 *            caputured.
+	 *            the piece that is captured, null if there is nothing captured.
 	 * @param end
-	 *            the end positon of this movce
+	 *            the end position of this move
 	 * @param time
 	 *            which round this move happens
 	 * @param checkOrNot
 	 *            whether this move check the opponent
 	 */
-	public Move(Piece moved, Square start, Piece taken, Square end, int time,
-			boolean checkOrNot) {
+	public Move(Piece moved, Square start, Piece taken, Square end, int time) {
+		this.time = time;
+		wb = moved.getWb();
+		this.moved = moved;
+		this.start = start;
+		this.taken = taken;
+		this.end = end;
+		endGame = null;
+		result = 0;
+	}
+
+	/**
+	 * constructs a record
+	 * 
+	 * @param moved
+	 *            the piece moved
+	 * @param start
+	 *            the start position of this move
+	 * @param taken
+	 *            the piece that is captured, null if there is nothing captured.
+	 * @param end
+	 *            the end position of this move
+	 * @param time
+	 *            which round this move happens
+	 * @param checkOrNot
+	 *            whether this move check the opponent
+	 */
+	public Move(Piece moved, Square start, Piece taken, Square end, int time, boolean checkOrNot) {
 		this.time = time;
 		wb = moved.getWb();
 		this.moved = moved;
@@ -51,7 +76,7 @@ public class Move {
 	 */
 	public String outPrint() {
 		String s = "";
-		if (moved.getType() != 'P')
+		if (moved.isType(Pawn.class))
 			s += moved.getType();
 		s += start.toString();
 		if (taken == null)
@@ -125,9 +150,8 @@ public class Move {
 	 *         castling
 	 */
 	public boolean canEnPassant(Square p) {
-		return moved.isType('P')
-				&& (start.X() == p.X() && end.X() == p.X() && (start.Y() + end
-						.Y()) == (p.Y() * 2));
+		return moved.isType(Pawn.class)
+				&& (start.X() == p.X() && end.X() == p.X() && (start.Y() + end.Y()) == (p.Y() * 2));
 	}
 
 	/**
@@ -139,10 +163,11 @@ public class Move {
 		moved.moveTo(start);
 		if (taken != null) {
 			chess.putBackToBoard(taken, end);
-			//check if this move is a En Passant, if it is move the taken Pawn to where it supposed to go
-			if (moved.isType('P') && taken.isType('P'))
+			// check if this move is a En Passant, if it is move the taken Pawn
+			// to where it supposed to go
+			if (moved.isType(Pawn.class) && taken.isType(Pawn.class))
 				if (chess.canEnPassantFromUndoMethod(end))
-					taken.moveTo(chess.spotAt(end.X(), 3 + end.Y()/3));
+					taken.moveTo(chess.spotAt(end.X(), 3 + end.Y() / 3));
 		}
 	}
 
@@ -171,7 +196,7 @@ public class Move {
 	 * @return true if this move can be redo over and over again later.
 	 */
 	public boolean notQuiet() {
-		return taken != null || moved.isType('P');
+		return taken != null || moved.isType(Pawn.class);
 	}
 
 	/**
@@ -185,8 +210,7 @@ public class Move {
 			return false;
 		if (x instanceof Castling)
 			return false;
-		return moved.equals(x.moved) && start.equals(x.start)
-				&& end.equals(x.end);
+		return moved.equals(x.moved) && start.equals(x.start) && end.equals(x.end);
 	}
 
 	// games ends
@@ -216,6 +240,18 @@ public class Move {
 			result = -1;
 		}
 		endGame = s;
+	}
+
+	public String toString() {
+		return outPrint() + " " + getDescript();
+	}
+
+	public void performMove(Chess chess) {
+		if (taken != null)
+			chess.takeOffBoard(taken);
+//		Square start = spot;
+		moved.moveTo(end);
+//		chess.addRecord(this, start, taken, end);
 	}
 
 }

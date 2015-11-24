@@ -4,6 +4,7 @@
  *
  */
 public class Queen extends Piece {
+	private final int VALUE = 10;
 	
 	/**
 	 * constructs a Queen with initial square
@@ -11,14 +12,23 @@ public class Queen extends Piece {
 	 * @param wb
 	 * @param position
 	 */
-	public Queen(char type, boolean wb, Square position) {
-		super(type, wb, position);
-		name = "Queen";
-		value= 9;
+	public Queen(boolean wb, Square position) {
+		super(wb, position);
 	}
 
 	@Override
-	public boolean legalPosition(Square end) {
-		return Bishop.legalPosition(spot, end, chess) || Rook.legalPosition(spot, end, chess);
+	public Move legalPosition(Square end) {
+		if( Bishop.legalPosition(spot, end, chess) || Rook.legalPosition(spot, end, chess))
+			return new Move(this, spot, end.getPiece(), end, chess.getTime());
+		return null;
+	}
+	@Override
+	public int getValue() {
+		return VALUE;
+	}
+	
+	@Override
+	public char getType() {
+		return 'Q';
 	}
 }

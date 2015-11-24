@@ -1,10 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-
-import javax.swing.JOptionPane;
 
 /**
  * It is the system for a chess game. It has fields to store the condition of
@@ -27,7 +24,7 @@ public class Chess {
 
 	private List<ChessListener> listeners;
 	private Collection<Square> list;
-	
+
 	// ----------------------------------------------------------------------------------------------------------------------------
 	// constructors and methods used to create and initializes the chess game.
 	/**
@@ -44,18 +41,18 @@ public class Chess {
 		gameHasEnded = false;
 		listeners = new ArrayList<>();
 		list = new ArrayList<Square>();
-		
+
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				Square t = new Square(i , j , this);
+				Square t = new Square(i, j, this);
 				spots[i][j] = t;
 				int y = t.Y();
 				if (y == 1) {
 					white.add(startSet(t.X(), true, t));
 				} else if (y == 2) {
-					white.add(new Pawn('P', true, t));
+					white.add(new Pawn(true, t));
 				} else if (y == 7) {
-					black.add(new Pawn('P', false, t));
+					black.add(new Pawn(false, t));
 				} else if (y == 8) {
 					black.add(startSet(t.X(), false, t));
 				}
@@ -78,15 +75,15 @@ public class Chess {
 	 */
 	private Piece startSet(int x, boolean b, Square p) {
 		if (x == 1 || x == 8)
-			return new Rook('R', b, p);
+			return new Rook(b, p);
 		else if (x == 2 || x == 7)
-			return new Knight('N', b, p);
+			return new Knight(b, p);
 		else if (x == 3 || x == 6)
-			return new Bishop('B', b, p);
+			return new Bishop(b, p);
 		else if (x == 4)
-			return new Queen('Q', b, p);
+			return new Queen(b, p);
 		else if (x == 5)
-			return new King('K', b, p);
+			return new King(b, p);
 		else
 			return null;
 	}
@@ -133,12 +130,12 @@ public class Chess {
 	public Square spotAt(int i, int j) {
 		return spots[i - 1][8 - j];
 	}
-	
-	public Collection<Square> getAllSquares(){
+
+	public Collection<Square> getAllSquares() {
 		return list;
 	}
-	
-	public ArrayList<Move> getRecords(){
+
+	public ArrayList<Move> getRecords() {
 		return records.getArrayList();
 	}
 	// ------------------------------------------------------------------------------------------------------
@@ -201,9 +198,7 @@ public class Chess {
 	// -------------------------------------------------------------------------------------------------------------------
 	// find out about the condition of the game, (In check etc.)
 
-	
-	
-	public ArrayList<Piece> possibleMovers(char type, boolean takeOrNot, Square end) {
+	public ArrayList<Piece> possibleMovers(Class<? extends Piece> type, Square end) {
 		ArrayList<Piece> possible = new ArrayList<Piece>();
 		ArrayList<Piece> set;
 		if (getWhoseTurn())
@@ -211,19 +206,13 @@ public class Chess {
 		else
 			set = black;
 
-		if (takeOrNot) {
-			for (Piece i : set) {
-				if (i.isType(type) && i.canCapture(end))
-					possible.add(i);
-			}
-		} else {
-			for (Piece i : set) {
-				if (i.isType(type) && i.canMove(end))
-					possible.add(i);
-			}
+		for (Piece i : set) {
+			if (i.isType(type) && i.canGo(end))
+				possible.add(i);
 		}
 		return possible;
 	}
+
 	/**
 	 * find out whether a certain move will put your own king in check
 	 * 
@@ -275,7 +264,7 @@ public class Chess {
 	 */
 	private boolean isAttacked(ArrayList<Piece> attack, Square p) {
 		for (Piece i : attack) {
-			if (i.canAttack(p))
+			if (i.canAttack(p) != null)
 				return true;
 		}
 		return false;
@@ -299,7 +288,7 @@ public class Chess {
 		for (Piece i : inCheck) {
 			for (Square[] r : spots) {
 				for (Square p : r) {
-					if (i.canMove(p) || i.canCapture(p))
+					if (i.canGo(p))
 						return false;
 				}
 			}
@@ -370,7 +359,7 @@ public class Chess {
 	 * @return true, if that move was an En Passant move.
 	 */
 	public boolean canEnPassantFromUndoMethod(Square end) {
-		return records.get(records.size() - 2).canEnPassant(end);
+		return records.get(records.size() - 2).canEnPassant(end) ;
 	}
 
 	/**
@@ -387,27 +376,32 @@ public class Chess {
 	 *            castling happens on the King side.
 	 * @return true if it is legal to make the castling of this side right now
 	 */
-	public boolean canCastling(King k, boolean longOrShort) {
+	public Move canCastling(King k, boolean longOrShort) {
 		ArrayList<Piece> attack;
 		if (k.getWb()) {
 			attack = black;
 		} else {
 			attack = white;
 		}
-		if (longOrShort)
-			return !canNotLongCastling(k.getY(), attack);
-		else
-			return !canNotShortCastling(k.getY(), attack);
+		if (longOrShort) {
+			if (canNotLongCastling(k.getY(), attack))
+				return null;
+			return new Castling(k, k.getP(), spotAt(3, k.getY()), (Rook)(spotAt(1, k.getY()).getPiece()) , spotAt(1, k.getY()), time);
+		} else {
+			if (canNotShortCastling(k.getY(), attack))
+				return null;
+			return new Castling(k, k.getP(), spotAt(7, k.getY()), (Rook)(spotAt(8, k.getY()).getPiece()) , spotAt(8, k.getY()), time);
+		}
 	}
 
 	private boolean canNotLongCastling(int y, ArrayList<Piece> attack) {
-		return hasMoved(spotAt(1, y), 'R') || hasMoved(spotAt(5, y), 'K') || spotAt(2, y).occupied()
+		return hasMoved(spotAt(1, y), Rook.class) || hasMoved(spotAt(5, y), King.class) || spotAt(2, y).occupied()
 				|| spotAt(3, y).occupied() || spotAt(4, y).occupied() || isAttacked(attack, spotAt(5, y))
 				|| isAttacked(attack, spotAt(3, y)) || isAttacked(attack, spotAt(4, y));
 	}
 
 	private boolean canNotShortCastling(int y, ArrayList<Piece> attack) {
-		return hasMoved(spotAt(8, y), 'R') || hasMoved(spotAt(5, y), 'K') || spotAt(6, y).occupied()
+		return hasMoved(spotAt(8, y), Rook.class) || hasMoved(spotAt(5, y), King.class) || spotAt(6, y).occupied()
 				|| spotAt(7, y).occupied() || isAttacked(attack, spotAt(5, y)) || isAttacked(attack, spotAt(6, y))
 				|| isAttacked(attack, spotAt(7, y));
 	}
@@ -421,7 +415,7 @@ public class Chess {
 	 * @return true if the original piece has ever moved or be taken since the
 	 *         game started.
 	 */
-	private boolean hasMoved(Square original, char type) {
+	private boolean hasMoved(Square original, Class<? extends Piece> type) {
 		if (!original.occupied() || !original.getPiece().isType(type))
 			return true;
 		for (Move i : records) {
@@ -437,7 +431,10 @@ public class Chess {
 	 *         or as part of the records.
 	 */
 	public String lastMoveOutPrint() {
-		return records.lastOutPrint();
+		Move move = lastMove();
+		if (move == null)
+			return "Hasn't start the chess yet!";
+		return move.outPrint();
 	}
 
 	/**
@@ -446,13 +443,18 @@ public class Chess {
 	 *         the top label.
 	 */
 	public String lastMoveDiscript() {
-		if (records.size() == 0)
-			return "Welcome to Greate Chess Game!";
-		return records.lastDescript();
+		Move move = lastMove();
+		if (move == null)
+			return "Hasn't start the chess yet!";
+		return move.getDescript();
 	}
 
 	// --------------------------------------------------------------------------------------------------------------
 	// the methods to modifies the chess board.
+
+	public Move lastMove() {
+		return records.lastMove();
+	}
 
 	/**
 	 * 
@@ -491,6 +493,23 @@ public class Chess {
 		}
 	}
 
+	// ----------------------------------------------------------------------------------------------------------
+	// Methods to deal with the commands and requested moves by the user.
+
+	// /**
+	// * This method is called if the user enter a command to undo his move. It
+	// * will undo two moves.
+	// *
+	// * @return
+	// */
+	// public String undoPreviousMove() {
+	// if (time == 1 && whoseTurn)
+	// return "It is already the start of Game";
+	// undoLastMove();
+	//
+	// return "Undo the Previous Move!";
+	// }
+
 	/**
 	 * changes the records and the chessboard, so everything will return back to
 	 * the state of previous round.
@@ -500,89 +519,14 @@ public class Chess {
 			return false;
 		Move lastMove = records.remove(records.size() - 1);
 		lastMove.undo(this);
-		return true;
-	}
-	
-	/**
-	 * perform command to move piece to certain spot
-	 * 
-	 * @param piece
-	 * @param spot
-	 * @return true if move is valid, false if not allowed by chess rule
-	 */
-	public boolean performMove(Piece piece, Square spot) {
-		if (piece.canMove(spot))
-			piece.move(spot);
-		else if (piece.canCapture(spot))
-			piece.capture(spot, spot.getPiece());
-		else
-			return false;
-		return true;
-	}
-
-	/**
-	 * After the smart program has decided that this move is legall and wants to
-	 * process this move, this method is called.
-	 * 
-	 * 
-	 * This method will check whether there is checkmake, or stalment in the
-	 * game. Add comment if I have just make a check, terminate the game if
-	 * necessary.
-	 * 
-	 * @return necessary information
-	 */
-	public void wrapMove() {
-		String s = "";
-		if (checkOrNot(whoseTurn)) {
-			s = "Check!! ";
-			if (checkMate()) {
-				if (whoseTurn) {
-					win(true, "White wins! -- CHECKMATE!!",  "WHITE Checkmates the BLACK, WHITE wins!!");
-					return;
-				} else {
-					win(false, "Black wins! -- CHECKMATE!!", "BLACK Checkmates the WHITE, BLACK wins!!");
-					return;
-				}
-			}
-		} else {
-			if (checkMate()) {
-				draw("Stalement" , "Draw due to Stalement.");
-				return;
-//				return "Draw -- Stalement!\n" ;
-//				+ print(); TODO: add this feature back when other things are fixed
-			}
-			canClaimDraw();
-			s = "" + canClaimDraw;
-		}
+		if (whoseTurn)
+			time--;
 		whoseTurn = !whoseTurn;
-		if (whoseTurn) {
-			time++;
-		}
-		
-		for (ChessListener listener : listeners)
-			listener.nextMove(whoseTurn);
+		return true;
 	}
 
 	// ----------------------------------------------------------------------------------------------------------
 	// Methods to deal with the commands and requested moves by the user.
-
-	/**
-	 * This method is called if the user enter a command to undo his move. It
-	 * will undo two moves.
-	 * 
-	 * @return
-	 */
-	public String undoPreviousMove() {
-		if (time == 1 && whoseTurn)
-			return "It is already the start of Game";
-		undoLastMove();
-		if (whoseTurn)
-			time--;
-		whoseTurn = !whoseTurn;
-		return "Undo the Previous Move!";
-	}
-
-	
 
 	/**
 	 * This method will be called if the user request to make a castling.
@@ -597,14 +541,101 @@ public class Chess {
 		else
 			king = (King) black.get(0);
 
-		if (canCastling(king, longOrShort)){
-			king.castling(this, longOrShort);
+		Move move = canCastling(king, longOrShort);
+				if (move != null){
+//			king.castling(this, longOrShort);
+					move.performMove(this);
+					records.add(move);
+			wrapMove();
 			return true;
 		}
 		return false;
 	}
 
-	
+	/**
+	 * perform command to move piece to certain spot
+	 * 
+	 * @param piece
+	 * @param end
+	 * @return true if move is valid, false if not allowed by chess rule
+	 */
+	public boolean performMove(Piece piece, Square end) {
+//		Move move = piece.canGo(spot);
+		Move move =  piece.canMove(end) ;
+		if ( move == null)
+			move =  piece.canCapture(end);
+//		if (move != null && capture == null)
+//			return move;
+//		else if (move==null && capture !=null)
+//			return capture;
+//		else if (move!=null && capture != null)	
+//			throw new RuntimeException();
+//		else
+//			return null;
+		if ( move != null){
+			move.performMove(this);
+//			piece.makeMove(end, end.getPiece());
+			records.add(move);
+			wrapMove();
+//			System.out.println(lastMove());
+//			System.out.println(move);
+		}else
+			return false;
+		return true;
+	}
+
+	private void performMove(Move move) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * After the smart program has decided that this move is legall and wants to
+	 * process this move, this method is called.
+	 * 
+	 * 
+	 * This method will check whether there is checkmake, or stalment in the
+	 * game. Add comment if I have just make a check, terminate the game if
+	 * necessary.
+	 * 
+	 * @return necessary information
+	 */
+	public void wrapMove() {
+		// String s = "";
+		if (checkOrNot(whoseTurn)) {
+			// s = "Check!! ";
+			if (checkMate()) {
+				if (whoseTurn) {
+					win(true, "White wins! -- CHECKMATE!!", "WHITE Checkmates the BLACK, WHITE wins!!");
+					return;
+				} else {
+					win(false, "Black wins! -- CHECKMATE!!", "BLACK Checkmates the WHITE, BLACK wins!!");
+					return;
+				}
+			}
+		} else {
+			if (checkMate()) {
+				draw("Stalement", "Draw due to Stalement.");
+				return;
+				// return "Draw -- Stalement!\n" ;
+				// + print(); TODO: add this feature back when other things are
+				// fixed
+			}
+			canClaimDraw();
+			// s = "" + canClaimDraw;
+		}
+
+		whoseTurn = !whoseTurn;
+		if (whoseTurn) {
+			time++;
+		}
+
+		for (ChessListener listener : listeners)
+			listener.nextMove(whoseTurn);
+	}
+
+	// ----------------------------------------------------------------------------------------------------------
+	// Methods to deal with the commands and requested moves by the user.
 
 	/**
 	 * According to the chess law, no player can request for draw consecutively.
@@ -660,24 +691,23 @@ public class Chess {
 	 */
 	public void resign() {
 		if (whoseTurn) {
-			win(false, null , "White resigns, Black wins.");
+			win(false, null, "White resigns, Black wins.");
 		} else {
-			win(true, null,  "Black resigns, White wins");
+			win(true, null, "Black resigns, White wins");
 		}
 	}
 
 	// ---------------------------------------------------------------------------------------------------------------------------
 	// methods that end the game
 
-
 	public void addChessListener(ChessListener chessListener) {
 		listeners.add(chessListener);
 	}
-	
+
 	public void removeChessListener(ChessControl chessControl) {
 		listeners.remove(chessControl);
 	}
-	
+
 	public void updateSquare(Square square) {
 		for (ChessListener listener : listeners)
 			listener.updateSquare(square);
@@ -695,24 +725,25 @@ public class Chess {
 	 * @return
 	 */
 	public int askForDraw() {
-		
+
 		if (canClaimDraw.isEmpty()) {
 			if (r.canAskFordraw(whoseTurn)) {
 				return 0;
-//				while (true) {
-//					String command = JOptionPane.showInputDialog("Do you agree draw?");
-//					if (command.isEmpty())
-//						continue;
-//					if (command.toLowerCase().startsWith("yes")) {
-//						draw("Draw by Agreement.");
-//					} else if (command.toLowerCase().startsWith("no"))
-//						break;
-//				}
+				// while (true) {
+				// String command = JOptionPane.showInputDialog("Do you agree
+				// draw?");
+				// if (command.isEmpty())
+				// continue;
+				// if (command.toLowerCase().startsWith("yes")) {
+				// draw("Draw by Agreement.");
+				// } else if (command.toLowerCase().startsWith("no"))
+				// break;
+				// }
 			} else {
 				return -1;
 			}
 		} else {
-			draw( "Draw" , canClaimDraw);
+			draw("Draw", canClaimDraw);
 			return 1;
 		}
 	}
@@ -721,22 +752,20 @@ public class Chess {
 		r.setRightToRequestDraw(whoseTurn);
 	}
 
-
-	
 	// methods that send message to control
-	
+
 	/**
 	 * ends the game as draw
 	 * 
 	 * @param descript
 	 * @return
 	 */
-	protected void draw(String outprint , String descript) {
+	protected void draw(String outprint, String descript) {
 		gameHasEnded = true;
 		records.draw(descript);
-		
+
 		for (ChessListener listener : listeners)
-			listener.draw(outprint , descript);
+			listener.draw(outprint, descript);
 	}
 
 	/**
@@ -748,18 +777,23 @@ public class Chess {
 	 *            how he win
 	 * @return
 	 */
-	public void win(boolean who, String outprint ,  String descrpt) {
+	public void win(boolean who, String outprint, String descrpt) {
 		gameHasEnded = true;
 		records.win(who, descrpt);
-		
+
 		for (ChessListener listener : listeners)
-			listener.win(who , outprint , descrpt);
+			listener.win(who, outprint, descrpt);
 	}
 
-	public void promotion() {
-		// TODO Auto-generated method stub
-		
+	public int getTime() {
+		return time;
 	}
 
-	
+	public Piece promotion(boolean wb , Square end) {
+		for (ChessListener listener : listeners){
+			return listener.promote(wb , end);
+		}
+		throw new ChessGameException("OOOOps!");
+	}
+
 }

@@ -487,6 +487,7 @@ public class Chess {
 		Move move = piece.canMove(end);
 		if (move == null)
 			move = piece.canCapture(end);
+		
 		if (move != null) {
 			makeMove(move);
 		} else
@@ -572,9 +573,9 @@ public class Chess {
 		return time / 2 + 1;
 	}
 
-	public Piece promotion(boolean wb, Square end) {
+	public Piece promotion(boolean wb, Square end) { //TODO: bad design
 		for (ChessListener listener : listeners) {
-			return listener.promote(wb, end);
+			return listener.promote(wb , end);
 		}
 		throw new ChessGameException("OOOOps!");
 	}

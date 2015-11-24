@@ -1,5 +1,3 @@
-import javax.management.RuntimeErrorException;
-
 /**
  * the super class for all different kinds of pieces.
  * @author zhangq2

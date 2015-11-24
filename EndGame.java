@@ -1,5 +1,5 @@
 
-interface EndGame {
+public interface EndGame {
 	public int getResult();
 	
 	public String getDescript();

@@ -20,8 +20,11 @@ public class Pawn extends Piece {
 
 	@Override
 	public Move legalPosition(Square end) {
-		if (legalPosition(spot, end, chess, getWb()))
+		if (legalPosition(spot, end, chess, getWb())){
+			if(canPromote(end))
+				return new Promotion(this, spot, end.getPiece(), end, chess.getRound());
 			return new Move(this, spot, end.getPiece(), end, chess.getRound());
+		}
 		return null;
 	}
 
@@ -49,8 +52,11 @@ public class Pawn extends Piece {
 	}
 
 	protected Move canAttack(Square end) {
-		if (legalPostionCapture(end))
+		if (legalPostionCapture(end)){
+			if(canPromote(end))
+				return new Promotion(this, spot, end.getPiece(), end, chess.getRound());
 			return new Move(this, spot, end.getPiece(), end, chess.getRound());
+		}
 		return null;
 	}
 
@@ -70,8 +76,6 @@ public class Pawn extends Piece {
 	}
 
 	protected Move canCapture(Square end) {
-		// if (!canAttack(end))
-		// return false;
 		Move capture = canAttack(end);
 		if (capture == null)
 			return null;

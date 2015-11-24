@@ -10,5 +10,4 @@ public interface ChessListener extends EventListener {
 
 	Piece promote(boolean wb , Square end);
 
-	
 }

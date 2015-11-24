@@ -323,8 +323,9 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 
 	@Override
 	public Piece promote(boolean wb, Square end) {
+		view.cleanTemp();
 		while (true) {
-			view.printOut("Please choose one kind of piece to promote to -- Q, N,R, B");
+			view.printOut("Please choose one kind of piece to promote to -- Q, N, R, B");
 			String s = JOptionPane.showInputDialog("Promotion to !?");
 			if (!s.isEmpty()) {
 				s = s.toUpperCase();

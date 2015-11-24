@@ -17,13 +17,11 @@ public class Promotion extends Move {
 	 *            which round the pawn promotes
 	 * @param checkOrNot
 	 *            whether this promotion cause a check
-	 * @param promotedTo
-	 *            the piece that the pawn is promoted to.
 	 */
 	public Promotion(Piece moved, Square start, Piece taken, Square end,
-			int round, Piece promotedTo) {
+			int round) {
 		super(moved, start, taken, end, round);
-		this.promotedTo = promotedTo;
+		this.promotedTo = null;
 	}
 
 	public String outPrint() {
@@ -55,4 +53,15 @@ public class Promotion extends Move {
 			s += endGame;
 		return s;
 	}
+	
+	public void performMove(Chess chess) {
+		if (taken != null)
+			chess.takeOffBoard(taken);
+		moved.moveTo(end);
+		promotedTo = chess.promotion(wb , end);
+		chess.takeOffBoard(taken);
+		chess.putBackToBoard(promotedTo, end);
+		checkOrNot = chess.checkOrNot(chess.getWhoseTurn());
+	}
+	
 }

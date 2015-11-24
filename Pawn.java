@@ -21,7 +21,7 @@ public class Pawn extends Piece {
 	@Override
 	public Move legalPosition(Square end) {
 		if (legalPosition(spot, end, chess, getWb()))
-			return new Move(this, spot, end.getPiece(), end, chess.getTime());
+			return new Move(this, spot, end.getPiece(), end, chess.getRound());
 		return null;
 	}
 
@@ -50,7 +50,7 @@ public class Pawn extends Piece {
 
 	protected Move canAttack(Square end) {
 		if (legalPostionCapture(end))
-			return new Move(this, spot, end.getPiece(), end, chess.getTime());
+			return new Move(this, spot, end.getPiece(), end, chess.getRound());
 		return null;
 	}
 
@@ -82,11 +82,9 @@ public class Pawn extends Piece {
 			return capture;
 		} else {
 			if (chess.canEnPassant(end))
-				return new EnPassant(this, spot, chess.spotAt(end.X(), spot.Y()).getPiece(), end, chess.getTime());
+				return new EnPassant(this, spot, chess.spotAt(end.X(), spot.Y()).getPiece(), end, chess.getRound());
 			return null;
 		}
-		// TODO: will it be necessary to create an En passant move class
-		// return chess.canEnPassant(end);
 	}
 
 	protected boolean canPromote(Square end) {

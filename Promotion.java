@@ -21,8 +21,8 @@ public class Promotion extends Move {
 	 *            the piece that the pawn is promoted to.
 	 */
 	public Promotion(Piece moved, Square start, Piece taken, Square end,
-			int time, boolean checkOrNot, Piece promotedTo) {
-		super(moved, start, taken, end, time, checkOrNot);
+			int round, Piece promotedTo) {
+		super(moved, start, taken, end, round);
 		this.promotedTo = promotedTo;
 	}
 

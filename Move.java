@@ -6,15 +6,14 @@
  *
  */
 public class Move {
-	protected int time;
+	protected int round;
 	protected boolean wb;
 	protected Piece moved;
 	protected Square start;
 	protected Piece taken;
 	protected Square end;
 	protected boolean checkOrNot;
-	protected String endGame;
-	protected int result;
+	protected EndGame endGame;
 
 	/**
 	 * constructs a record
@@ -32,43 +31,14 @@ public class Move {
 	 * @param checkOrNot
 	 *            whether this move check the opponent
 	 */
-	public Move(Piece moved, Square start, Piece taken, Square end, int time) {
-		this.time = time;
+	public Move(Piece moved, Square start, Piece taken, Square end, int round) {
+		this.round = round;
 		wb = moved.getWb();
 		this.moved = moved;
 		this.start = start;
 		this.taken = taken;
 		this.end = end;
 		endGame = null;
-		result = 0;
-	}
-
-	/**
-	 * constructs a record
-	 * 
-	 * @param moved
-	 *            the piece moved
-	 * @param start
-	 *            the start position of this move
-	 * @param taken
-	 *            the piece that is captured, null if there is nothing captured.
-	 * @param end
-	 *            the end position of this move
-	 * @param time
-	 *            which round this move happens
-	 * @param checkOrNot
-	 *            whether this move check the opponent
-	 */
-	public Move(Piece moved, Square start, Piece taken, Square end, int time, boolean checkOrNot) {
-		this.time = time;
-		wb = moved.getWb();
-		this.moved = moved;
-		this.start = start;
-		this.taken = taken;
-		this.end = end;
-		this.checkOrNot = checkOrNot;
-		endGame = null;
-		result = 0;
 	}
 
 	/**
@@ -85,18 +55,13 @@ public class Move {
 			s += "x";
 		s += end.toString();
 
+		if (checkOrNot)
+			s += "+";
+		if (endGame == Win.WHITECHECKMATE || endGame == Win.BLACKCHECKMATE)
+			s += "+";
+		
 		if (endGame != null) {
-			if (result != 0) {
-				if (result > 0)
-					s += "\n1-0";
-				else
-					s += "\n1-0";
-			} else {
-				s += "\n1/2-1/2";
-			}
-		} else {
-			if (checkOrNot)
-				s += "+";
+			s += "\n"+endGame.getDoc();
 		}
 		return s;
 	}
@@ -106,9 +71,8 @@ public class Move {
 	 * @return the words that will appear in the top label of the window
 	 */
 	public String getDescript() {
-
 		if (endGame != null)
-			return endGame;
+			return endGame.getDescript();
 
 		String s = "";
 		if (wb)
@@ -161,14 +125,8 @@ public class Move {
 	 */
 	public void undo(Chess chess) {
 		moved.moveTo(start);
-		if (taken != null) {
+		if (taken != null) 
 			chess.putBackToBoard(taken, end);
-			// check if this move is a En Passant, if it is move the taken Pawn
-			// to where it supposed to go
-			if (moved.isType(Pawn.class) && taken.isType(Pawn.class))
-				if (chess.canEnPassantFromUndoMethod(end))
-					taken.moveTo(chess.spotAt(end.X(), 3 + end.Y() / 3));
-		}
 	}
 
 	/**
@@ -179,7 +137,7 @@ public class Move {
 	public String print() {
 		String s = "";
 		if (wb) {
-			s += time + ". ";
+			s += round + ". ";
 			s += outPrint();
 		} else {
 			s += " ";
@@ -213,35 +171,6 @@ public class Move {
 		return moved.equals(x.moved) && start.equals(x.start) && end.equals(x.end);
 	}
 
-	// games ends
-	/**
-	 * 
-	 * ends the game as draw
-	 * 
-	 * @param s
-	 *            the description of how this game ends in draw
-	 */
-	public void draw(String s) {
-		endGame = s;
-	}
-
-	/**
-	 * ends the game when one player defeats the other player.
-	 * 
-	 * @param who
-	 *            who wins
-	 * @param s
-	 *            the description of how this game ends in win.
-	 */
-	public void win(boolean who, String s) {
-		if (who) {
-			result = 1;
-		} else {
-			result = -1;
-		}
-		endGame = s;
-	}
-
 	public String toString() {
 		return outPrint() + " " + getDescript();
 	}
@@ -255,6 +184,18 @@ public class Move {
 
 	public boolean getWhoseTurn() {
 		return wb;
+	}
+
+	// games ends
+	/**
+	 * 
+	 * ends the game as draw
+	 * 
+	 * @param s
+	 *            the description of how this game ends in draw
+	 */
+	public void endGame(EndGame endgame) {
+		endGame = endgame;
 	}
 
 }

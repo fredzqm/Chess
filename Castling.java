@@ -18,28 +18,8 @@ public class Castling extends Move {
 	 * @param time  the round number of this casting
 	 * @param check  whether this castling make a check.
 	 */
-	public Castling(King king, Square kingStart, Square kingEnd, Rook rook,Square rookStart , int time) {
-		super(king, kingStart, null, kingEnd, time);
-		this.rook = rook;
-		if (rook.getX()<4)
-			this.longOrShort = true;
-		else
-			this.longOrShort = false;
-		this.rookStart = rookStart;
-	}
-	
-	/**
-	 * it creates a record of castling
-	 * @param king   the king involved
-	 * @param kingStart  the start square of the king
-	 * @param kingEnd  the end square of the king
-	 * @param rook  the rook involved in this castling
-	 * @param rookStart  the starting position of this rook
-	 * @param time  the round number of this casting
-	 * @param check  whether this castling make a check.
-	 */
-	public Castling(King king, Square kingStart, Square kingEnd, Rook rook,Square rookStart , int time, boolean check) {
-		super(king, kingStart, null, kingEnd, time, check);
+	public Castling(King king, Square kingStart, Square kingEnd, Rook rook,Square rookStart , int round) {
+		super(king, kingStart, null, kingEnd, round);
 		this.rook = rook;
 		if (rook.getX()<4)
 			this.longOrShort = true;

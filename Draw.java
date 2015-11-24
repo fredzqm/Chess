@@ -15,7 +15,7 @@ public enum Draw implements EndGame{
 	}
 	
 	@Override
-	public int result() {
+	public int getResult() {
 		return 0;
 	}
 	
@@ -29,6 +29,10 @@ public enum Draw implements EndGame{
 		return printOut;
 	}
 
+	@Override
+	public String getDoc() {
+		return "1/2-1/2";
+	}
 
 	
 }

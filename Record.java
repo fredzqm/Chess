@@ -2,10 +2,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Record implements Iterable<Move> {
-	ArrayList<Move> list;
+	private ArrayList<Move> list;
+	private boolean hasEnd;
 	
 	public Record() {
 		list = new ArrayList<>();
+		hasEnd = false;
 	}
 	
 	public int size() {
@@ -41,39 +43,43 @@ public class Record implements Iterable<Move> {
 		return list.remove(i);
 	}
 
+	public void removeLast(){
+		list.remove(size() - 1);
+	}
 	
 	public Move lastMove() {
 		if (isEmpty())
 			return null ;
 		return get(size() - 1) ;
 	}
-
-//	public String lastOutPrint() {
-//		if (isEmpty())
-//			return "Hasn't start the chess yet!" ;
-//		return get(size() - 1).outPrint();
-//	}
-//
-//	public String lastDescript() {
-//		if (isEmpty())
-//			return "Hasn't start the chess yet!" ;
-//		return get(size() - 1).getDescript();
-//	}
-
-	public boolean draw(String descript) {
-		if (isEmpty())
-			return false;
-		get(size() - 1).draw(descript);
-		return true;
-	}
-
-	public boolean win(boolean who, String descrpt) {
-		if (isEmpty())
-			return false;
-		get(size() - 1).win(who , descrpt);
-		return true;
+	
+	public boolean hasEnd() {
+		return hasEnd;
 	}
 
 
+	public void endGame(EndGame endgame){
+		hasEnd = true;
+		lastMove().endGame(endgame);
+	}
+	
+	/**
+	 * 
+	 * @param original
+	 *            the original positon of the piece
+	 * @param type
+	 *            the type of the piece originally at this square
+	 * @return true if the original piece has ever moved or be taken since the
+	 *         game started.
+	 */
+	public boolean hasMoved(Square original, Class<? extends Piece> type, int time) { 
+		if (!original.occupied() || !original.getPiece().isType(type))
+			return true;
+		for (int t = 0 ; t < time ; t ++) {
+			if (original.equals(get(t).getStart()))
+				return true;
+		}
+		return false;
+	}
 
 }

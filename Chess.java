@@ -18,7 +18,6 @@ public class Chess {
 	private ArrayList<Piece> white;
 	private ArrayList<Piece> black;
 	private Record records;
-	private boolean gameHasEnded;
 
 	private List<ChessListener> listeners;
 	private Collection<Square> list;
@@ -30,12 +29,11 @@ public class Chess {
 	 */
 	public Chess() {
 		whoseTurn = true;
-		time = 1;
+		time = 0;
 		records = new Record();
 		spots = new Square[8][8];
 		white = new ArrayList<Piece>();
 		black = new ArrayList<Piece>();
-		gameHasEnded = false;
 		listeners = new ArrayList<>();
 		list = new ArrayList<Square>();
 
@@ -97,7 +95,7 @@ public class Chess {
 	 * @return true if the game has terminated.
 	 */
 	public boolean hasEnd() {
-		return gameHasEnded;
+		return records.hasEnd();
 	}
 
 	/**
@@ -138,20 +136,22 @@ public class Chess {
 
 	// ------------------------------------------------------------------------------------------------------
 
-	/**
-	 * add a record about promotion of pawn
-	 * 
-	 * @param promoteTo
-	 *            the piece that the pawn promoted to
-	 */
-	protected void addPromotionRecord(Piece moved, Square start, Piece taken, Square end, Piece promotedTo) {
-
-		takeOffBoard(moved);
-		putBackToBoard(promotedTo, end);
-
-		Promotion a = new Promotion(moved, start, taken, end, time, checkOrNot(whoseTurn), promotedTo);
-		records.add(a);
-	}
+	// /**
+	// * add a record about promotion of pawn
+	// *
+	// * @param promoteTo
+	// * the piece that the pawn promoted to
+	// */
+	// protected void addPromotionRecord(Piece moved, Square start, Piece taken,
+	// Square end, Piece promotedTo) {
+	//
+	// takeOffBoard(moved);
+	// putBackToBoard(promotedTo, end);
+	//
+	// Promotion a = new Promotion(moved, start, taken, end, time,
+	// checkOrNot(whoseTurn), promotedTo);
+	// records.add(a);
+	// }
 
 	// -------------------------------------------------------------------------------------------------------------------
 	// find out about the condition of the game, (In check etc.)
@@ -260,7 +260,7 @@ public class Chess {
 	 * marks to canClaimDraw. So both players can claim draw if they want.
 	 */
 	Draw canClaimDraw() {
-		int recordNum = records.size();
+		int recordNum = time;
 		if (recordNum > 50) {
 			boolean quiet = true;
 			for (int i = recordNum - 50; i < recordNum; i++) {
@@ -269,7 +269,7 @@ public class Chess {
 					break;
 				}
 			}
-			if (quiet) 
+			if (quiet)
 				return Draw.FIFTY_MOVE;
 		}
 		for (int i = 2; i < 25; i++) {
@@ -282,7 +282,7 @@ public class Chess {
 					break;
 				}
 			}
-			if (repetition) 
+			if (repetition)
 				return Draw.REPETITION;
 		}
 		return null;
@@ -301,21 +301,22 @@ public class Chess {
 	 * @return whether the En Passant move is legal right now.
 	 */
 	public boolean canEnPassant(Square end) {
-		if (records.size() < 1)
+		Move move = lastMove();
+		if (move == null)
 			return false;
-		return records.get(records.size() - 1).canEnPassant(end);
+		return move.canEnPassant(end);
 	}
 
-	/**
-	 * this method is only used by undo method of Move, it will check whether
-	 * that move was an En Passant move.
-	 * 
-	 * @param end
-	 * @return true, if that move was an En Passant move.
-	 */
-	public boolean canEnPassantFromUndoMethod(Square end) {
-		return records.get(records.size() - 2).canEnPassant(end);
-	}
+	// /**
+	// * this method is only used by undo method of Move, it will check whether
+	// * that move was an En Passant move.
+	// *
+	// * @param end
+	// * @return true, if that move was an En Passant move.
+	// */
+	// public boolean canEnPassantFromUndoMethod(Square end) {
+	// return records.get(records.size() - 2).canEnPassant(end);
+	// }
 
 	/**
 	 * En Passant is a very special rule of chess. Castling move can only be
@@ -342,44 +343,26 @@ public class Chess {
 			if (canNotLongCastling(k.getY(), attack))
 				return null;
 			return new Castling(k, k.getP(), spotAt(3, k.getY()), (Rook) (spotAt(1, k.getY()).getPiece()),
-					spotAt(1, k.getY()), time);
+					spotAt(1, k.getY()), getRound());
 		} else {
 			if (canNotShortCastling(k.getY(), attack))
 				return null;
 			return new Castling(k, k.getP(), spotAt(7, k.getY()), (Rook) (spotAt(8, k.getY()).getPiece()),
-					spotAt(8, k.getY()), time);
+					spotAt(8, k.getY()), getRound());
 		}
 	}
 
 	private boolean canNotLongCastling(int y, ArrayList<Piece> attack) {
-		return hasMoved(spotAt(1, y), Rook.class) || hasMoved(spotAt(5, y), King.class) || spotAt(2, y).occupied()
-				|| spotAt(3, y).occupied() || spotAt(4, y).occupied() || isAttacked(attack, spotAt(5, y))
-				|| isAttacked(attack, spotAt(3, y)) || isAttacked(attack, spotAt(4, y));
+		return records.hasMoved(spotAt(1, y), Rook.class, time) || records.hasMoved(spotAt(5, y), King.class, time)
+				|| spotAt(2, y).occupied() || spotAt(3, y).occupied() || spotAt(4, y).occupied()
+				|| isAttacked(attack, spotAt(5, y)) || isAttacked(attack, spotAt(3, y))
+				|| isAttacked(attack, spotAt(4, y));
 	}
 
 	private boolean canNotShortCastling(int y, ArrayList<Piece> attack) {
-		return hasMoved(spotAt(8, y), Rook.class) || hasMoved(spotAt(5, y), King.class) || spotAt(6, y).occupied()
-				|| spotAt(7, y).occupied() || isAttacked(attack, spotAt(5, y)) || isAttacked(attack, spotAt(6, y))
-				|| isAttacked(attack, spotAt(7, y));
-	}
-
-	/**
-	 * 
-	 * @param original
-	 *            the original positon of the piece
-	 * @param type
-	 *            the type of the piece originally at this square
-	 * @return true if the original piece has ever moved or be taken since the
-	 *         game started.
-	 */
-	private boolean hasMoved(Square original, Class<? extends Piece> type) {
-		if (!original.occupied() || !original.getPiece().isType(type))
-			return true;
-		for (Move i : records) {
-			if (original.equals(i.getStart()))
-				return true;
-		}
-		return false;
+		return records.hasMoved(spotAt(8, y), Rook.class, time) || records.hasMoved(spotAt(5, y), King.class, time)
+				|| spotAt(6, y).occupied() || spotAt(7, y).occupied() || isAttacked(attack, spotAt(5, y))
+				|| isAttacked(attack, spotAt(6, y)) || isAttacked(attack, spotAt(7, y));
 	}
 
 	/**
@@ -410,7 +393,9 @@ public class Chess {
 	// the methods to modifies the chess board.
 
 	public Move lastMove() {
-		return records.lastMove();
+		if (time == 0)
+			return null;
+		return records.get(time - 1);
 	}
 
 	/**
@@ -452,32 +437,17 @@ public class Chess {
 
 	// ----------------------------------------------------------------------------------------------------------
 	// Methods to deal with the commands and requested moves by the user.
-
-	// /**
-	// * This method is called if the user enter a command to undo his move. It
-	// * will undo two moves.
-	// *
-	// * @return
-	// */
-	// public String undoPreviousMove() {
-	// if (time == 1 && whoseTurn)
-	// return "It is already the start of Game";
-	// undoLastMove();
-	//
-	// return "Undo the Previous Move!";
-	// }
-
 	/**
 	 * changes the records and the chessboard, so everything will return back to
 	 * the state of previous round.
 	 */
 	public boolean undoLastMove() {
-		if (records.isEmpty())
+		Move lastMove = lastMove();
+		if (lastMove == null)
 			return false;
-		Move lastMove = records.remove(records.size() - 1);
 		lastMove.undo(this);
-		if (whoseTurn)
-			time--;
+		records.removeLast();//TODO: records can be improved
+		time--;
 		whoseTurn = !whoseTurn;
 		return true;
 	}
@@ -547,17 +517,14 @@ public class Chess {
 		}
 
 		whoseTurn = !whoseTurn;
-		if (whoseTurn) {
-			time++;
-		}
+		time++;
 
 		for (ChessListener listener : listeners)
 			listener.nextMove(move);
 	}
 
 	void endGame(EndGame endgame) {
-		gameHasEnded = true;
-		
+		records.endGame(endgame);
 		for (ChessListener listener : listeners)
 			listener.endGame(endgame);
 	}
@@ -569,7 +536,6 @@ public class Chess {
 	 * 
 	 * The class is made to decide whether a player can request for draw.
 	 */
-	
 
 	// ---------------------------------------------------------------------------------------------------------------------------
 	// methods that end the game
@@ -586,7 +552,7 @@ public class Chess {
 		for (ChessListener listener : listeners)
 			listener.updateSquare(square);
 	}
-	
+
 	/**
 	 * This method is caled if the player resigns. It will ends the game.
 	 * 
@@ -602,8 +568,8 @@ public class Chess {
 
 	// methods that send message to control
 
-	public int getTime() {
-		return time;
+	public int getRound() {
+		return time / 2 + 1;
 	}
 
 	public Piece promotion(boolean wb, Square end) {

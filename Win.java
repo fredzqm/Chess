@@ -1,4 +1,3 @@
-
 public enum Win implements EndGame {
 	WHITECHECKMATE(true, "White wins! -- CHECKMATE!!" , "WHITE Checkmates the BLACK, WHITE wins!!" ),
 	BLACKCHECKMATE(false, "Black wins! -- CHECKMATE!!" , "BLACK Checkmates the WHITE, BLACK wins!!" ),
@@ -19,7 +18,7 @@ public enum Win implements EndGame {
 	}
 	
 	@Override
-	public int result() {
+	public int getResult() {
 		return winner;
 	}
 	
@@ -32,6 +31,14 @@ public enum Win implements EndGame {
 	@Override
 	public String getPrintOut() {
 		return printOut;
+	}
+
+	@Override
+	public String getDoc() {
+			if (winner > 0)
+				return "1-0";
+			else
+				return "1-0";
 	}
 	
 }

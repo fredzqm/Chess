@@ -24,7 +24,7 @@ public class King extends Piece {
 		if (Math.abs(spot.X() - end.X()) > 1 || Math.abs(spot.Y() - end.Y()) > 1)
 			return null;
 		else {
-			return new Move(this, spot, end.getPiece(), end, chess.getTime());
+			return new Move(this, spot, end.getPiece(), end, chess.getRound());
 		}
 	}
 

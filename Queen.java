@@ -19,7 +19,7 @@ public class Queen extends Piece {
 	@Override
 	public Move legalPosition(Square end) {
 		if( Bishop.legalPosition(spot, end, chess) || Rook.legalPosition(spot, end, chess))
-			return new Move(this, spot, end.getPiece(), end, chess.getTime());
+			return new Move(this, spot, end.getPiece(), end, chess.getRound());
 		return null;
 	}
 	@Override

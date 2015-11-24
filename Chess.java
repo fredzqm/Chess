@@ -90,6 +90,12 @@ public class Chess {
 		return whoseTurn;
 	}
 
+	// methods that send message to control
+	
+	public int getRound() {
+		return time / 2 + 1;
+	}
+
 	/**
 	 * 
 	 * @return true if the game has terminated.
@@ -524,6 +530,9 @@ public class Chess {
 			listener.nextMove(move);
 	}
 
+	
+	// methods that end the game
+
 	void endGame(EndGame endgame) {
 		records.endGame(endgame);
 		for (ChessListener listener : listeners)
@@ -539,7 +548,7 @@ public class Chess {
 	 */
 
 	// ---------------------------------------------------------------------------------------------------------------------------
-	// methods that end the game
+	// methods that send message to control
 
 	public void addChessListener(ChessListener chessListener) {
 		listeners.add(chessListener);
@@ -554,24 +563,7 @@ public class Chess {
 			listener.updateSquare(square);
 	}
 
-	/**
-	 * This method is caled if the player resigns. It will ends the game.
-	 * 
-	 * @return
-	 */
-	public void resign() {
-		if (whoseTurn) {
-			endGame(Win.WHITERESIGN);
-		} else {
-			endGame(Win.BLACKESIGN);
-		}
-	}
-
-	// methods that send message to control
-
-	public int getRound() {
-		return time / 2 + 1;
-	}
+	
 
 	public Piece promotion(boolean wb, Square end) { //TODO: bad design
 		for (ChessListener listener : listeners) {

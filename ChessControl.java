@@ -242,11 +242,11 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			if (c.equals("undo")) {
 				undo();
 			} else if (c.equals("resign")) {
-				chess.resign();
+				drawRequest.resign();
 			} else if (c.equals("draw")) {
 				drawRequest.askForDraw();
-			} else if (!makeMove(c)) { // makeMove return true if the move is
-										// performed
+			} else if (!makeMove(c)) { 
+				// makeMove return true if the move is performed
 				view.printOut(ERROR_MESSAGE);
 			}
 		}
@@ -410,6 +410,25 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 				}
 			} else {
 				chess.endGame(canClaimDraw);
+			}
+		}
+		
+		/**
+		 * This method is caled if the player resigns. It will ends the game.
+		 * 
+		 * @return
+		 */
+		public void resign() {
+			Draw canClaimDraw = chess.canClaimDraw();
+			if (canClaimDraw != null) {
+				view.printOut("Actually, you can go with a draw!");
+				chess.endGame(canClaimDraw);
+				return;
+			}
+			if (chess.getWhoseTurn()) {
+				chess.endGame(Win.WHITERESIGN);
+			} else {
+				chess.endGame(Win.BLACKESIGN);
 			}
 		}
 	}

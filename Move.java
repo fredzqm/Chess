@@ -249,9 +249,12 @@ public class Move {
 	public void performMove(Chess chess) {
 		if (taken != null)
 			chess.takeOffBoard(taken);
-//		Square start = spot;
 		moved.moveTo(end);
-//		chess.addRecord(this, start, taken, end);
+		checkOrNot = chess.checkOrNot(chess.getWhoseTurn());
+	}
+
+	public boolean getWhoseTurn() {
+		return wb;
 	}
 
 }

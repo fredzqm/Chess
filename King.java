@@ -46,42 +46,6 @@ public class King extends Piece {
 		return legalPosition(end) ;
 	}
 
-	/**
-	 * carry on the castling of this king
-	 * 
-	 * @param rook
-	 *            the rook involved in this castling
-	 * @param chess
-	 * @param longOrShort
-	 *            long castling or short castling
-	 * @return the output needed for box
-	 */
-	public void castling(Chess chess, boolean longOrShort) {
-		Square kingStart = spot;
-		Square kingEnd;
-		Square rookStart;
-		Square rookEnd;
-		Piece rook;
-		int y = getY();
-
-		if (longOrShort) {
-			kingEnd = chess.spotAt(3, y);
-			rookStart = chess.spotAt(1, y);
-			rookEnd = chess.spotAt(4, y);
-			rook = chess.spotAt(1, y).getPiece();
-		} else {
-			kingEnd = chess.spotAt(7, y);
-			rookStart = chess.spotAt(8, y);
-			rookEnd = chess.spotAt(6, y);
-			rook = chess.spotAt(8, y).getPiece();
-		}
-		chess.addRecord(this, kingStart, kingEnd, (Rook) rook, rookStart, rookEnd);
-		moveTo(kingEnd);
-		rook.moveTo(rookEnd);
-		// return "castling sucessful! " + // TODO: get those printed
-//		chess.wrapMove();
-	}
-
 	@Override
 	public int getValue() {
 		return VALUE;

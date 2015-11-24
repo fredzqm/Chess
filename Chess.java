@@ -18,8 +18,6 @@ public class Chess {
 	private ArrayList<Piece> white;
 	private ArrayList<Piece> black;
 	private Record records;
-	private String canClaimDraw = "";
-	private DrawRequest r;
 	private boolean gameHasEnded;
 
 	private List<ChessListener> listeners;
@@ -37,7 +35,6 @@ public class Chess {
 		spots = new Square[8][8];
 		white = new ArrayList<Piece>();
 		black = new ArrayList<Piece>();
-		r = new DrawRequest();
 		gameHasEnded = false;
 		listeners = new ArrayList<>();
 		list = new ArrayList<Square>();
@@ -138,47 +135,8 @@ public class Chess {
 	public ArrayList<Move> getRecords() {
 		return records.getArrayList();
 	}
+
 	// ------------------------------------------------------------------------------------------------------
-	// methods to add records
-
-	/**
-	 * add a record about an ordinary move
-	 * 
-	 * @param moved
-	 *            the piece moved
-	 * @param start
-	 *            the starting position
-	 * @param taken
-	 *            the piece captured in this move, it could be null, if there is
-	 *            no piece capture.
-	 * @param end
-	 *            the position moved to
-	 */
-	protected void addRecord(Piece moved, Square start, Piece taken, Square end) {
-		records.add(new Move(moved, start, taken, end, time, checkOrNot(whoseTurn)));
-	}
-
-	/**
-	 * 
-	 * add a record about this castling
-	 * 
-	 * @param king
-	 *            the king in this castling
-	 * @param kingStart
-	 *            the original position of the king
-	 * @param kingEnd
-	 *            the final posion of the king
-	 * @param rook
-	 *            the rook in this castling
-	 * @param rookStart
-	 *            the original positon of the rook
-	 * @param rookEnd
-	 *            the final positon of the rook, though this parameter is not
-	 *            actually used
-	 */
-	protected void addRecord(King king, Square kingStart, Square kingEnd, Rook rook, Square rookStart, Square rookEnd) {
-		records.add(new Castling(king, kingStart, kingEnd, rook, rookStart, time, checkOrNot(whoseTurn)));
-	}
 
 	/**
 	 * add a record about promotion of pawn
@@ -301,7 +259,7 @@ public class Chess {
 	 * requirement of 'Fifty-move rule', or 'threefold repetition rule', add
 	 * marks to canClaimDraw. So both players can claim draw if they want.
 	 */
-	private void canClaimDraw() {
+	Draw canClaimDraw() {
 		int recordNum = records.size();
 		if (recordNum > 50) {
 			boolean quiet = true;
@@ -311,14 +269,12 @@ public class Chess {
 					break;
 				}
 			}
-			if (quiet) {
-				canClaimDraw = "You can claim draw -- Fifty-move rule.\n";
-				return;
-			}
+			if (quiet) 
+				return Draw.FIFTY_MOVE;
 		}
 		for (int i = 2; i < 25; i++) {
 			if (i * 4 > recordNum)
-				return;
+				return null;
 			boolean repetition = true;
 			for (int j = 1; j <= 2 * i; j++) {
 				if (!records.get(recordNum - j).equals(records.get(recordNum - j - 2 * i))) {
@@ -326,11 +282,10 @@ public class Chess {
 					break;
 				}
 			}
-			if (repetition) {
-				canClaimDraw = "You can claim draw -- threefold repetition.\n";
-				return;
-			}
+			if (repetition) 
+				return Draw.REPETITION;
 		}
+		return null;
 	}
 
 	/**
@@ -359,7 +314,7 @@ public class Chess {
 	 * @return true, if that move was an En Passant move.
 	 */
 	public boolean canEnPassantFromUndoMethod(Square end) {
-		return records.get(records.size() - 2).canEnPassant(end) ;
+		return records.get(records.size() - 2).canEnPassant(end);
 	}
 
 	/**
@@ -386,11 +341,13 @@ public class Chess {
 		if (longOrShort) {
 			if (canNotLongCastling(k.getY(), attack))
 				return null;
-			return new Castling(k, k.getP(), spotAt(3, k.getY()), (Rook)(spotAt(1, k.getY()).getPiece()) , spotAt(1, k.getY()), time);
+			return new Castling(k, k.getP(), spotAt(3, k.getY()), (Rook) (spotAt(1, k.getY()).getPiece()),
+					spotAt(1, k.getY()), time);
 		} else {
 			if (canNotShortCastling(k.getY(), attack))
 				return null;
-			return new Castling(k, k.getP(), spotAt(7, k.getY()), (Rook)(spotAt(8, k.getY()).getPiece()) , spotAt(8, k.getY()), time);
+			return new Castling(k, k.getP(), spotAt(7, k.getY()), (Rook) (spotAt(8, k.getY()).getPiece()),
+					spotAt(8, k.getY()), time);
 		}
 	}
 
@@ -542,11 +499,8 @@ public class Chess {
 			king = (King) black.get(0);
 
 		Move move = canCastling(king, longOrShort);
-				if (move != null){
-//			king.castling(this, longOrShort);
-					move.performMove(this);
-					records.add(move);
-			wrapMove();
+		if (move != null) {
+			makeMove(move);
 			return true;
 		}
 		return false;
@@ -560,68 +514,35 @@ public class Chess {
 	 * @return true if move is valid, false if not allowed by chess rule
 	 */
 	public boolean performMove(Piece piece, Square end) {
-//		Move move = piece.canGo(spot);
-		Move move =  piece.canMove(end) ;
-		if ( move == null)
-			move =  piece.canCapture(end);
-//		if (move != null && capture == null)
-//			return move;
-//		else if (move==null && capture !=null)
-//			return capture;
-//		else if (move!=null && capture != null)	
-//			throw new RuntimeException();
-//		else
-//			return null;
-		if ( move != null){
-			move.performMove(this);
-//			piece.makeMove(end, end.getPiece());
-			records.add(move);
-			wrapMove();
-//			System.out.println(lastMove());
-//			System.out.println(move);
-		}else
+		Move move = piece.canMove(end);
+		if (move == null)
+			move = piece.canCapture(end);
+		if (move != null) {
+			makeMove(move);
+		} else
 			return false;
 		return true;
 	}
 
-	private void performMove(Move move) {
-		// TODO Auto-generated method stub
-		
-	}
+	private void makeMove(Move move) {
+		move.performMove(this);
+		records.add(move);
 
-	/**
-	 * After the smart program has decided that this move is legall and wants to
-	 * process this move, this method is called.
-	 * 
-	 * 
-	 * This method will check whether there is checkmake, or stalment in the
-	 * game. Add comment if I have just make a check, terminate the game if
-	 * necessary.
-	 * 
-	 * @return necessary information
-	 */
-	public void wrapMove() {
 		// String s = "";
 		if (checkOrNot(whoseTurn)) {
 			// s = "Check!! ";
 			if (checkMate()) {
-				if (whoseTurn) {
-					win(true, "White wins! -- CHECKMATE!!", "WHITE Checkmates the BLACK, WHITE wins!!");
-					return;
-				} else {
-					win(false, "Black wins! -- CHECKMATE!!", "BLACK Checkmates the WHITE, BLACK wins!!");
-					return;
-				}
+				endGame(Win.BLACKCHECKMATE);
+				return;
 			}
 		} else {
 			if (checkMate()) {
-				draw("Stalement", "Draw due to Stalement.");
+				endGame(Draw.STALEMENT);
 				return;
 				// return "Draw -- Stalement!\n" ;
 				// + print(); TODO: add this feature back when other things are
 				// fixed
 			}
-			canClaimDraw();
 			// s = "" + canClaimDraw;
 		}
 
@@ -631,11 +552,15 @@ public class Chess {
 		}
 
 		for (ChessListener listener : listeners)
-			listener.nextMove(whoseTurn);
+			listener.nextMove(move);
 	}
 
-	// ----------------------------------------------------------------------------------------------------------
-	// Methods to deal with the commands and requested moves by the user.
+	void endGame(EndGame endgame) {
+		gameHasEnded = true;
+		
+		for (ChessListener listener : listeners)
+			listener.endGame(endgame);
+	}
 
 	/**
 	 * According to the chess law, no player can request for draw consecutively.
@@ -644,58 +569,7 @@ public class Chess {
 	 * 
 	 * The class is made to decide whether a player can request for draw.
 	 */
-	class DrawRequest {
-		private boolean white;
-		private boolean black;
-
-		protected DrawRequest() {
-			white = true;
-			black = true;
-		}
-
-		/**
-		 * If one player make a request for draw, and is declined, this method
-		 * will be called.
-		 * 
-		 * @param whoseTurn
-		 *            who makes the request for draw
-		 */
-		protected void setRightToRequestDraw(boolean whoseTurn) {
-			if (whoseTurn) {
-				white = false;
-				black = true;
-			} else {
-				white = true;
-				black = false;
-			}
-		}
-
-		/**
-		 * 
-		 * @param whoseTurn
-		 *            who should play next move
-		 * @return true if he can request for draw
-		 */
-		protected boolean canAskFordraw(boolean whoseTurn) {
-			if (whoseTurn)
-				return white;
-			else
-				return black;
-		}
-	}
-
-	/**
-	 * This method is caled if the player resigns. It will ends the game.
-	 * 
-	 * @return
-	 */
-	public void resign() {
-		if (whoseTurn) {
-			win(false, null, "White resigns, Black wins.");
-		} else {
-			win(true, null, "Black resigns, White wins");
-		}
-	}
+	
 
 	// ---------------------------------------------------------------------------------------------------------------------------
 	// methods that end the game
@@ -712,86 +586,29 @@ public class Chess {
 		for (ChessListener listener : listeners)
 			listener.updateSquare(square);
 	}
-
-	public String getDrawClaim() {
-		return canClaimDraw;
-	}
-
+	
 	/**
-	 * Find out if it is legal to claim draw. If it is, ends the game and claim
-	 * draw, otherwise send a request for draw, and wait for the reply of
-	 * opponent.
+	 * This method is caled if the player resigns. It will ends the game.
 	 * 
 	 * @return
 	 */
-	public int askForDraw() {
-
-		if (canClaimDraw.isEmpty()) {
-			if (r.canAskFordraw(whoseTurn)) {
-				return 0;
-				// while (true) {
-				// String command = JOptionPane.showInputDialog("Do you agree
-				// draw?");
-				// if (command.isEmpty())
-				// continue;
-				// if (command.toLowerCase().startsWith("yes")) {
-				// draw("Draw by Agreement.");
-				// } else if (command.toLowerCase().startsWith("no"))
-				// break;
-				// }
-			} else {
-				return -1;
-			}
+	public void resign() {
+		if (whoseTurn) {
+			endGame(Win.WHITERESIGN);
 		} else {
-			draw("Draw", canClaimDraw);
-			return 1;
+			endGame(Win.BLACKESIGN);
 		}
 	}
 
-	public void setRightToRequestDraw() {
-		r.setRightToRequestDraw(whoseTurn);
-	}
-
 	// methods that send message to control
-
-	/**
-	 * ends the game as draw
-	 * 
-	 * @param descript
-	 * @return
-	 */
-	protected void draw(String outprint, String descript) {
-		gameHasEnded = true;
-		records.draw(descript);
-
-		for (ChessListener listener : listeners)
-			listener.draw(outprint, descript);
-	}
-
-	/**
-	 * ends the game when one player beats the other
-	 * 
-	 * @param who
-	 *            the winner
-	 * @param descrpt
-	 *            how he win
-	 * @return
-	 */
-	public void win(boolean who, String outprint, String descrpt) {
-		gameHasEnded = true;
-		records.win(who, descrpt);
-
-		for (ChessListener listener : listeners)
-			listener.win(who, outprint, descrpt);
-	}
 
 	public int getTime() {
 		return time;
 	}
 
-	public Piece promotion(boolean wb , Square end) {
-		for (ChessListener listener : listeners){
-			return listener.promote(wb , end);
+	public Piece promotion(boolean wb, Square end) {
+		for (ChessListener listener : listeners) {
+			return listener.promote(wb, end);
 		}
 		throw new ChessGameException("OOOOps!");
 	}

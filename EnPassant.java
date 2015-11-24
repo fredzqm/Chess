@@ -28,8 +28,4 @@ public class EnPassant extends Move {
 		return s;
 	}
 	
-//	public void performMove(Chess chess) {
-//	
-//	}
-	
 }

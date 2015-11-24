@@ -4,14 +4,11 @@ public interface ChessListener extends EventListener {
 
 	void updateSquare(Square square);
 
-	void win(boolean whiteOrBlack , String outprint , String descript);
+	void endGame(EndGame end);
 	
-	void draw(String outprint , String descript);
-
-	void endOfGame(EndGame end);
-	
-	void nextMove(boolean whoseTurn);
+	void nextMove(Move previousMove);
 
 	Piece promote(boolean wb , Square end);
+
 	
 }

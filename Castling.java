@@ -103,6 +103,8 @@ public class Castling extends Move {
 //			chess.addRecord(this, kingStart, kingEnd, (Rook) rook, rookStart, rookEnd);
 			moved.moveTo(kingEnd);
 			rook.moveTo(rookEnd);
+
+			checkOrNot = chess.checkOrNot(chess.getWhoseTurn());
 			// return "castling sucessful! " + // TODO: get those printed
 //			chess.wrapMove();
 //		}

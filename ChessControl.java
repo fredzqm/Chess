@@ -50,6 +50,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	ChessViewer view;
 	Chess chess;
 	Piece chosen;
+	DrawRequest drawRequest;
 
 	/**
 	 * start my little chess game!!!!
@@ -61,6 +62,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		chess = new Chess();
 		chess.addChessListener(this);
 		chosen = null;
+		drawRequest = new DrawRequest();
 
 		view = new ChessViewer(this);
 		view.setVisible(true);
@@ -74,6 +76,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		chess = new Chess();
 		chess.addChessListener(this);
 		chosen = null;
+		drawRequest = new DrawRequest();
 
 		view.deHighLightWholeBoard();
 		view.setStatusLabelText("       Welcome to Another Wonderful Chess Game         ");
@@ -136,12 +139,24 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	 * @return
 	 */
 	private boolean makeMove(String s) {
-		if (checkCastling(s))
+		if (s.startsWith("o")) {
+			if (s.equals("o-o")) {
+				if (!chess.castling(false))
+					view.printOut("You cannot do castling, please check the rules for castling.");
+			} else if (s.equals("o-o-o")) {
+				if (!chess.castling(true))
+					view.printOut("You cannot do castling, please check the rules for castling.");
+			} else {
+				view.printOut("For short castling, enter \"O-O\" and for long castling, enter \"O-O-O\".");
+			}
 			return true;
+		}
 
 		Pattern p = Pattern.compile("([prnbqk])?([a-h])?([1-8])?.*?([a-h][1-8]).*");
 		Matcher m = p.matcher(s);
-		if (m.matches()) {
+		if (m.matches())
+
+		{
 			Class<? extends Piece> type = m.group(1) == null ? Pawn.class : Piece.getType(m.group(1).charAt(0));
 			if (type == Piece.class) {
 				view.printOut(
@@ -185,161 +200,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			return true;
 		}
 		return false;
-		// char type;
-		// if (s.length() == 5) {
-		// s = 'P' + s;
-		// type = 'P';
-		// } else {
-		// type = s.toUpperCase().charAt(0);
-		// if (!(type == 'R' || type == 'N' || type == 'B' || type == 'Q' ||
-		// type == 'K' || type == 'P')) {
-		// view.printOut(
-		// "Please enter valid initial of chessman -- R(Root), N(Knight),
-		// B(Bishop), Q(Queen), K(King). If you omit it, it is assumed as
-		// Pawn.");
-		// return false;
-		// }
-		// }
-		//
-		// s = s.toLowerCase();
-		// Square start = chess.getSquare(s.substring(1, 3));
-		// if (start == null) {
-		// view.printOut("please enter a valid start Position");
-		// return;
-		// }
-		// boolean takeOrNot;
-		// char action = s.charAt(3);
-		// if (action == '-')
-		// takeOrNot = false;
-		// else if (s.charAt(3) == 'x')
-		// takeOrNot = true;
-		// else {
-		// view.printOut("Pleae enter \"-\" or \"x\" to indicate whether this
-		// move takes some piece or not.");
-		// return;
-		// }
-		// Square end = chess.getSquare(s.substring(4));
-		// if (end == null) {
-		// view.printOut("please enter a valid end Position");
-		// return;
-		// }
-		// Piece movedChessman = start.getPiece();
-		// if (movedChessman == null) {
-		// if (chess.getWhoseTurn())
-		// view.printOut("There should be a white chessman in the start
-		// Position!");
-		// else
-		// view.printOut("There should be a black chessman in the start
-		// Position!");
-		// return;
-		// }
-		// if (!(movedChessman.isType(Piece.getType(type)))) {
-		// view.printOut(
-		// "The chessman in the start Position is not corret! \n R(Root),
-		// N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
-		// return;
-		// }
 
-		// Piece chessmanTaken = end.getPiece();
-		// if (takeOrNot) {
-		// if (!movedChessman.canCapture(end)) {
-		// view.printOut("Illegal move! Please check the rule of " +
-		// movedChessman.getName() + "!");
-		// return;
-		// }
-		// // view.printOut(movedChessman.capture(end, chessmanTaken));
-		// } else {
-		// if (chessmanTaken != null) {
-		// view.printOut("It works this time,but please use \"x\" if you want to
-		// take it next time. Thank you!");
-		// // view.printOut(movedChessman.capture(end, chessmanTaken));
-		// } else {
-		// if (!movedChessman.canMove(end)) {
-		// view.printOut("Illegal move! Please check the rule of " +
-		// movedChessman.getName() + "!");
-		// return;
-		// }
-		// // view.printOut(movedChessman.move(end));
-		// }
-		// }
-
-		// if (!chess.performMove(movedChessman, end)) {
-		// view.printOut("Illegal move! Please check the rule of " +
-		// movedChessman.getName() + "!");
-		// return;
-		// }
-
-	}
-
-	private boolean checkCastling(String s) {
-		boolean lors;
-		if (s.equals("o-o")) {
-			lors = false;
-		} else if (s.equals("o-o-o")) {
-			lors = true;
-		} else
-			return false;
-
-		if (!chess.castling(lors))
-			view.printOut("You cannot do castling, please check the rules for castling.");
-		return true;
-	}
-
-	/**
-	 * Find out if it is legal to claim draw. If it is, ends the game and claim
-	 * draw, otherwise send a request for draw, and wait for the reply of
-	 * opponent.
-	 * 
-	 * @return
-	 */
-	public void askForDraw() {
-		int status = chess.askForDraw();
-		if (status == 0) {
-			while (true) {
-				String command = JOptionPane.showInputDialog("Do you agree draw?");
-				if (command.isEmpty())
-					continue;
-				if (command.toLowerCase().startsWith("yes")) {
-					chess.draw("Agreement to draw", "Draw by Agreement.");
-					return;
-				} else if (command.toLowerCase().startsWith("no")) {
-					chess.setRightToRequestDraw();
-					view.printOut("Request declined");
-					return;
-				}
-			}
-		} else if (status == -1) {
-			view.printOut("You cannot request for draw again now.");
-		}
-
-	}
-
-	/**
-	 * print out the temporal piece that is chosen in the box
-	 * 
-	 * @param s
-	 */
-	protected void printchosenPiece(String s) {
-		if (s.charAt(0) == 'P')
-			view.printTemp(s.substring(1));
-		else
-			view.printTemp(s);
-	}
-
-	/**
-	 * when one possible piece is chosen, highlight it and all the spots it can
-	 * move to.
-	 * 
-	 * @param piece
-	 */
-	public void setChosenPiece(Piece piece) {
-		chosen = piece;
-		squareToLabel(piece.getP()).highLight();
-		for (Square i : chess.getAllSquares())
-			if (!i.occupiedBy(chess.getWhoseTurn()))
-				if (chosen.canGo(i)) {
-					squareToLabel(i).highLight();
-				}
 	}
 
 	private SquareLabel squareToLabel(Square sqr) {
@@ -383,7 +244,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			} else if (c.equals("resign")) {
 				chess.resign();
 			} else if (c.equals("draw")) {
-				askForDraw();
+				drawRequest.askForDraw();
 			} else if (!makeMove(c)) { // makeMove return true if the move is
 										// performed
 				view.printOut(ERROR_MESSAGE);
@@ -443,39 +304,21 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	}
 
 	@Override
-	public void win(boolean whiteOrBlack, String outprint, String descript) {
-		view.setStatusLabelText(descript);
-		view.printOut(outprint);
-		// if (whiteOrBlack) {
-		// view.printOut("WHITE wins!!");
-		// } else {
-		// view.printOut("BLACK wins!!");
-		// }
+	public void endGame(EndGame end) {
+		view.setStatusLabelText(end.getDescript());
+		view.printOut(end.getPrintOut());
 	}
 
 	@Override
-	public void draw(String outprint, String descript) {
-		view.setStatusLabelText(descript);
-		view.printOut(outprint);
-		// view.printOut("Draw.");
-	}
-
-	@Override
-	public void nextMove(boolean whoseTurn) {
+	public void nextMove(Move previousMove) {
 		view.setStatusLabelText(chess.lastMoveDiscript());
 		view.cleanTemp();
 		view.printOut(chess.lastMoveOutPrint());
-		if (whoseTurn) {
-			view.printOut("Next move -- white");
-		} else {
+		if (previousMove.getWhoseTurn()) {
 			view.printOut("Next move -- black");
+		} else {
+			view.printOut("Next move -- white");
 		}
-	}
-
-	@Override
-	public void endOfGame(EndGame end) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -494,8 +337,80 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 					return new Bishop(wb, end);
 				else if (a == 'N')
 					return new Knight(wb, end);
-
 			}
 		}
 	}
+
+	class DrawRequest {
+		private boolean white;
+		private boolean black;
+
+		protected DrawRequest() {
+			white = true;
+			black = true;
+		}
+
+		/**
+		 * If one player make a request for draw, and is declined, this method
+		 * will be called.
+		 * 
+		 * @param whoseTurn
+		 *            who makes the request for draw
+		 */
+		private void setRightToRequestDraw(boolean whoseTurn) {
+			if (whoseTurn) {
+				white = false;
+				black = true;
+			} else {
+				white = true;
+				black = false;
+			}
+		}
+
+		/**
+		 * 
+		 * @param whoseTurn
+		 *            who should play next move
+		 * @return true if he can request for draw
+		 */
+		private boolean canAskFordraw(boolean whoseTurn) {
+			if (whoseTurn)
+				return white;
+			else
+				return black;
+		}
+
+		/**
+		 * Find out if it is legal to claim draw. If it is, ends the game and
+		 * claim draw, otherwise send a request for draw, and wait for the reply
+		 * of opponent.
+		 * 
+		 * @return
+		 */
+		public void askForDraw() {
+			Draw canClaimDraw = chess.canClaimDraw();
+			if (canClaimDraw == null) {
+				if (canAskFordraw(chess.getWhoseTurn())) {
+					while (true) {
+						String command = JOptionPane.showInputDialog("Do you agree draw?");
+						if (command.isEmpty())
+							continue;
+						if (command.toLowerCase().startsWith("yes")) {
+							chess.endGame(Draw.AGREEMENT);
+							return;
+						} else if (command.toLowerCase().startsWith("no")) {
+							drawRequest.setRightToRequestDraw(chess.getWhoseTurn());
+							view.printOut("Request declined");
+							return;
+						}
+					}
+				} else {
+					view.printOut("You cannot request for draw again now.");
+				}
+			} else {
+				chess.endGame(canClaimDraw);
+			}
+		}
+	}
+
 }

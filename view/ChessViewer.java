@@ -23,6 +23,7 @@ public class ChessViewer extends JFrame {
 	private static final int CONSOLE_FONT_SIZE = 20;
 	private static final Font FONT_CONSOLE = new Font("Serif", Font.PLAIN, CONSOLE_FONT_SIZE);
 
+	private boolean wb;
 	private ChessViewerControl viewControl;
 	private JLabel statusLabel;
 	private SquareLabel[][] labels;
@@ -34,10 +35,17 @@ public class ChessViewer extends JFrame {
 	 * construct a chess view given a controller
 	 * 
 	 * @param controller
+	 * @param b 
 	 */
-	public ChessViewer(ChessViewerControl controller) {
-		super("The Great Chess Game");
+	public ChessViewer(ChessViewerControl controller, boolean whiteOrBlack) {
 		this.viewControl = controller;
+		this.wb = whiteOrBlack;
+		if (wb){
+			setTitle("The Great Chess Game white view");
+		}else{
+			setTitle("The Great Chess Game black view");
+		}
+			
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// configure chess board
@@ -55,13 +63,13 @@ public class ChessViewer extends JFrame {
 					labels[i][j] = new SquareLabel();
 					String s = "";
 					if (i > 0)
-						s += (char) (i + 96);
+						s += (char) (wb? (i + 96) : (105 - i));
 					labels[i][j].setText(s);
 					labels[i][j].setOpaque(false);
 				} else if (i == 0) {
 					labels[i][j] = new SquareLabel();
 					String s = "";
-					s += (8 - j);
+					s += wb? (8 - j) : j+1;
 					labels[i][j].setText(s);
 					labels[i][j].setOpaque(false);
 				} else {
@@ -117,7 +125,7 @@ public class ChessViewer extends JFrame {
 	 * @return {link {@link SquareLabel} at (x , y) coordinate
 	 */
 	public SquareLabel labelAt(int x, int y) {
-		return labels[x][8 - y];
+		return wb? labels[x][8 - y] : labels[9-x][y-1];
 	}
 
 	/**

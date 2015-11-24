@@ -23,7 +23,6 @@ public abstract class Piece implements Comparable<Piece> {
 
 	// ------------------------------------------------------------------------------------------------------------------------
 	// accessors
-	
 	public String getName(){
 		return getClass().getName();
 	}
@@ -59,6 +58,8 @@ public abstract class Piece implements Comparable<Piece> {
 	public int getY() {
 		return spot.Y();
 	}
+	
+	// modifiers
 
 	/**
 	 * Only place in this program that can change the position of a spot.
@@ -85,18 +86,14 @@ public abstract class Piece implements Comparable<Piece> {
 	 */
 	public abstract Move legalPosition(Square end);
 
+	/**
+	 * This method takes everything into account, including giving away king, castling, En Passant
+	 * 
+	 * @param end
+	 * @return true if it is safe to make this move.
+	 */
 	public boolean canGo(Square end){
 		return canCapture(end) !=null || canMove(end) != null;
-//		Move move =  canMove(end) ;
-//		Move capture =  canCapture(end);
-//		if (move != null && capture == null)
-//			return move;
-//		else if (move==null && capture !=null)
-//			return capture;
-//		else if (move!=null && capture != null)	
-//			throw new RuntimeException();
-//		else
-//			return null;
 	}
 
 	/**
@@ -135,6 +132,11 @@ public abstract class Piece implements Comparable<Piece> {
 		return legalPosition(end);
 	}
 
+	/**
+	 * 
+	 * @param c
+	 * @return the corresponding class
+	 */
 	public static Class<?extends Piece> getType(char c){
 		switch (Character.toUpperCase(c)) {
 		case 'P':return Pawn.class;

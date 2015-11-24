@@ -23,7 +23,6 @@ public class SquareLabel extends JLabel {
 	private static final Color TEXT_COLOR_BALCK = Color.black;
 	private static final Color TEXT_COLOR_WHITE = Color.red;
 
-//	private String name;
 	int x;
 	int y;
 	private Color originalColor;
@@ -64,9 +63,10 @@ public class SquareLabel extends JLabel {
 	// ------------------------------------------------------------------------------------------------------------------
 	// accessors
 	
-//	public String toString() {
-//		return name;
-//	}
+	public String toString() {
+		return "("+x+","+y+")";
+	}
+	
 	public int X() {
 		return x;
 	}
@@ -99,12 +99,12 @@ public class SquareLabel extends JLabel {
 	 * upDate the color and text of this JLabel.
 	 */
 	public void upDatePiece(char type, boolean wb) {
-			setText("" + type);
-			if (wb)
-				setForeground(TEXT_COLOR_WHITE);
-			else
-				setForeground(TEXT_COLOR_BALCK);
-		
+		setText("" + type);
+		if (wb)
+			setForeground(TEXT_COLOR_WHITE);
+		else
+			setForeground(TEXT_COLOR_BALCK);
+
 	}
 	
 }

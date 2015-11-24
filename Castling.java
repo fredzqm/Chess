@@ -10,13 +10,19 @@ public class Castling extends Move {
 	
 	/**
 	 * it creates a record of castling
-	 * @param king   the king involved
-	 * @param kingStart  the start square of the king
-	 * @param kingEnd  the end square of the king
-	 * @param rook  the rook involved in this castling
-	 * @param rookStart  the starting position of this rook
-	 * @param time  the round number of this casting
-	 * @param check  whether this castling make a check.
+	 * 
+	 * @param king
+	 *            the king involved
+	 * @param kingStart
+	 *            the start square of the king
+	 * @param kingEnd
+	 *            the end square of the king
+	 * @param rook
+	 *            the rook involved in this castling
+	 * @param rookStart
+	 *            the starting position of this rook
+	 * @param time
+	 *            the round number of this casting
 	 */
 	public Castling(King king, Square kingStart, Square kingEnd, Rook rook,Square rookStart , int round) {
 		super(king, kingStart, null, kingEnd, round);
@@ -28,7 +34,7 @@ public class Castling extends Move {
 		this.rookStart = rookStart;
 	}
 	
-	public String outPrint(){
+	public String getDoc(){
 		String s;
 		if (longOrShort)
 			s = "O-O-O";
@@ -38,13 +44,20 @@ public class Castling extends Move {
 			s +="+";
 		return s;
 	}
+	
+	public String getPrintOut() {
+		return getDoc() + " Successfully castling!";
+	}
+	
 	public void undo(Chess c){
 		moved.moveTo(start);
 		rook.moveTo(rookStart);
 	}
+	
 	public boolean notQuiet(){
 		return false;
 	}
+	
 	public String getDescript() {
 		String s = "";
 		if (wb)
@@ -62,31 +75,24 @@ public class Castling extends Move {
 	}
 	
 	public void performMove(Chess chess) {
-//		public void castling(Chess chess, boolean longOrShort) {
-			Square kingStart = start;
-			Square kingEnd;
-			Square rookStart;
-			Square rookEnd;
-			Piece rook;
-			int y = moved.getY();
-			if (longOrShort) {
-				kingEnd = chess.spotAt(3, y);
-				rookStart = chess.spotAt(1, y);
-				rookEnd = chess.spotAt(4, y);
-				rook = chess.spotAt(1, y).getPiece();
-			} else {
-				kingEnd = chess.spotAt(7, y);
-				rookStart = chess.spotAt(8, y);
-				rookEnd = chess.spotAt(6, y);
-				rook = chess.spotAt(8, y).getPiece();
-			}
-//			chess.addRecord(this, kingStart, kingEnd, (Rook) rook, rookStart, rookEnd);
-			moved.moveTo(kingEnd);
-			rook.moveTo(rookEnd);
+		Square kingEnd;
+		Square rookEnd;
+		Piece rook;
+		int y = moved.getY();
+		if (longOrShort) {
+			kingEnd = chess.spotAt(3, y);
+			rookStart = chess.spotAt(1, y);
+			rookEnd = chess.spotAt(4, y);
+			rook = chess.spotAt(1, y).getPiece();
+		} else {
+			kingEnd = chess.spotAt(7, y);
+			rookStart = chess.spotAt(8, y);
+			rookEnd = chess.spotAt(6, y);
+			rook = chess.spotAt(8, y).getPiece();
+		}
+		moved.moveTo(kingEnd);
+		rook.moveTo(rookEnd);
 
-			checkOrNot = chess.checkOrNot(chess.getWhoseTurn());
-			// return "castling sucessful! " + // TODO: get those printed
-//			chess.wrapMove();
-//		}
+		checkOrNot = chess.checkOrNot(chess.getWhoseTurn());
 	}
 }

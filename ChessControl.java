@@ -7,10 +7,17 @@ import javax.swing.JOptionPane;
 
 public class ChessControl implements ChessViewerControl, ChessListener {
 
+	/**
+	 * printed when command line input cannot be recognized
+	 */
 	public static final String ERROR_MESSAGE = "Please enter the move as (The type of chessman)(the start position)(its action)(the end position)\n"
 			+ "you can omit the \"P\" at the begining for a pawn." + "for casting, enter \"O-O\" or \"O-O-O\"\n"
-			+ "for examples, \"e2-e4\", \"Nb2-c3\" ";
+			+ "for examples, \"e2-e4\", \"Nb2-c3\" \n"
+			+ "If you need further help, type \"help\"";
 
+	/**
+	 * printed when asked for help message
+	 */
 	public static final String HELP_MESSAGE = "Enter commands:\n" + "enter 'undo' to undo the previous round;\n"
 			+ "enter 'restart' to start a new game over;\n'" + "enter 'print' to print all the records;\n"
 			+ "enter 'resign' to give up;\n" + "enter 'draw' to request for draw;\n"
@@ -18,6 +25,9 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			+ "enter 'rules for ....' to get help about the rules of chess.\n"
 			+ "    Castling, Pawn, King, Queen, Rook, Bishop, Knight, En Passant, Promotion.";
 
+	/**
+	 * rule message
+	 */
 	public static final HashMap<String, String> rules = new HashMap<String, String>() {
 		{
 			put("castling",
@@ -47,10 +57,10 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		}
 	};
 
-	ChessViewer view;
-	Chess chess;
-	Piece chosen;
-	DrawRequest drawRequest;
+	private ChessViewer view;
+	private Chess chess;
+	private Piece chosen;
+	private Request drawRequest;
 
 	/**
 	 * start my little chess game!!!!
@@ -62,11 +72,9 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		chess = new Chess();
 		chess.addChessListener(this);
 		chosen = null;
-		drawRequest = new DrawRequest();
+		drawRequest = new Request();
 
 		view = new ChessViewer(this);
-		view.setVisible(true);
-		view.pack();
 		for (Square s : chess.getAllSquares())
 			updateSquare(s);
 	}
@@ -76,7 +84,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		chess = new Chess();
 		chess.addChessListener(this);
 		chosen = null;
-		drawRequest = new DrawRequest();
+		drawRequest = new Request();
 
 		view.deHighLightWholeBoard();
 		view.setStatusLabelText("       Welcome to Another Wonderful Chess Game         ");
@@ -211,15 +219,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		return chess.spotAt(sql.X(), sql.Y());
 	}
 
-	/**
-	 * handle command and call the relevant method
-	 * 
-	 * @param s
-	 *            the input string
-	 * @param chess
-	 *            the game class
-	 * @return the next output line
-	 */
+	@Override
 	public void handleCommand(String command) {
 		String c = command.toLowerCase();
 		if (c.length() == 0)
@@ -253,14 +253,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 
 	}
 
-	/**
-	 * this mehod will be called if the user click on the board. It will find
-	 * out whether the user has suggest a legal move, and provides proper
-	 * outputs.
-	 * 
-	 * @param spot
-	 *            the square that is clicked
-	 */
+	@Override
 	public void click(SquareLabel label) {
 		if (chess.hasEnd()) {
 			view.printOut("Game is already over! Type restart to start a new game");
@@ -342,22 +335,23 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		}
 	}
 
-	class DrawRequest {
+
+	/**
+	 * According to the chess law, no player can request for draw consecutively.
+	 * if he has just made a request for draw, he cannot make another request
+	 * for draw, untill his opponent makes a request for draw, and is declined.
+	 * 
+	 * The class is made to decide whether a player can request for draw.
+	 */
+	protected class Request {
 		private boolean white;
 		private boolean black;
 
-		protected DrawRequest() {
+		protected Request() {
 			white = true;
 			black = true;
 		}
 
-		/**
-		 * If one player make a request for draw, and is declined, this method
-		 * will be called.
-		 * 
-		 * @param whoseTurn
-		 *            who makes the request for draw
-		 */
 		private void setRightToRequestDraw(boolean whoseTurn) {
 			if (whoseTurn) {
 				white = false;
@@ -368,12 +362,6 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			}
 		}
 
-		/**
-		 * 
-		 * @param whoseTurn
-		 *            who should play next move
-		 * @return true if he can request for draw
-		 */
 		private boolean canAskFordraw(boolean whoseTurn) {
 			if (whoseTurn)
 				return white;
@@ -382,8 +370,10 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		}
 
 		/**
-		 * Find out if it is legal to claim draw. If it is, ends the game and
-		 * claim draw, otherwise send a request for draw, and wait for the reply
+		 * invoked when one player is asking for a draw.
+		 * 
+		 * Find out if the game satisfied automatic draw condition due to FIFTY_MOVE or REPETITION {@link Draw. End the game and
+		 * claim draw if those conditions are met. Otherwise, send a request for draw, and wait for the reply
 		 * of opponent.
 		 * 
 		 * @return
@@ -414,7 +404,8 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		}
 		
 		/**
-		 * This method is caled if the player resigns. It will ends the game.
+		 * Invoked if a player resigns. It will ends the game.
+		 * However, if the game satisfied automatic draw condition, the game will be draw instead.
 		 * 
 		 * @return
 		 */

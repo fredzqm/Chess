@@ -1,4 +1,10 @@
-
+/**
+ * End game type Draw
+ * We can even add more complex draw type later, and change their outputs
+ * 
+ * @author FredZhang
+ *
+ */
 public enum Draw implements EndGame{
 	STALEMENT("Stalement", "Draw due to Stalement."), 
 	FIFTY_MOVE("Quite" , "Fifty-move rule."), 

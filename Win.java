@@ -1,3 +1,10 @@
+/**
+ * End game type Win
+ * We can even add more complex draw type later, and change their outputs
+ * 
+ * @author FredZhang
+ *
+ */
 public enum Win implements EndGame {
 	WHITECHECKMATE(true, "White wins! -- CHECKMATE!!" , "WHITE Checkmates the BLACK, WHITE wins!!" ),
 	BLACKCHECKMATE(false, "Black wins! -- CHECKMATE!!" , "BLACK Checkmates the WHITE, BLACK wins!!" ),

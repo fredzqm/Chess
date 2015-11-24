@@ -28,8 +28,6 @@ public class Move {
 	 *            the end position of this move
 	 * @param time
 	 *            which round this move happens
-	 * @param checkOrNot
-	 *            whether this move check the opponent
 	 */
 	public Move(Piece moved, Square start, Piece taken, Square end, int round) {
 		this.round = round;
@@ -42,9 +40,9 @@ public class Move {
 	}
 
 	/**
-	 * @return the output words that will appeal in the box.
+	 * @return the documentation in standard chess convention
 	 */
-	public String outPrint() {
+	public String getDoc() {
 		String s = "";
 		if (moved.isType(Pawn.class))
 			s += moved.getType();
@@ -67,8 +65,15 @@ public class Move {
 	}
 
 	/**
+	 * @return the messages necessary to printOut in the console
+	 */
+	public String getPrintOut() {
+		return getDoc();
+	}
+	
+	/**
 	 * 
-	 * @return the words that will appear in the top label of the window
+	 * @return the description of this move, which will appear in the top label of the window
 	 */
 	public String getDescript() {
 		if (endGame != null)
@@ -138,10 +143,10 @@ public class Move {
 		String s = "";
 		if (wb) {
 			s += round + ". ";
-			s += outPrint();
+			s += getDoc();
 		} else {
 			s += " ";
-			s += outPrint();
+			s += getDoc();
 			s += "\n";
 		}
 		return s;
@@ -153,7 +158,7 @@ public class Move {
 	 * 
 	 * @return true if this move can be redo over and over again later.
 	 */
-	public boolean notQuiet() {
+	protected boolean notQuiet() {
 		return taken != null || moved.isType(Pawn.class);
 	}
 
@@ -172,7 +177,7 @@ public class Move {
 	}
 
 	public String toString() {
-		return outPrint() + " " + getDescript();
+		return getPrintOut() + " " + getDescript();
 	}
 
 	public void performMove(Chess chess) {
@@ -186,7 +191,6 @@ public class Move {
 		return wb;
 	}
 
-	// games ends
 	/**
 	 * 
 	 * ends the game as draw

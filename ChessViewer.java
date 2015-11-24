@@ -15,32 +15,37 @@ import javax.swing.JTextArea;
 @SuppressWarnings("serial")
 public class ChessViewer extends JFrame {
 
-	private static final int WIDTH = 50;
+	public static final int CHESSOBARD_WIDTH = 50;
 	private static final Font FONT_PIECE = new Font("Serif", Font.PLAIN, 40);
-	private static final Font FONT_STATUS = new Font("Serif", Font.PLAIN, 40);
+	private static final Font FONT_STATUS_LABEL = new Font("Serif", Font.PLAIN, 40);
 	private static final int CONSOLE_FONT_SIZE = 20;
 	private static final Font FONT_CONSOLE = new Font("Serif", Font.PLAIN, CONSOLE_FONT_SIZE);
 
-	ChessViewerControl viewControl;
+	private ChessViewerControl viewControl;
 	private JLabel statusLabel;
 	private SquareLabel[][] labels;
 
 	private JTextArea myConsole;
 	private String existence;
 
+	/**
+	 * construct a chess view given a controller
+	 * 
+	 * @param controller
+	 */
 	public ChessViewer(ChessViewerControl controller) {
 		super("The Great Chess Game");
-
 		this.viewControl = controller;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		// configure chess board
 		JPanel chessBoardSpace = new JPanel();
 		chessBoardSpace.setLayout(new FlowLayout());
 		chessBoardSpace.setVisible(true);
 		JPanel chessBoard = new JPanel();
-		chessBoard.setSize(WIDTH * 9, WIDTH * 9);
+		chessBoard.setSize(CHESSOBARD_WIDTH * 9, CHESSOBARD_WIDTH * 9);
 		chessBoard.setLayout(new GridLayout(9, 9));
 		chessBoard.setVisible(true);
-
 		labels = new SquareLabel[9][9];
 		for (int j = 0; j < 9; j++) {
 			for (int i = 0; i < 9; i++) {
@@ -60,17 +65,19 @@ public class ChessViewer extends JFrame {
 				} else {
 					labels[i][j] = new SquareLabel(i, j, controller);
 				}
-				labels[i][j].setPreferredSize(new Dimension(WIDTH, WIDTH));
+				labels[i][j].setPreferredSize(new Dimension(CHESSOBARD_WIDTH, CHESSOBARD_WIDTH));
 				labels[i][j].setFont(FONT_PIECE);
 				chessBoard.add(labels[i][j]);
 			}
 		}
 		chessBoardSpace.add(chessBoard);
 
+		// configure status label
 		statusLabel = new JLabel("            Welcome to Wonderful Chess Game             ", JLabel.CENTER);
-		statusLabel.setFont(FONT_STATUS);
+		statusLabel.setFont(FONT_STATUS_LABEL);
 		statusLabel.setVisible(true);
 
+		// configure console panel
 		JPanel consolePanel = new JPanel();
 		consolePanel.setLayout(new FlowLayout());
 		consolePanel.setVisible(true);
@@ -97,58 +104,70 @@ public class ChessViewer extends JFrame {
 		add(statusLabel, BorderLayout.NORTH);
 		add(chessBoardSpace, BorderLayout.CENTER);
 		add(consolePanel, BorderLayout.SOUTH);
-	}
-
-	public SquareLabel labelAt(int i, int j) {
-		return labels[i][8 - j];
+		setVisible(true);
+		pack();
 	}
 
 	/**
-	 * print out the outPut in the console.
 	 * 
-	 * @param outPut
+	 * @param x
+	 * @param y
+	 * @return {link {@link SquareLabel} at (x , y) coordinate
 	 */
-	public void printOut( String outPut) {
-			existence = myConsole.getText();
-		if (outPut != null) {
-			existence = existence + outPut + "\n";
+	public SquareLabel labelAt(int x, int y) {
+		return labels[x][8 - y];
+	}
+
+	/**
+	 * print the message in the console.
+	 * 
+	 * @param message
+	 */
+	public void printOut(String message) {
+		existence = myConsole.getText();
+		if (message != null) {
+			existence = existence + message + "\n";
 			myConsole.setText(existence);
 		}
 	}
 
 	/**
-	 * print out the temporal string in the console. This string can be erase
-	 * later.
+	 * print out the temporal string in the console, without updating the
+	 * record. The temp string printed can be clear with
+	 * {@link ChessViewer#cleanTemp()}
 	 * 
-	 * @param s
+	 * @param temp
 	 */
-	public void printTemp(String s) {
-		myConsole.setText(existence + s);
+	public void printTemp(String temp) {
+		myConsole.setText(existence + temp);
 	}
 
 	/**
-	 * erase the temporal string in the console
+	 * erase the temporal string in the console printed by
+	 * {@link ChessViewer#printTemp(String)}
 	 */
 	public void cleanTemp() {
 		myConsole.setText(existence);
 	}
 
-	public void setStatusLabelText(String s) {
-		statusLabel.setText(s);
+	/**
+	 * 
+	 * @param str
+	 */
+	public void setStatusLabelText(String str) {
+		statusLabel.setText(str);
 	}
 
 	/**
-	 * show the label at (x, y) in the chess board view
+	 * show the label at (x, y) in the chess board view to indicate a chessman piece
 	 * 
 	 * @param x
 	 * @param y
-	 * @param type
-	 *            type of piece to display
-	 * @param wb
-	 *            white or black
+	 * @param label
+	 * @param whiteOrBlack
 	 */
-	public void showLabel(int x, int y, char type, boolean wb) {
-		labelAt(x, y).upDatePiece(type, wb);
+	public void showLabel(int x, int y, char label, boolean whiteOrBlack) {
+		labelAt(x, y).upDatePiece(label, whiteOrBlack);
 	}
 
 	/**

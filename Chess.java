@@ -207,7 +207,7 @@ public class Chess {
 			set = black;
 
 		for (Piece i : set) {
-			if (i.isType(type) && (i.canGo(end) != null))
+			if (i.isType(type) && i.canGo(end))
 				possible.add(i);
 		}
 		return possible;
@@ -288,7 +288,7 @@ public class Chess {
 		for (Piece i : inCheck) {
 			for (Square[] r : spots) {
 				for (Square p : r) {
-					if (i.canGo(p) != null)
+					if (i.canGo(p))
 						return false;
 				}
 			}
@@ -431,7 +431,10 @@ public class Chess {
 	 *         or as part of the records.
 	 */
 	public String lastMoveOutPrint() {
-		return records.lastOutPrint();
+		Move move = lastMove();
+		if (move == null)
+			return "Hasn't start the chess yet!";
+		return move.outPrint();
 	}
 
 	/**
@@ -440,13 +443,18 @@ public class Chess {
 	 *         the top label.
 	 */
 	public String lastMoveDiscript() {
-		if (records.size() == 0)
-			return "Welcome to Greate Chess Game!";
-		return records.lastDescript();
+		Move move = lastMove();
+		if (move == null)
+			return "Hasn't start the chess yet!";
+		return move.getDescript();
 	}
 
 	// --------------------------------------------------------------------------------------------------------------
 	// the methods to modifies the chess board.
+
+	public Move lastMove() {
+		return records.lastMove();
+	}
 
 	/**
 	 * 
@@ -535,6 +543,7 @@ public class Chess {
 
 		if (canCastling(king, longOrShort) != null ) {
 			king.castling(this, longOrShort);
+			wrapMove();
 			return true;
 		}
 		return false;
@@ -544,17 +553,28 @@ public class Chess {
 	 * perform command to move piece to certain spot
 	 * 
 	 * @param piece
-	 * @param spot
+	 * @param end
 	 * @return true if move is valid, false if not allowed by chess rule
 	 */
-	public boolean performMove(Piece piece, Square spot) {
-		// if (piece.canMove(spot))
-		// piece.move(spot);
-		// else if (piece.canCapture(spot))
-		// piece.capture(spot, spot.getPiece());
-		if (piece.canGo(spot) != null)
-			piece.makeMove(spot, spot.getPiece());
-		else
+	public boolean performMove(Piece piece, Square end) {
+//		Move move = piece.canGo(spot);
+		Move move =  piece.canMove(end) ;
+		if ( move == null)
+			move =  piece.canCapture(end);
+//		if (move != null && capture == null)
+//			return move;
+//		else if (move==null && capture !=null)
+//			return capture;
+//		else if (move!=null && capture != null)	
+//			throw new RuntimeException();
+//		else
+//			return null;
+		if ( move != null){
+			piece.makeMove(end, end.getPiece());
+			wrapMove();
+			System.out.println(lastMove());
+			System.out.println(move);
+		}else
 			return false;
 		return true;
 	}

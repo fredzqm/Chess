@@ -246,5 +246,9 @@ public class Move {
 		}
 		endGame = s;
 	}
+	
+	public String toString(){
+		return outPrint()+" "+getDescript();
+	}
 
 }

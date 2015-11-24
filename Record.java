@@ -41,17 +41,24 @@ public class Record implements Iterable<Move> {
 		return list.remove(i);
 	}
 
-	public String lastOutPrint() {
+	
+	public Move lastMove() {
 		if (isEmpty())
-			return "Hasn't start the chess yet!" ;
-		return get(size() - 1).outPrint();
+			return null ;
+		return get(size() - 1) ;
 	}
 
-	public String lastDescript() {
-		if (isEmpty())
-			return "Hasn't start the chess yet!" ;
-		return get(size() - 1).getDescript();
-	}
+//	public String lastOutPrint() {
+//		if (isEmpty())
+//			return "Hasn't start the chess yet!" ;
+//		return get(size() - 1).outPrint();
+//	}
+//
+//	public String lastDescript() {
+//		if (isEmpty())
+//			return "Hasn't start the chess yet!" ;
+//		return get(size() - 1).getDescript();
+//	}
 
 	public boolean draw(String descript) {
 		if (isEmpty())
@@ -66,6 +73,7 @@ public class Record implements Iterable<Move> {
 		get(size() - 1).win(who , descrpt);
 		return true;
 	}
+
 
 
 }

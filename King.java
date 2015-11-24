@@ -59,7 +59,7 @@ public class King extends Piece {
 		Square start = spot;
 		moveTo(end);
 		chess.addRecord(this, start, taken, end);
-		chess.wrapMove();
+//		chess.wrapMove();
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class King extends Piece {
 		moveTo(kingEnd);
 		rook.moveTo(rookEnd);
 		// return "castling sucessful! " + // TODO: get those printed
-		chess.wrapMove();
+//		chess.wrapMove();
 	}
 
 	@Override

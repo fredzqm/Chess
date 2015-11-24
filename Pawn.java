@@ -146,7 +146,7 @@ public class Pawn extends Piece {
 			moveTo(end);
 			chess.addRecord(this, start, taken, end);
 		}
-		chess.wrapMove();
+//		chess.wrapMove();
 	}
 
 	protected boolean canPromote(Square end) {

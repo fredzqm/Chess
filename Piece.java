@@ -87,17 +87,18 @@ public abstract class Piece implements Comparable<Piece> {
 	 */
 	public abstract Move legalPosition(Square end);
 
-	public Move canGo(Square end){
-		Move move =  canMove(end) ;
-		Move capture =  canCapture(end);
-		if (move != null && capture == null)
-			return move;
-		else if (move==null && capture !=null)
-			return capture;
-		else if (move!=null && capture != null)	
-			throw new RuntimeException();
-		else
-			return null;
+	public boolean canGo(Square end){
+		return canCapture(end) !=null || canMove(end) != null;
+//		Move move =  canMove(end) ;
+//		Move capture =  canCapture(end);
+//		if (move != null && capture == null)
+//			return move;
+//		else if (move==null && capture !=null)
+//			return capture;
+//		else if (move!=null && capture != null)	
+//			throw new RuntimeException();
+//		else
+//			return null;
 	}
 
 	/**
@@ -153,7 +154,6 @@ public abstract class Piece implements Comparable<Piece> {
 		Square start = spot;
 		moveTo(end);
 		chess.addRecord(this, start, taken, end);
-		chess.wrapMove();
 	}
 
 	public static Class<?extends Piece> getType(char c){

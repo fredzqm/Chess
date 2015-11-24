@@ -317,13 +317,6 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		if (possible.size() == 0) {
 			view.printOut("Ambiguity: No one can reach that spot.");
 		} else if (possible.size() == 1) {
-			// String newStr = "" + type;
-			// newStr += possible.get(0).getP().toString();
-			// if (takeOrNot)
-			// newStr += "x";
-			// else
-			// newStr += "-";
-			// newStr += end.toString();
 			chess.performMove(possible.get(0), end);
 		} else {
 			view.printOut("Ambiguity: This can represent many different moves.");
@@ -355,28 +348,9 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			}
 		} else if (status == -1) {
 			view.printOut("You cannot request for draw again now.");
-			// }else if (status == 1){
-			// draw(outprint, descript);
 		}
 
 	}
-
-	// chess.printInBox("Please choose one kind of piece to promote to -- Q, N,
-	// R, B");
-	// String s = JOptionPane.showInputDialog("Promotion to !?");
-	// if (!s.isEmpty()) {
-	// s = s.toUpperCase();
-	// char a = s.charAt(0);
-	// if (a == 'Q')
-	// return new Queen('Q', wb, end);
-	// else if (a == 'R')
-	// return new Rook('R', wb, end);
-	// else if (a == 'B')
-	// return new Bishop('B', wb, end);
-	// else if (a == 'N')
-	// return new Knight('N', wb, end);
-	// }
-	// return promotion(end);
 
 	/**
 	 * print out the temporal piece that is chosen in the box
@@ -390,12 +364,6 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 			view.printTemp(s);
 	}
 
-	// private void performMove(Piece movedChessman, Square end) {
-	// if (!chess.performMove(movedChessman, end))
-	// view.printOut("Illegal move! Please check the rule of " +
-	// movedChessman.getName() + "!");
-	// }
-
 	/**
 	 * when one possible piece is chosen, highlight it and all the spots it can
 	 * move to.
@@ -407,7 +375,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 		squareToLabel(piece.getP()).highLight();
 		for (Square i : chess.getAllSquares())
 			if (!i.occupiedBy(chess.getWhoseTurn()))
-				if (chosen.canGo(i) != null) {
+				if (chosen.canGo(i)) {
 					squareToLabel(i).highLight();
 				}
 	}
@@ -490,7 +458,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 					squareToLabel(chosen.getP()).highLight();
 					for (Square i : chess.getAllSquares())
 						if (!i.occupiedBy(chess.getWhoseTurn()))
-							if (chosen.canGo(i) != null)
+							if (chosen.canGo(i))
 								squareToLabel(i).highLight();
 
 					if (spot.getPiece().isType(Pawn.class))

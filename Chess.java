@@ -541,8 +541,11 @@ public class Chess {
 		else
 			king = (King) black.get(0);
 
-		if (canCastling(king, longOrShort) != null ) {
-			king.castling(this, longOrShort);
+		Move move = canCastling(king, longOrShort);
+				if (move != null){
+//			king.castling(this, longOrShort);
+					move.performMove(this);
+					records.add(move);
 			wrapMove();
 			return true;
 		}
@@ -570,13 +573,20 @@ public class Chess {
 //		else
 //			return null;
 		if ( move != null){
-			piece.makeMove(end, end.getPiece());
+			move.performMove(this);
+//			piece.makeMove(end, end.getPiece());
+			records.add(move);
 			wrapMove();
-			System.out.println(lastMove());
-			System.out.println(move);
+//			System.out.println(lastMove());
+//			System.out.println(move);
 		}else
 			return false;
 		return true;
+	}
+
+	private void performMove(Move move) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/**

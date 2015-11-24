@@ -46,22 +46,6 @@ public class King extends Piece {
 		return legalPosition(end) ;
 	}
 
-	public void makeMove(Square end, Piece taken) {
-		if (taken == null) {
-			if ((spot.X() - end.X()) > 1)
-				castling(chess, true);
-			else if (end.X() - spot.X() > 1)
-				castling(chess, false);
-			return;
-		}
-		if (taken != null)
-			chess.takeOffBoard(taken);
-		Square start = spot;
-		moveTo(end);
-		chess.addRecord(this, start, taken, end);
-//		chess.wrapMove();
-	}
-
 	/**
 	 * carry on the castling of this king
 	 * 

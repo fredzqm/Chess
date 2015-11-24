@@ -82,71 +82,11 @@ public class Pawn extends Piece {
 			return capture;
 		} else {
 			if (chess.canEnPassant(end))
-				return new Move(this, spot, chess.spotAt(end.X(), spot.Y()).getPiece(), end, chess.getTime());
+				return new EnPassant(this, spot, chess.spotAt(end.X(), spot.Y()).getPiece(), end, chess.getTime());
 			return null;
 		}
 		// TODO: will it be necessary to create an En passant move class
 		// return chess.canEnPassant(end);
-	}
-
-	// @Override
-	// public void capture(Square end, Piece taken) {
-	// if (taken == null) {
-	// // s = "En Passant! "; TODO: get those printed
-	// taken = chess.spotAt(end.X(), spot.Y()).getPiece();
-	// if (taken == null)
-	// System.out.println("En Passant error!");
-	// }
-	// makeMove(end, taken);
-	// }
-
-	// public boolean canAttack(Square end) {
-	//
-	// if (spot == null)
-	// return false;
-	//
-	// if (Math.abs(end.X() - spot.X()) == 1) {
-	// if (wb) {
-	// if (end.Y() - spot.Y() == 1)
-	// return true;
-	// } else {
-	// if (end.Y() - spot.Y() == -1)
-	// return true;
-	// }
-	// }
-	// return false;
-	// }
-	//
-	// public boolean canCapture(Square end) {
-	// if (!canAttack(end))
-	// return false;
-	//
-	// if (end.occupiedBy(!wb))
-	// return canAttack(end) && end.occupiedBy(!wb) && !chess.giveAwayKing(this,
-	// spot, end.getPiece(), end, wb);
-	// else
-	// return chess.canEnPassant(end);
-	// }
-	//
-	public void makeMove(Square end, Piece taken) {
-		if ((canCapture(end)) != null && (taken == null)) {
-			// s = "En Passant! "; TODO: get those printed
-			taken = chess.spotAt(end.X(), spot.Y()).getPiece();
-			if (taken == null)
-				System.out.println("En Passant error!");
-		}
-
-		if (taken != null)
-			chess.takeOffBoard(taken);
-		Square start = spot;
-		if (canPromote(end)) {
-			Piece promotionTo = chess.promotion( wb , end);
-			chess.addPromotionRecord(this, start, taken, end, promotionTo);
-		} else {
-			moveTo(end);
-			chess.addRecord(this, start, taken, end);
-		}
-//		chess.wrapMove();
 	}
 
 	protected boolean canPromote(Square end) {

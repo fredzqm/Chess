@@ -286,44 +286,6 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	}
 
 	/**
-	 * Tranformed the abbreviated command to the complete one, or return error
-	 * if there is ambiguous about the abbreviated command.
-	 * 
-	 * @param s
-	 * @return
-	 */
-	public void abbreviation(String s) {
-		char type = Character.toUpperCase(s.charAt(0));
-		if (type == 'R' || type == 'N' || type == 'B' || type == 'Q' || type == 'K' || type == 'P')
-			s = s.substring(1);
-		else
-			type = 'P';
-
-		boolean takeOrNot = (s.charAt(0) == 'x');
-
-		if (takeOrNot)
-			s = s.substring(1);
-
-		Square end = null;
-		if (s.length() == 2)
-			end = chess.getSquare(s);
-		if (end == null) {
-			view.printOut("Incorrect format of abbreviation command.\n"
-					+ "You can omit the start spot of the move in the complete command.");
-			return;
-		}
-
-		ArrayList<Piece> possible = chess.possibleMovers(Piece.getType(type), end);
-		if (possible.size() == 0) {
-			view.printOut("Ambiguity: No one can reach that spot.");
-		} else if (possible.size() == 1) {
-			chess.performMove(possible.get(0), end);
-		} else {
-			view.printOut("Ambiguity: This can represent many different moves.");
-		}
-	}
-
-	/**
 	 * Find out if it is legal to claim draw. If it is, ends the game and claim
 	 * draw, otherwise send a request for draw, and wait for the reply of
 	 * opponent.

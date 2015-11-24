@@ -16,7 +16,6 @@ public class Move {
 	protected String endGame;
 	protected int result;
 
-	
 	/**
 	 * constructs a record
 	 * 
@@ -25,8 +24,7 @@ public class Move {
 	 * @param start
 	 *            the start position of this move
 	 * @param taken
-	 *            the piece that is captured, null if there is nothing
-	 *            captured.
+	 *            the piece that is captured, null if there is nothing captured.
 	 * @param end
 	 *            the end position of this move
 	 * @param time
@@ -44,7 +42,7 @@ public class Move {
 		endGame = null;
 		result = 0;
 	}
-	
+
 	/**
 	 * constructs a record
 	 * 
@@ -53,8 +51,7 @@ public class Move {
 	 * @param start
 	 *            the start position of this move
 	 * @param taken
-	 *            the piece that is captured, null if there is nothing
-	 *            captured.
+	 *            the piece that is captured, null if there is nothing captured.
 	 * @param end
 	 *            the end position of this move
 	 * @param time
@@ -62,8 +59,7 @@ public class Move {
 	 * @param checkOrNot
 	 *            whether this move check the opponent
 	 */
-	public Move(Piece moved, Square start, Piece taken, Square end, int time,
-			boolean checkOrNot) {
+	public Move(Piece moved, Square start, Piece taken, Square end, int time, boolean checkOrNot) {
 		this.time = time;
 		wb = moved.getWb();
 		this.moved = moved;
@@ -155,8 +151,7 @@ public class Move {
 	 */
 	public boolean canEnPassant(Square p) {
 		return moved.isType(Pawn.class)
-				&& (start.X() == p.X() && end.X() == p.X() && (start.Y() + end
-						.Y()) == (p.Y() * 2));
+				&& (start.X() == p.X() && end.X() == p.X() && (start.Y() + end.Y()) == (p.Y() * 2));
 	}
 
 	/**
@@ -168,10 +163,11 @@ public class Move {
 		moved.moveTo(start);
 		if (taken != null) {
 			chess.putBackToBoard(taken, end);
-			//check if this move is a En Passant, if it is move the taken Pawn to where it supposed to go
+			// check if this move is a En Passant, if it is move the taken Pawn
+			// to where it supposed to go
 			if (moved.isType(Pawn.class) && taken.isType(Pawn.class))
 				if (chess.canEnPassantFromUndoMethod(end))
-					taken.moveTo(chess.spotAt(end.X(), 3 + end.Y()/3));
+					taken.moveTo(chess.spotAt(end.X(), 3 + end.Y() / 3));
 		}
 	}
 
@@ -214,8 +210,7 @@ public class Move {
 			return false;
 		if (x instanceof Castling)
 			return false;
-		return moved.equals(x.moved) && start.equals(x.start)
-				&& end.equals(x.end);
+		return moved.equals(x.moved) && start.equals(x.start) && end.equals(x.end);
 	}
 
 	// games ends
@@ -246,9 +241,17 @@ public class Move {
 		}
 		endGame = s;
 	}
-	
-	public String toString(){
-		return outPrint()+" "+getDescript();
+
+	public String toString() {
+		return outPrint() + " " + getDescript();
+	}
+
+	public void performMove(Chess chess) {
+		if (taken != null)
+			chess.takeOffBoard(taken);
+//		Square start = spot;
+		moved.moveTo(end);
+//		chess.addRecord(this, start, taken, end);
 	}
 
 }

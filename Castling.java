@@ -81,4 +81,30 @@ public class Castling extends Move {
 		return s;
 	}
 	
+	public void performMove(Chess chess) {
+//		public void castling(Chess chess, boolean longOrShort) {
+			Square kingStart = start;
+			Square kingEnd;
+			Square rookStart;
+			Square rookEnd;
+			Piece rook;
+			int y = moved.getY();
+			if (longOrShort) {
+				kingEnd = chess.spotAt(3, y);
+				rookStart = chess.spotAt(1, y);
+				rookEnd = chess.spotAt(4, y);
+				rook = chess.spotAt(1, y).getPiece();
+			} else {
+				kingEnd = chess.spotAt(7, y);
+				rookStart = chess.spotAt(8, y);
+				rookEnd = chess.spotAt(6, y);
+				rook = chess.spotAt(8, y).getPiece();
+			}
+//			chess.addRecord(this, kingStart, kingEnd, (Rook) rook, rookStart, rookEnd);
+			moved.moveTo(kingEnd);
+			rook.moveTo(rookEnd);
+			// return "castling sucessful! " + // TODO: get those printed
+//			chess.wrapMove();
+//		}
+	}
 }

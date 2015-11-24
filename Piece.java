@@ -137,25 +137,6 @@ public abstract class Piece implements Comparable<Piece> {
 		return legalPosition(end);
 	}
 
-	/**
-	 * 
-	 * @param end
-	 *            the square moves to
-	 * @param taken
-	 *            the piece that will be taken, null if there is no piece taken
-	 * @param chess
-	 * @param takeOrNot
-	 *            whether it takes a piece or not
-	 * @return the output information it needs to print out in the box
-	 */
-	public void makeMove(Square end, Piece taken) {
-		if (taken != null)
-			chess.takeOffBoard(taken);
-		Square start = spot;
-		moveTo(end);
-		chess.addRecord(this, start, taken, end);
-	}
-
 	public static Class<?extends Piece> getType(char c){
 		switch (Character.toUpperCase(c)) {
 		case 'P':return Pawn.class;

@@ -26,7 +26,8 @@ public abstract class Piece implements Comparable<Piece> {
 	// ------------------------------------------------------------------------------------------------------------------------
 	// accessors
 	public String getName(){
-		return getClass().getName();
+		String s  = getClass().getName();
+		return s.substring(s.lastIndexOf("." ) + 1);
 	}
 
 	public Square getP() {

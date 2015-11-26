@@ -27,6 +27,7 @@ public class SquareLabel extends JLabel {
 
 	int x;
 	int y;
+	private boolean wb;
 	private Color originalColor;
 	boolean highLight;
 
@@ -42,10 +43,16 @@ public class SquareLabel extends JLabel {
 	 *            rank of this square
 	 * @param chess
 	 */
-	public SquareLabel(int i, int j, ChessViewerControl chess) {
+	public SquareLabel(int i, int j, ChessViewerControl chess, boolean whiteOrBlack) {
 		super("", JLabel.CENTER);
-		x = i;
-		y = 8 - j;
+		if (whiteOrBlack){
+			x = i;
+			y = 8 - j;
+		}else{
+			x = 9 - i;
+			y = 1 + j;
+		}
+		wb = whiteOrBlack;
 		setPreferredSize(new Dimension(MWIDTH, MWIDTH));
 		if ((i + j) % 2 != 0)
 			originalColor = Color.gray;
@@ -55,9 +62,10 @@ public class SquareLabel extends JLabel {
 		setBorder(BorderFactory.createLineBorder(Color.black, 1));
 		setOpaque(true);
 		addMouseListener(new MouseAdapter(){
+			
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				chess.click(SquareLabel.this);
+				chess.click(SquareLabel.this, wb);
 			}
 		});
 	}

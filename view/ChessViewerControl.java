@@ -7,7 +7,7 @@ public interface ChessViewerControl {
 	 * 
 	 * @param command
 	 */
-	public void handleCommand(String command);
+	public void handleCommand(String command, boolean whiteOrBlack);
 
 	/**
 	 * Invoked when chess board is clicked
@@ -15,6 +15,6 @@ public interface ChessViewerControl {
 	 * @param squareLabel
 	 *            the label clicked
 	 */
-	public void click(SquareLabel squareLabel);
+	public void click(SquareLabel squareLabel, boolean whiteOrBlack);
 
 }

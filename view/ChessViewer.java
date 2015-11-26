@@ -30,6 +30,8 @@ public class ChessViewer extends JFrame {
 
 	private JTextArea myConsole;
 	private String existence;
+	private boolean waitForResponse;
+	private ConsoleListener listener;
 
 	/**
 	 * construct a chess view given a controller
@@ -40,6 +42,8 @@ public class ChessViewer extends JFrame {
 	public ChessViewer(ChessViewerControl controller, boolean whiteOrBlack) {
 		this.viewControl = controller;
 		this.wb = whiteOrBlack;
+		waitForResponse = false;
+		
 		if (wb){
 			setTitle("The Great Chess Game white view");
 		}else{
@@ -73,7 +77,7 @@ public class ChessViewer extends JFrame {
 					labels[i][j].setText(s);
 					labels[i][j].setOpaque(false);
 				} else {
-					labels[i][j] = new SquareLabel(i, j, controller);
+					labels[i][j] = new SquareLabel(i, j, controller, wb);
 				}
 				labels[i][j].setPreferredSize(new Dimension(CHESSOBARD_WIDTH, CHESSOBARD_WIDTH));
 				labels[i][j].setFont(FONT_PIECE);
@@ -94,20 +98,8 @@ public class ChessViewer extends JFrame {
 		myConsole = new JTextArea("Welcome to little Chess Game. Enter \"help\" for instructions.\n",
 				130 / CONSOLE_FONT_SIZE, 1000 / CONSOLE_FONT_SIZE);
 		myConsole.setFont(FONT_CONSOLE);
-		myConsole.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent arg0) {
-				if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-					String text = myConsole.getText();
-					if (existence.length() < text.length()) {
-						String input = text.substring(existence.length(), text.length() - 1);
-						if (input.length() > 0) {
-							viewControl.handleCommand(input);
-						}
-					}
-				}
-			}
-		});
+		listener = new ConsoleListener();
+		myConsole.addKeyListener(listener);
 		existence = myConsole.getText();
 		consolePanel.add(new JScrollPane(myConsole));
 
@@ -203,4 +195,55 @@ public class ChessViewer extends JFrame {
 		}
 	}
 
+//	public String getResponse() {
+//		new Thread()
+//		
+//	}
+//
+//	class ThreadA extends Thread{
+//		
+//	}
+	class ConsoleListener extends KeyAdapter implements Runnable{
+		String input;
+		
+		@Override
+		public void run(){
+			waitForResponse = true;
+			
+			synchronized(this){
+	            try{
+	                this.wait();
+	            }catch(InterruptedException e){
+	                e.printStackTrace();
+	            }
+	        }
+			
+		}
+		
+//		public String getResponse() {
+//			Thread a = new Thread(target);
+//		}
+		
+		@Override
+		public void keyReleased(KeyEvent arg0) {
+			if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
+				String text = myConsole.getText();
+				if (existence.length() < text.length()) {
+					input = text.substring(existence.length(), text.length() - 1);
+					if (input.length() > 0) {
+						if (waitForResponse)
+							notify();
+						else
+							viewControl.handleCommand(input , wb);
+					}
+				}
+			}
+		}
+
+	}
+
+//	public String getResponse() {
+//		return this.listener.getResponse();
+//	}
+	
 }

@@ -536,7 +536,7 @@ public class Chess {
 	
 	public Piece promotion(boolean wb, Square end) { //TODO: bad design
 		for (ChessListener listener : listeners) {
-			return listener.promote(wb , end);
+			return listener.choosePromotePiece(wb , end);
 		}
 		throw new ChessGameException("OOOOps!");
 	}

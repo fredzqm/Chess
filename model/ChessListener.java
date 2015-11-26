@@ -34,6 +34,6 @@ public interface ChessListener extends EventListener {
 	 *            the end square pawn reached
 	 * @return
 	 */
-	Piece promote(boolean whiteOrBlack, Square square);
+	Piece choosePromotePiece(boolean whiteOrBlack, Square square);
 
 }

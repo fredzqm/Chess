@@ -318,7 +318,7 @@ public class ChessControl implements ChessViewerControl, ChessListener {
 	}
 
 	@Override
-	public Piece promote(boolean wb, Square end) {
+	public Piece choosePromotePiece(boolean wb, Square end) {
 		view.cleanTemp();
 		while (true) {
 			view.printOut("Please choose one kind of piece to promote to -- Q, N, R, B");

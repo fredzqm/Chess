@@ -1,4 +1,3 @@
-package view;
 
 public interface ChessViewerControl {
 

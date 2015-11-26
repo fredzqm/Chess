@@ -1,5 +1,3 @@
-package model;
-
 /**
  * End game type Win
  * We can even add more complex draw type later, and change their outputs

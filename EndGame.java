@@ -1,5 +1,3 @@
-package model;
-
 /**
  * 
  * @author FredZhang

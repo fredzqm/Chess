@@ -1,5 +1,3 @@
-package model;
-
 /**
  * this class is a record of all the moves in this game, so we can undo steps or
  * check for special rules.

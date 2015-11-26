@@ -1,5 +1,3 @@
-package model;
-
 /**
  * this class records the castling move
  * @author zhangq2

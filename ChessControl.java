@@ -5,9 +5,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
-import model.*;
-import view.*;
-
 public class ChessControl implements ChessViewerControl, ChessListener {
 
 	/**

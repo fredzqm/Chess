@@ -1,4 +1,3 @@
-package model;
 
 /**
  * Pawn in the chess

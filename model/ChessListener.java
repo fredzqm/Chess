@@ -1,3 +1,4 @@
+package model;
 import java.util.EventListener;
 
 public interface ChessListener extends EventListener {

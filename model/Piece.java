@@ -1,3 +1,5 @@
+package model;
+
 /**
  * the super class for all different kinds of pieces.
  * @author zhangq2

@@ -1,3 +1,5 @@
+package model;
+
 /**
  * End game type Draw
  * We can even add more complex draw type later, and change their outputs

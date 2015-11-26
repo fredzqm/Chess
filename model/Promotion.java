@@ -1,3 +1,5 @@
+package model;
+
 public class Promotion extends Move {
 	private Piece promotedTo;
 

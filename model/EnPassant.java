@@ -1,4 +1,4 @@
-
+package model;
 public class EnPassant extends Move {
 	private Square pawnPos;
 

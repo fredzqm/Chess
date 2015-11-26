@@ -1,3 +1,5 @@
+package model;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -512,7 +514,7 @@ public class Chess {
 	 * 
 	 * @param endgame the kind of end game occurred
 	 */
-	protected void endGame(EndGame endgame) {
+	public void endGame(EndGame endgame) {
 		records.endGame(endgame);
 		for (ChessListener listener : listeners)
 			listener.endGame(endgame);
@@ -522,7 +524,7 @@ public class Chess {
 		listeners.add(chessListener);
 	}
 
-	public void removeChessListener(ChessControl chessControl) {
+	public void removeChessListener(ChessListener chessControl) {
 		listeners.remove(chessControl);
 	}
 

@@ -17,8 +17,6 @@ import javax.swing.JTextArea;
 @SuppressWarnings("serial")
 public class ChessViewer extends JFrame {
 
-	public static final int CHESSOBARD_WIDTH = 50;
-	private static final Font FONT_PIECE = new Font("Serif", Font.PLAIN, 40);
 	private static final Font FONT_STATUS_LABEL = new Font("Serif", Font.PLAIN, 40);
 	private static final int CONSOLE_FONT_SIZE = 20;
 	private static final Font FONT_CONSOLE = new Font("Serif", Font.PLAIN, CONSOLE_FONT_SIZE);
@@ -27,7 +25,6 @@ public class ChessViewer extends JFrame {
 	private ChessViewerControl viewControl;
 	private JLabel statusLabel;
 	private SquareLabel[][] labels;
-
 	private JTextArea myConsole;
 	private String existence;
 	private boolean waitForResponse;
@@ -37,19 +34,19 @@ public class ChessViewer extends JFrame {
 	 * construct a chess view given a controller
 	 * 
 	 * @param controller
-	 * @param b 
+	 * @param b
 	 */
 	public ChessViewer(ChessViewerControl controller, boolean whiteOrBlack) {
 		this.viewControl = controller;
 		this.wb = whiteOrBlack;
 		waitForResponse = false;
-		
-		if (wb){
+
+		if (wb) {
 			setTitle("The Great Chess Game white view");
-		}else{
+		} else {
 			setTitle("The Great Chess Game black view");
 		}
-			
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// configure chess board
@@ -57,30 +54,29 @@ public class ChessViewer extends JFrame {
 		chessBoardSpace.setLayout(new FlowLayout());
 		chessBoardSpace.setVisible(true);
 		JPanel chessBoard = new JPanel();
-		chessBoard.setSize(CHESSOBARD_WIDTH * 9, CHESSOBARD_WIDTH * 9);
+		chessBoard.setSize(SquareLabel.SQUARE_WIDTH * 9, SquareLabel.SQUARE_WIDTH * 9);
 		chessBoard.setLayout(new GridLayout(9, 9));
 		chessBoard.setVisible(true);
 		labels = new SquareLabel[9][9];
+
 		for (int j = 0; j < 9; j++) {
 			for (int i = 0; i < 9; i++) {
 				if (j == 8) {
 					labels[i][j] = new SquareLabel();
 					String s = "";
 					if (i > 0)
-						s += (char) (wb? (i + 96) : (105 - i));
+						s += (char) (wb ? (i + 96) : (105 - i));
 					labels[i][j].setText(s);
 					labels[i][j].setOpaque(false);
 				} else if (i == 0) {
 					labels[i][j] = new SquareLabel();
 					String s = "";
-					s += wb? (8 - j) : j+1;
+					s += wb ? (8 - j) : j + 1;
 					labels[i][j].setText(s);
 					labels[i][j].setOpaque(false);
 				} else {
 					labels[i][j] = new SquareLabel(i, j, controller, wb);
 				}
-				labels[i][j].setPreferredSize(new Dimension(CHESSOBARD_WIDTH, CHESSOBARD_WIDTH));
-				labels[i][j].setFont(FONT_PIECE);
 				chessBoard.add(labels[i][j]);
 			}
 		}
@@ -110,6 +106,14 @@ public class ChessViewer extends JFrame {
 		pack();
 	}
 
+	public void setSymbolProvider(ChessSymbolProvider symProvider) {
+		for (SquareLabel[] sqlist : labels) {
+			for (SquareLabel sq : sqlist) {
+				sq.setSymbolProvider(symProvider);
+			}
+		}
+	}
+
 	/**
 	 * 
 	 * @param x
@@ -117,7 +121,7 @@ public class ChessViewer extends JFrame {
 	 * @return {link {@link SquareLabel} at (x , y) coordinate
 	 */
 	public SquareLabel labelAt(int x, int y) {
-		return wb? labels[x][8 - y] : labels[9-x][y-1];
+		return wb ? labels[x][8 - y] : labels[9 - x][y - 1];
 	}
 
 	/**
@@ -161,28 +165,6 @@ public class ChessViewer extends JFrame {
 	}
 
 	/**
-	 * show the label at (x, y) in the chess board view to indicate a chessman piece
-	 * 
-	 * @param x
-	 * @param y
-	 * @param label
-	 * @param whiteOrBlack
-	 */
-	public void showLabel(int x, int y, char label, boolean whiteOrBlack) {
-		labelAt(x, y).upDatePiece(label, whiteOrBlack);
-	}
-
-	/**
-	 * clean the label at (x, y) in the chess board view
-	 * 
-	 * @param x
-	 * @param y
-	 */
-	public void cleanLabel(int x, int y) {
-		labelAt(x, y).setText("");
-	}
-
-	/**
 	 * dehighlight the whole board
 	 */
 	public void deHighLightWholeBoard() {
@@ -195,35 +177,35 @@ public class ChessViewer extends JFrame {
 		}
 	}
 
-//	public String getResponse() {
-//		new Thread()
-//		
-//	}
-//
-//	class ThreadA extends Thread{
-//		
-//	}
-	class ConsoleListener extends KeyAdapter implements Runnable{
+	// public String getResponse() {
+	// new Thread()
+	//
+	// }
+	//
+	// class ThreadA extends Thread{
+	//
+	// }
+	class ConsoleListener extends KeyAdapter implements Runnable {
 		String input;
-		
+
 		@Override
-		public void run(){
+		public void run() {
 			waitForResponse = true;
-			
-			synchronized(this){
-	            try{
-	                this.wait();
-	            }catch(InterruptedException e){
-	                e.printStackTrace();
-	            }
-	        }
-			
+
+			synchronized (this) {
+				try {
+					this.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
 		}
-		
-//		public String getResponse() {
-//			Thread a = new Thread(target);
-//		}
-		
+
+		// public String getResponse() {
+		// Thread a = new Thread(target);
+		// }
+
 		@Override
 		public void keyReleased(KeyEvent arg0) {
 			if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -234,7 +216,7 @@ public class ChessViewer extends JFrame {
 						if (waitForResponse)
 							notify();
 						else
-							viewControl.handleCommand(input , wb);
+							viewControl.handleCommand(input, wb);
 					}
 				}
 			}
@@ -242,8 +224,8 @@ public class ChessViewer extends JFrame {
 
 	}
 
-//	public String getResponse() {
-//		return this.listener.getResponse();
-//	}
-	
+	// public String getResponse() {
+	// return this.listener.getResponse();
+	// }
+
 }

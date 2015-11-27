@@ -1,11 +1,19 @@
 package view;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 /**
@@ -19,20 +27,28 @@ import javax.swing.JLabel;
 @SuppressWarnings("serial")
 public class SquareLabel extends JLabel {
 
-	static final int MWIDTH = 50;
+	public static final int SQUARE_WIDTH = 65;
 	
+	
+	private static final Font FONT_PIECE = new Font("Serif", Font.PLAIN, 40);
 	private static final Color HIGHLIGHT_COLOR = Color.yellow;
-	private static final Color TEXT_COLOR_BALCK = Color.black;
-	private static final Color TEXT_COLOR_WHITE = Color.red;
+	private ChessSymbolProvider DEFAULT_SYMBOL_PROVIDER = new ImageProvider("icons/Chess_symbols.png");
+	
+//	private static final Color TEXT_COLOR_BALCK = Color.black;
+//	private static final Color TEXT_COLOR_WHITE = Color.red;
 
-	int x;
-	int y;
+	private int x;
+	private int y;
 	private boolean wb;
 	private Color originalColor;
-	boolean highLight;
+	private boolean highLight;
+	private BufferedImage image;
+	private ChessSymbolProvider symbolProvider;
 
 	public SquareLabel() {
 		super("", JLabel.CENTER);
+		setPreferredSize(new Dimension(SquareLabel.SQUARE_WIDTH, SquareLabel.SQUARE_WIDTH));
+		setFont(FONT_PIECE);
 	}
 	
 	/**
@@ -44,7 +60,7 @@ public class SquareLabel extends JLabel {
 	 * @param chess
 	 */
 	public SquareLabel(int i, int j, ChessViewerControl chess, boolean whiteOrBlack) {
-		super("", JLabel.CENTER);
+		this();
 		if (whiteOrBlack){
 			x = i;
 			y = 8 - j;
@@ -53,7 +69,6 @@ public class SquareLabel extends JLabel {
 			y = 1 + j;
 		}
 		wb = whiteOrBlack;
-		setPreferredSize(new Dimension(MWIDTH, MWIDTH));
 		if ((i + j) % 2 != 0)
 			originalColor = Color.gray;
 		else
@@ -62,12 +77,12 @@ public class SquareLabel extends JLabel {
 		setBorder(BorderFactory.createLineBorder(Color.black, 1));
 		setOpaque(true);
 		addMouseListener(new MouseAdapter(){
-			
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				chess.click(SquareLabel.this, wb);
 			}
 		});
+		symbolProvider = DEFAULT_SYMBOL_PROVIDER;
 	}
 
 	// ------------------------------------------------------------------------------------------------------------------
@@ -105,16 +120,34 @@ public class SquareLabel extends JLabel {
 		setBackground(originalColor);
 	}
 
+	protected void setSymbolProvider(ChessSymbolProvider symProvider){
+		this.symbolProvider = symProvider;
+	}
+	
 	/**
 	 * upDate the color and text of this JLabel.
 	 */
-	public void upDatePiece(char type, boolean wb) {
-		setText("" + type);
-		if (wb)
-			setForeground(TEXT_COLOR_WHITE);
-		else
-			setForeground(TEXT_COLOR_BALCK);
+	public void upDatePiece(ChessPieceType chessPieceType, boolean wb) {
+		image = symbolProvider.getSymbol(chessPieceType, wb);
+		repaint();
+//		setText("" + type);
+//		if (wb)
+//			setForeground(TEXT_COLOR_WHITE);
+//		else
+//			setForeground(TEXT_COLOR_BALCK);
 
+	}
+	
+	public void clearLabel() {
+		image = null;
+	}
+
+	protected void paintComponent(Graphics g){
+		super.paintComponent(g);
+		if (image != null ){
+			Graphics2D g2 = (Graphics2D) g;
+			g2.drawImage(image, null, 0, 0);
+		}
 	}
 	
 }

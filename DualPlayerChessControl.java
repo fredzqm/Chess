@@ -338,11 +338,11 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 	@Override
 	public void updateSquare(Square sq) {
 		if (sq.occupied()) {
-			whiteView.showLabel(sq.X(), sq.Y(), sq.getPiece().getType(), sq.getPiece().getWb());
-			blackView.showLabel(sq.X(), sq.Y(), sq.getPiece().getType(), sq.getPiece().getWb());
+			whiteView.labelAt(sq.X(), sq.Y()).upDatePiece( ChessPieceType.from( sq.getPiece().getType() ), sq.getPiece().getWb());
+			blackView.labelAt(sq.X(), sq.Y()).upDatePiece( ChessPieceType.from( sq.getPiece().getType() ), sq.getPiece().getWb());
 		} else {
-			whiteView.cleanLabel(sq.X(), sq.Y());
-			blackView.cleanLabel(sq.X(), sq.Y());
+			whiteView.labelAt(sq.X(), sq.Y()).clearLabel();
+			blackView.labelAt(sq.X(), sq.Y()).clearLabel();
 		}
 	}
 
@@ -464,6 +464,5 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 			}
 		}
 	}
-	
 
 }

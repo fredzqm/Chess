@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -156,6 +157,7 @@ public class ChessViewer extends JFrame {
 		myConsole.setText(existence);
 	}
 
+	
 	/**
 	 * 
 	 * @param str
@@ -163,18 +165,23 @@ public class ChessViewer extends JFrame {
 	public void setStatusLabelText(String str) {
 		statusLabel.setText(str);
 	}
+	
+	ArrayList<SquareLabel> highlighted;
+	
+
+	public void highLightAll(ArrayList<SquareLabel> hightlight) {
+		highlighted = hightlight;
+		for (SquareLabel sqrl : highlighted)
+			sqrl.highLight();
+	}
 
 	/**
 	 * dehighlight the whole board
 	 */
 	public void deHighLightWholeBoard() {
-		for (int i = 1; i <= 8; i++) {
-			for (int j = 1; j <= 8; j++) {
-				SquareLabel l = labelAt(i, j);
-				if (l.isHighLight())
-					l.deHighLight();
-			}
-		}
+		for (SquareLabel sqrl : highlighted)
+			sqrl.deHighLight();
+		highlighted = new ArrayList<>();
 	}
 
 	// public String getResponse() {

@@ -15,8 +15,7 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 	 */
 	public static final String ERROR_MESSAGE = "Please enter the move as (The type of chessman)(the start position)(its action)(the end position)\n"
 			+ "you can omit the \"P\" at the begining for a pawn." + "for casting, enter \"O-O\" or \"O-O-O\"\n"
-			+ "for examples, \"e2-e4\", \"Nb2-c3\" \n"
-			+ "If you need further help, type \"help\"";
+			+ "for examples, \"e2-e4\", \"Nb2-c3\" \n" + "If you need further help, type \"help\"";
 
 	/**
 	 * printed when asked for help message
@@ -78,8 +77,8 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 		chosen = null;
 		drawRequest = new Request();
 
-		whiteView = new ChessViewer(this , true);
-		blackView = new ChessViewer(this , false);
+		whiteView = new ChessViewer(this, true);
+		blackView = new ChessViewer(this, false);
 		for (Square s : chess.getAllSquares())
 			updateSquare(s);
 	}
@@ -100,21 +99,20 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 		whiteView.printOut("Start a new game!");
 		blackView.printOut("Start a new game!");
 	}
-	
+
 	private ChessViewer chooesView(boolean whiteOrBlack) {
 		return whiteOrBlack ? whiteView : blackView;
 	}
-	
 
 	private String side(boolean whoseTurn) {
-		return whoseTurn? "White" : "Black";
+		return whoseTurn ? "White" : "Black";
 	}
 
 	/**
 	 * return the requested rules text.
 	 * 
 	 * @param command
-	 * @param whiteOrBlack 
+	 * @param whiteOrBlack
 	 * @return
 	 */
 	private void showRules(String command, boolean whiteOrBlack) {
@@ -138,7 +136,8 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 
 	/**
 	 * print out the records of the game in starndart chess recording language
-	 * @param whiteOrBlack 
+	 * 
+	 * @param whiteOrBlack
 	 * 
 	 * @return records
 	 */
@@ -235,6 +234,13 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 		return chooesView(whiteOrBlack).labelAt(sqr.X(), sqr.Y());
 	}
 
+	private ArrayList<SquareLabel> squareToLabel(ArrayList<Square> squares, boolean whiteOrBlack) {
+		ArrayList<SquareLabel> list = new ArrayList<SquareLabel>();
+		for (Square sqr : squares)
+			list.add(squareToLabel(sqr, whiteOrBlack));
+		return list;
+	}
+
 	private Square labelToSquare(SquareLabel sql) {
 		return chess.spotAt(sql.X(), sql.Y());
 	}
@@ -260,29 +266,37 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 		} else {
 			chosen = null;
 			chooesView(whiteOrBlack).deHighLightWholeBoard();
-			if (whiteOrBlack != chess.getWhoseTurn()) {
-				chooesView(whiteOrBlack).printOut("Please wait for "+side(!whiteOrBlack)+" to finish");
-			} else if (c.equals("undo")) {
-				undo();
-			} else if (c.equals("resign")) {
+			if (c.equals("resign")) {
 				drawRequest.resign(whiteOrBlack);
 			} else if (c.equals("draw")) {
-				drawRequest.askForDraw();
+				drawRequest.askForDraw(whiteOrBlack);
+			} else if (whiteOrBlack != chess.getWhoseTurn()) {
+				if (c.equals("undo"))
+					undo();
+				else
+					chooesView(whiteOrBlack).printOut("Please wait for " + side(!whiteOrBlack) + " to finish");
 			} else if (!makeMove(c)) {
 				// makeMove return false, so this move is not allowed.
 				chooesView(whiteOrBlack).printOut(ERROR_MESSAGE);
 			}
 		}
+		
+		repaintAll();
+	}
 
+	private void repaintAll() {
+		whiteView.repaint();
+		blackView.repaint();
 	}
 
 	@Override
-	public void click(SquareLabel label , boolean whiteOrBlack) {
+	public void click(SquareLabel label, boolean whiteOrBlack) {
+		ChessViewer clickedView = chooesView(whiteOrBlack);
 		if (chess.hasEnd()) {
-			chooesView(whiteOrBlack).printOut("Game is already over! Type restart to start a new game");
+			clickedView.printOut("Game is already over! Type restart to start a new game");
 		} else {
 			if (whiteOrBlack != chess.getWhoseTurn()) {
-				chooesView(whiteOrBlack).printOut("Please wait for your opponnet to finish");
+				clickedView.printOut("Please wait for your opponnet to finish");
 				return;
 			}
 			Square spot = labelToSquare(label);
@@ -292,26 +306,27 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 						throw new ChessGameException(
 								"Illegal move of " + chosen.getName() + " did not correctly caught from UI!");
 				} else
-					chooesView(whiteOrBlack).cleanTemp();
+					clickedView.cleanTemp();
 				chosen = null;
-				chooesView(whiteOrBlack).deHighLightWholeBoard();
+				clickedView.deHighLightWholeBoard();
 			} else {
 				if (spot.occupiedBy(chess.getWhoseTurn())) {
 					chosen = spot.getPiece();
-					squareToLabel(chosen.getP() , whiteOrBlack).highLight();
-					for (Square i : chess.getAllSquares())
-						if (!i.occupiedBy(chess.getWhoseTurn()))
-							if (chosen.canGo(i))
-								squareToLabel(i , whiteOrBlack).highLight();
+					ArrayList<Square> reachable = chess.reachable(chosen);
+					reachable.add(spot);
+					ArrayList<SquareLabel> hightlight = squareToLabel(reachable, whiteOrBlack);
+					clickedView.highLightAll(hightlight);
 
 					if (spot.getPiece().isType(Pawn.class))
-						chooesView(whiteOrBlack).printTemp(spot.toString());
+						clickedView.printTemp(spot.toString());
 					else
-						chooesView(whiteOrBlack).printTemp(spot.getPiece().getType() + spot.toString());
+						clickedView.printTemp(spot.getPiece().getType() + spot.toString());
 
 				}
 			}
 		}
+		
+		repaintAll();
 	}
 
 	@Override
@@ -319,6 +334,7 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 		chooesView(wb).cleanTemp();
 		while (true) {
 			chooesView(wb).printOut("Please choose one kind of piece to promote to -- Q, N, R, B");
+			repaintAll();
 			String s = JOptionPane.showInputDialog("Promotion to !?");
 			if (!s.isEmpty()) {
 				s = s.toUpperCase();
@@ -338,8 +354,10 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 	@Override
 	public void updateSquare(Square sq) {
 		if (sq.occupied()) {
-			whiteView.labelAt(sq.X(), sq.Y()).upDatePiece( ChessPieceType.from( sq.getPiece().getType() ), sq.getPiece().getWb());
-			blackView.labelAt(sq.X(), sq.Y()).upDatePiece( ChessPieceType.from( sq.getPiece().getType() ), sq.getPiece().getWb());
+			whiteView.labelAt(sq.X(), sq.Y()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
+					sq.getPiece().getWb());
+			blackView.labelAt(sq.X(), sq.Y()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
+					sq.getPiece().getWb());
 		} else {
 			whiteView.labelAt(sq.X(), sq.Y()).clearLabel();
 			blackView.labelAt(sq.X(), sq.Y()).clearLabel();
@@ -362,7 +380,7 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 	public void nextMove(Move previousMove) {
 		ChessViewer pre = chooesView(previousMove.getWhoseTurn());
 		ChessViewer next = chooesView(!previousMove.getWhoseTurn());
-		
+
 		whiteView.setStatusLabelText(chess.lastMoveDiscript());
 		blackView.setStatusLabelText(chess.lastMoveDiscript());
 		pre.cleanTemp();
@@ -370,6 +388,7 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 		blackView.printOut(chess.lastMoveOutPrint());
 		next.printOut("Please make your move.");
 		pre.printOut("Wait for the " + side(!previousMove.getWhoseTurn()) + " to make a move");
+		
 	}
 
 	/**
@@ -408,29 +427,32 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 		/**
 		 * invoked when one player is asking for a draw.
 		 * 
-		 * Find out if the game satisfied automatic draw condition due to FIFTY_MOVE or REPETITION {@link Draw. End the game and
-		 * claim draw if those conditions are met. Otherwise, send a request for draw, and wait for the reply
-		 * of opponent.
+		 * Find out if the game satisfied automatic draw condition due to
+		 * FIFTY_MOVE or REPETITION {@link Draw. End
+		 * @param whiteOrBlack  the game and claim draw if
+		 * those conditions are met. Otherwise, send a request for draw, and
+		 * wait for the reply of opponent.
 		 * 
 		 * @return
 		 */
-		public void askForDraw() {
+		public void askForDraw(boolean whiteOrBlack) {
 			Draw canClaimDraw = chess.canClaimDraw();
 			if (canClaimDraw == null) {
-				if (canAskFordraw(chess.getWhoseTurn())) {
-					ChessViewer response = chooesView(!chess.getWhoseTurn());
+				if (canAskFordraw(whiteOrBlack)) {
+					ChessViewer request = chooesView(whiteOrBlack);
+					ChessViewer response = chooesView(!whiteOrBlack);
 					while (true) {
+						response.printOut(side(whiteOrBlack) + " ask for draw, do you agreed?");
 						String command = JOptionPane.showInputDialog("Do you agree draw?");
-						response.printOut(side(chess.getWhoseTurn())+" ask for draw, do you agreed?");
-//						String command = response.getResponse();
+						// String command = response.getResponse();
 						if (command.isEmpty())
 							continue;
 						if (command.toLowerCase().startsWith("yes")) {
 							chess.endGame(Draw.AGREEMENT);
 							return;
 						} else if (command.toLowerCase().startsWith("no")) {
-							drawRequest.setRightToRequestDraw(chess.getWhoseTurn());
-							whiteView.printOut("Request declined");
+							setRightToRequestDraw(whiteOrBlack);
+							request.printOut("Request declined");
 							return;
 						}
 					}
@@ -441,12 +463,13 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 				chess.endGame(canClaimDraw);
 			}
 		}
-		
 
 		/**
-		 * Invoked if a player resigns. It will ends the game.
-		 * However, if the game satisfied automatic draw condition, the game will be draw instead.
-		 * @param whiteOrBlack 
+		 * Invoked if a player resigns. It will ends the game. However, if the
+		 * game satisfied automatic draw condition, the game will be draw
+		 * instead.
+		 * 
+		 * @param whiteOrBlack
 		 * 
 		 * @return
 		 */

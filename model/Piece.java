@@ -96,7 +96,8 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @return true if it is safe to make this move.
 	 */
 	public boolean canGo(Square end){
-		return canCapture(end) !=null || canMove(end) != null;
+		return getMove(end) != null ;
+//				getCapture(end) !=null || ;
 	}
 
 	/**
@@ -105,23 +106,43 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @param chess
 	 * @return true if it is legal to move this piece to the end position
 	 */
-	protected Move canMove(Square end) {
-		if (end.occupied() || chess.giveAwayKing(this, spot, end.getPiece(), end, wb))
+	protected Move getMove(Square end) {
+		if (end.occupiedBy(wb)) 
 			return null;
-		return legalPosition(end) ;
-	}
-
-	/**
-	 * 
-	 * @param end
-	 * @param chess
-	 * @return true if it is legal to capture the piece at the end
-	 */
-	protected Move canCapture(Square end) {
-		if ( ! end.occupiedBy(!wb) || chess.giveAwayKing(this, spot, end.getPiece(), end, wb) )
+		Move legalMove =  legalPosition(end) ;
+		if (legalMove == null)
 			return null;
-		return canAttack(end) ;
+		if (chess.giveAwayKing(legalMove))
+			return null;
+		return legalMove;
 	}
+//	protected Move getMove(Square end) {
+//		if (end.occupied()) 
+//			return null;
+//		Move legalMove =  legalPosition(end) ;
+//		if (legalMove == null)
+//			return null;
+//		if (chess.giveAwayKing(this, spot, end.getPiece(), end, wb))
+//			return null;
+//		return legalMove;
+//	}
+//
+//	/**
+//	 * 
+//	 * @param end
+//	 * @param chess
+//	 * @return true if it is legal to capture the piece at the end
+//	 */
+//	protected Move getCapture(Square end) {
+//		if (! end.occupiedBy(!wb)) 
+//			return null;
+//		Move legalMove =  canAttack(end) ;
+//		if (legalMove == null)
+//			return null;
+//		if (chess.giveAwayKing(this, spot, end.getPiece(), end, wb))
+//			return null;
+//		return legalMove;
+//	}
 
 	/**
 	 * 

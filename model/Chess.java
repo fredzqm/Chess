@@ -110,7 +110,8 @@ public class Chess {
 	 * 
 	 * @param s
 	 *            the name of the square
-	 * @return the position of the square, null if fail to find a corresponding square
+	 * @return the position of the square, null if fail to find a corresponding
+	 *         square
 	 */
 	public Square getSquare(String s) {
 		if (s.length() != 2)
@@ -144,8 +145,10 @@ public class Chess {
 
 	/**
 	 * 
-	 * @param type type of the piece
-	 * @param end square to move to 
+	 * @param type
+	 *            type of the piece
+	 * @param end
+	 *            square to move to
 	 * @return all possible pieces that can move to given square
 	 */
 	public ArrayList<Piece> possibleMovers(Class<? extends Piece> type, Square end) {
@@ -163,6 +166,14 @@ public class Chess {
 		return possible;
 	}
 
+	public ArrayList<Square> reachable(Piece chosen) {
+		ArrayList<Square> list = new ArrayList<>();
+		for (Square i : getAllSquares())
+			if (chosen.canGo(i))
+				list.add(i);
+		return list;
+	}
+
 	/**
 	 * find out whether a certain move will put your own king in check
 	 * 
@@ -173,22 +184,15 @@ public class Chess {
 	 * @param wb
 	 * @return
 	 */
-	public boolean giveAwayKing(Piece moved, Square start, Piece taken, Square end, boolean wb) { 
-		// TODO: change this method to take Move
-		boolean giveAway = true;
-		if (taken != null) {
-			taken.moveTo(null);
-			moved.moveTo(end);
-			if (!checkOrNot(!wb))
-				giveAway = false;
-			moved.moveTo(start);
-			taken.moveTo(end);
-		} else {
-			moved.moveTo(end);
-			if (!checkOrNot(!wb))
-				giveAway = false;
-			moved.moveTo(start);
+	public boolean giveAwayKing(Move move) {
+		testGiveAway = true;
+		boolean giveAway = false;
+		move.performMove(this);
+		if (checkOrNot(!move.getWhoseTurn())){
+			giveAway = true;
 		}
+		move.undo(this);
+		testGiveAway = false;
 		return giveAway;
 	}
 
@@ -217,7 +221,7 @@ public class Chess {
 			attacker = white;
 		else
 			attacker = black;
-		
+
 		for (Piece i : attacker) {
 			if (i.canAttack(square) != null)
 				return true;
@@ -241,10 +245,10 @@ public class Chess {
 		else
 			inCheck = white;
 		for (Piece i : inCheck) {
-				for (Square p : getAllSquares()) {
-					if (i.canGo(p))
-						return false;
-				}
+			for (Square p : getAllSquares()) {
+				if (i.canGo(p))
+					return false;
+			}
 		}
 		return true;
 	}
@@ -306,8 +310,8 @@ public class Chess {
 	}
 
 	/**
-	 * Castling is a very special rule of chess. Castling move can only be
-	 * made if the king and rook in this castling have never moved yet, plus any
+	 * Castling is a very special rule of chess. Castling move can only be made
+	 * if the king and rook in this castling have never moved yet, plus any
 	 * squares the king goes through cannot be attacked.
 	 * 
 	 * find out whether castling is legal.
@@ -317,7 +321,8 @@ public class Chess {
 	 * @param longOrShort
 	 *            long Casting happens on the Queen side, while the short
 	 *            castling happens on the King side.
-	 * @return the castling move if it is legal to make the castling of this side right now, null otherwise
+	 * @return the castling move if it is legal to make the castling of this
+	 *         side right now, null otherwise
 	 */
 	public Move canCastling(King k, boolean longOrShort) {
 		if (longOrShort) {
@@ -334,16 +339,16 @@ public class Chess {
 	}
 
 	private boolean canNotLongCastling(int y, boolean attack) {
-		return records.hasMoved(spotAt(1, y), Rook.class, time) || records.hasMoved(spotAt(5, y), King.class, time)
-				|| spotAt(2, y).occupied() || spotAt(3, y).occupied() || spotAt(4, y).occupied()
+		return spotAt(2, y).occupied() || spotAt(3, y).occupied() || spotAt(4, y).occupied()
 				|| isAttacked(attack, spotAt(5, y)) || isAttacked(attack, spotAt(3, y))
-				|| isAttacked(attack, spotAt(4, y));
+				|| isAttacked(attack, spotAt(4, y)) || records.hasMoved(spotAt(1, y), Rook.class, time)
+				|| records.hasMoved(spotAt(5, y), King.class, time);
 	}
 
 	private boolean canNotShortCastling(int y, boolean attack) {
-		return records.hasMoved(spotAt(8, y), Rook.class, time) || records.hasMoved(spotAt(5, y), King.class, time)
-				|| spotAt(6, y).occupied() || spotAt(7, y).occupied() || isAttacked(attack, spotAt(5, y))
-				|| isAttacked(attack, spotAt(6, y)) || isAttacked(attack, spotAt(7, y));
+		return spotAt(6, y).occupied() || spotAt(7, y).occupied() || isAttacked(attack, spotAt(5, y))
+				|| isAttacked(attack, spotAt(6, y)) || isAttacked(attack, spotAt(7, y))
+				|| records.hasMoved(spotAt(8, y), Rook.class, time) || records.hasMoved(spotAt(5, y), King.class, time);
 	}
 
 	/**
@@ -377,7 +382,7 @@ public class Chess {
 	}
 
 	// modifiers
-	
+
 	/**
 	 * 
 	 * If a piece is captured, and we need to put it off the board, we call this
@@ -426,7 +431,7 @@ public class Chess {
 		if (lastMove == null)
 			return false;
 		lastMove.undo(this);
-		records.removeLast();//TODO: records can be improved
+		records.removeLast();// TODO: records can be improved
 		time--;
 		whoseTurn = !whoseTurn;
 		return true;
@@ -443,10 +448,7 @@ public class Chess {
 	 * @return true if move is valid, false if not allowed by chess rule
 	 */
 	public boolean performMove(Piece piece, Square end) {
-		Move move = piece.canMove(end);
-		if (move == null)
-			move = piece.canCapture(end);
-		
+		Move move = piece.getMove(end);
 		if (move != null) {
 			makeMove(move);
 		} else
@@ -466,7 +468,7 @@ public class Chess {
 			king = (King) white.get(0);
 		else
 			king = (King) black.get(0);
-	
+
 		Move move = canCastling(king, longOrShort);
 		if (move != null) {
 			makeMove(move);
@@ -474,13 +476,13 @@ public class Chess {
 		}
 		return false;
 	}
-	
 
 	// ---------------------------------------------------------------------------------------------------------------------------
 	// methods that send message to control
 
 	/**
 	 * all moves from the user input will go throw this method
+	 * 
 	 * @param move
 	 */
 	private void makeMove(Move move) {
@@ -509,10 +511,10 @@ public class Chess {
 	}
 
 	/**
-	 * record end game information and 
-	 * send message to control
+	 * record end game information and send message to control
 	 * 
-	 * @param endgame the kind of end game occurred
+	 * @param endgame
+	 *            the kind of end game occurred
 	 */
 	public void endGame(EndGame endgame) {
 		records.endGame(endgame);
@@ -528,15 +530,17 @@ public class Chess {
 		listeners.remove(chessControl);
 	}
 
+	boolean testGiveAway;
+
 	public void updateSquare(Square square) {
-		for (ChessListener listener : listeners)
-			listener.updateSquare(square);
+		if (!testGiveAway)
+			for (ChessListener listener : listeners)
+				listener.updateSquare(square);
 	}
 
-	
-	public Piece promotion(boolean wb, Square end) { //TODO: bad design
+	public Piece promotion(boolean wb, Square end) { // TODO: bad design
 		for (ChessListener listener : listeners) {
-			return listener.choosePromotePiece(wb , end);
+			return listener.choosePromotePiece(wb, end);
 		}
 		throw new ChessGameException("OOOOps!");
 	}

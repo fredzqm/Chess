@@ -110,12 +110,12 @@ public class SquareLabel extends JLabel {
 	/**
 	 * hight light this spot and set the back ground color to highlight color.
 	 */
-	public void highLight() {
+	protected void highLight() {
 		highLight = true;
 		setBackground(HIGHLIGHT_COLOR);
 	}
 
-	public void deHighLight() {
+	protected void deHighLight() {
 		highLight = false;
 		setBackground(originalColor);
 	}
@@ -129,13 +129,6 @@ public class SquareLabel extends JLabel {
 	 */
 	public void upDatePiece(ChessPieceType chessPieceType, boolean wb) {
 		image = symbolProvider.getSymbol(chessPieceType, wb);
-		repaint();
-//		setText("" + type);
-//		if (wb)
-//			setForeground(TEXT_COLOR_WHITE);
-//		else
-//			setForeground(TEXT_COLOR_BALCK);
-
 	}
 	
 	public void clearLabel() {

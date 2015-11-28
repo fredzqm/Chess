@@ -70,9 +70,9 @@ public class SquareLabel extends JLabel {
 		}
 		wb = whiteOrBlack;
 		if ((i + j) % 2 != 0)
-			originalColor = Color.gray;
-		else
 			originalColor = Color.white;
+		else
+			originalColor = Color.gray;
 		setBackground(originalColor);
 		setBorder(BorderFactory.createLineBorder(Color.black, 1));
 		setOpaque(true);

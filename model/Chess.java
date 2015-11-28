@@ -22,7 +22,11 @@ public class Chess {
 	private Record records;
 
 	private List<ChessListener> listeners;
+	private ChessController control;
 	private Collection<Square> list;
+
+	
+	boolean enableUpdateSquare;
 
 	// ----------------------------------------------------------------------------------------------------------------------------
 	// constructors and methods used to create and initializes the chess game.
@@ -30,14 +34,17 @@ public class Chess {
 	 * construct a default chess with start setting.
 	 * 
 	 */
-	public Chess() {
+	public Chess(ChessController controller) {
+		enableUpdateSquare = false;
 		whoseTurn = true;
 		time = 0;
 		records = new Record();
 		spots = new Square[8][8];
 		white = new ArrayList<Piece>();
 		black = new ArrayList<Piece>();
+		control = controller;
 		listeners = new ArrayList<>();
+		listeners.add(control);
 		list = new ArrayList<Square>();
 
 		for (int i = 0; i < 8; i++) {
@@ -59,6 +66,7 @@ public class Chess {
 		}
 		Collections.sort(white);
 		Collections.sort(black);
+		enableUpdateSquare = false;
 	}
 
 	/**
@@ -185,14 +193,14 @@ public class Chess {
 	 * @return
 	 */
 	public boolean giveAwayKing(Move move) {
-		testGiveAway = true;
+		enableUpdateSquare = false;
 		boolean giveAway = false;
 		move.performMove(this);
-		if (checkOrNot(!move.getWhoseTurn())){
+		if (checkOrNot(!move.getWhoseTurn())) {
 			giveAway = true;
 		}
 		move.undo(this);
-		testGiveAway = false;
+		enableUpdateSquare = true;
 		return giveAway;
 	}
 
@@ -506,8 +514,20 @@ public class Chess {
 		whoseTurn = !whoseTurn;
 		time++;
 		// send notification to control
-		for (ChessListener listener : listeners)
-			listener.nextMove(move);
+//		for (ChessListener listener : listeners)
+			control.nextMove(move);
+	}
+
+	protected Piece promotion(boolean wb, Square end) {
+			return control.choosePromotePiece(wb, end);
+	}
+
+	public void addChessListener(ChessListener chessListener) {
+		listeners.add(chessListener);
+	}
+
+	public void removeChessListener(ChessListener chessControl) {
+		listeners.remove(chessControl);
 	}
 
 	/**
@@ -519,30 +539,24 @@ public class Chess {
 	public void endGame(EndGame endgame) {
 		records.endGame(endgame);
 		for (ChessListener listener : listeners)
-			listener.endGame(endgame);
+			(new Thread(new Runnable() {
+				@Override
+				public void run() {
+					listener.endGame(endgame);
+				}
+			})).start();
+		;
 	}
-
-	public void addChessListener(ChessListener chessListener) {
-		listeners.add(chessListener);
-	}
-
-	public void removeChessListener(ChessListener chessControl) {
-		listeners.remove(chessControl);
-	}
-
-	boolean testGiveAway;
 
 	public void updateSquare(Square square) {
-		if (!testGiveAway)
+		if (enableUpdateSquare)
 			for (ChessListener listener : listeners)
-				listener.updateSquare(square);
-	}
-
-	public Piece promotion(boolean wb, Square end) { // TODO: bad design
-		for (ChessListener listener : listeners) {
-			return listener.choosePromotePiece(wb, end);
-		}
-		throw new ChessGameException("OOOOps!");
+				(new Thread(new Runnable() {
+					@Override
+					public void run() {
+						listener.updateSquare(square);
+					}
+				})).start();
 	}
 
 }

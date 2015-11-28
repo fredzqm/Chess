@@ -79,9 +79,9 @@ public class ImageProvider implements ChessSymbolProvider {
 	public BufferedImage getSymbol(ChessPieceType type, boolean whiteOrBlack) {
 		int color;
 		if (whiteOrBlack)
-			color = 60;
-		else
 			color = 0;
+		else
+			color = 60;
 		switch (type) {
 		case Pawn:
 			return imageAt(313, color);

@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 import model.*;
 import view.*;
 
-public class DualPlayerChessControl implements ChessViewerControl, ChessListener {
+public class DualPlayerChessControl implements ChessViewerControl, ChessController {
 
 	/**
 	 * printed when command line input cannot be recognized
@@ -72,21 +72,23 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 	 *            ignored
 	 */
 	public DualPlayerChessControl() {
-		chess = new Chess();
-		chess.addChessListener(this);
+		chess = new Chess(this);
+//		chess.addChessListener(this);
 		chosen = null;
 		drawRequest = new Request();
 
 		whiteView = new ChessViewer(this, true);
 		blackView = new ChessViewer(this, false);
+		
 		for (Square s : chess.getAllSquares())
 			updateSquare(s);
+		repaintAll();
 	}
 
 	private void restart() {
 		chess.removeChessListener(this);
-		chess = new Chess();
-		chess.addChessListener(this);
+		chess = new Chess(this);
+//		chess.addChessListener(this);
 		chosen = null;
 		drawRequest = new Request();
 
@@ -438,13 +440,14 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 		public void askForDraw(boolean whiteOrBlack) {
 			Draw canClaimDraw = chess.canClaimDraw();
 			if (canClaimDraw == null) {
+				ChessViewer request = chooesView(whiteOrBlack);
+				ChessViewer response = chooesView(!whiteOrBlack);
 				if (canAskFordraw(whiteOrBlack)) {
-					ChessViewer request = chooesView(whiteOrBlack);
-					ChessViewer response = chooesView(!whiteOrBlack);
 					while (true) {
 						response.printOut(side(whiteOrBlack) + " ask for draw, do you agreed?");
 						String command = JOptionPane.showInputDialog("Do you agree draw?");
-						// String command = response.getResponse();
+//						String command = response.getResponse();
+						command = "no";
 						if (command.isEmpty())
 							continue;
 						if (command.toLowerCase().startsWith("yes")) {
@@ -457,7 +460,7 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessListener
 						}
 					}
 				} else {
-					whiteView.printOut("You cannot request for draw again now.");
+					request.printOut("You cannot request for draw again now.");
 				}
 			} else {
 				chess.endGame(canClaimDraw);

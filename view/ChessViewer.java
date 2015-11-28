@@ -9,6 +9,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+import javax.print.DocFlavor.INPUT_STREAM;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -28,9 +29,11 @@ public class ChessViewer extends JFrame {
 	private SquareLabel[][] labels;
 	private JTextArea myConsole;
 	private String existence;
-	private boolean waitForResponse;
 	private ConsoleListener listener;
+	private ArrayList<SquareLabel> highlighted;
 
+	private boolean waitForResponse;
+	
 	/**
 	 * construct a chess view given a controller
 	 * 
@@ -40,8 +43,8 @@ public class ChessViewer extends JFrame {
 	public ChessViewer(ChessViewerControl controller, boolean whiteOrBlack) {
 		this.viewControl = controller;
 		this.wb = whiteOrBlack;
-		waitForResponse = false;
-
+		highlighted = new ArrayList<>();
+		
 		if (wb) {
 			setTitle("The Great Chess Game white view");
 		} else {
@@ -157,7 +160,6 @@ public class ChessViewer extends JFrame {
 		myConsole.setText(existence);
 	}
 
-	
 	/**
 	 * 
 	 * @param str
@@ -165,9 +167,6 @@ public class ChessViewer extends JFrame {
 	public void setStatusLabelText(String str) {
 		statusLabel.setText(str);
 	}
-	
-	ArrayList<SquareLabel> highlighted;
-	
 
 	public void highLightAll(ArrayList<SquareLabel> hightlight) {
 		highlighted = hightlight;
@@ -184,34 +183,29 @@ public class ChessViewer extends JFrame {
 		highlighted = new ArrayList<>();
 	}
 
-	// public String getResponse() {
-	// new Thread()
-	//
-	// }
-	//
-	// class ThreadA extends Thread{
-	//
-	// }
-	class ConsoleListener extends KeyAdapter implements Runnable {
-		String input;
-
-		@Override
-		public void run() {
-			waitForResponse = true;
-
-			synchronized (this) {
-				try {
-					this.wait();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-
+	public String getResponse() {
+		waitForResponse = true;
+		while (waitForResponse) {
+//			synchronized (listener) {
+//				try {
+//					repaint();
+					System.out.println("start waiting" + waitForResponse);
+//					wait();
+//					System.out.println("finish waiting" + waitForResponse);
+//				} catch (InterruptedException e) {
+//				}
+//			}
 		}
+		return listener.input;
+	}
 
-		// public String getResponse() {
-		// Thread a = new Thread(target);
-		// }
+	public void notifyResponse() {
+		waitForResponse = false;
+		this.notifyAll();
+	}
+
+	class ConsoleListener extends KeyAdapter {
+		String input;
 
 		@Override
 		public void keyReleased(KeyEvent arg0) {
@@ -220,19 +214,12 @@ public class ChessViewer extends JFrame {
 				if (existence.length() < text.length()) {
 					input = text.substring(existence.length(), text.length() - 1);
 					if (input.length() > 0) {
-						if (waitForResponse)
-							notify();
-						else
-							viewControl.handleCommand(input, wb);
+						viewControl.handleCommand(input, wb);
 					}
 				}
 			}
 		}
 
 	}
-
-	// public String getResponse() {
-	// return this.listener.getResponse();
-	// }
 
 }

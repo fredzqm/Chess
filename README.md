@@ -24,8 +24,11 @@ In general, it would be recommend to use the complete command if you are using i
 
 <h3>use Graphical user interface (GUI) to make a move</h3>
 It is very easy to play the two-people game with our GUI system. You can just click on the piece you want to move, and all the possible square it can go will be hightlighted, then you can just click to make that move. As indicated by the rule of chess, your move can't give away your king. Our model is smart enought to detect and hide those illegal moves.
+In the following example, queen cannot leave e file since rook is attacking the queen.
 <img src="img/moveGUI1.png">
+In this example, there are only two spots queen can go to protected the attack of black rook.
 <img src="img/moveGUI2.png">
+Queen can move to lots of squares in the next move.
 <img src="img/moveGUI3.png">
 
 

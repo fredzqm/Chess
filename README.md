@@ -48,15 +48,12 @@ When one player makes a stalement -- The opponent is not being checked and all m
 
 <h3>Draw by agreement</h3>
 If one player gets tired of playing and think neither sides have a chance of making checkmate, he or she can request an draw by type `darw` in the command console. If the program decides that the game has already satisfied conditions for automatic draw, it will declare draw immediately, otherwise it will send a request to his opponent for response, who can either type `yes` or `no` to accept or decline the draw request. One player cannot request for draw consecutively according to rules of chess. 
-<img src="img/agreement.png">
 
 <h3>Draw by threefold repetition</h3>
 When the same pattern of moves occurs at least 3 times, the game satisfies automatic draw condition due to "Threefold Repetition". If either player request `draw`, the game will be ended automatically.
-<img src="img/repetition.png">
 
 <h3>Draw by fifty-move rule</h3>
 If there has been no capture or pawn move in the last fifty moves by each player, the games satisfies automatic draw condition due to "Fifty-move rule". If either player request `draw`, the game will be ended automatically.
-<img src="img/fiftyMove.png">
 
 <!--<p>-->
 <!--The game is immediately drawn when there is no possibility of checkmate for either side with any series of legal moves. This draw is often due to insufficient material, including the endgames-->
@@ -83,19 +80,19 @@ Our program is able to check all of those constrains to determin whether a castl
 <h3>En Passant</h1>
 When a pawn advances two squares from its original square and ends the turn adjacent to a pawn of the opponent's on the same rank, it may be captured by that pawn of the opponent's, as if it had moved only one square forward. This capture is only legal on the opponent's next move immediately following the first pawn's advance.
 <a href='http://www.wiki.com/en/En_passant'>See Wikipedia</a>
+Here is an example of en passant. Black just advanced g7 pawn two squares, so white can take en passant pawn immediately.
 <img src="img/enpassant.png">
 
 <h1>Record Features</h1>
 <h3>print out records</h3>
 This program has a helpful ability to record the game. You can type `print` to print out the records of the game you just played.
-<img src="img/enpassant.png">
+<img src="img/print.png">
 
 <h3>Undo</h3>
 You can undo a previous step by typing `undo` in the command window.
-<img src="img/undo.png">
+Even en passant and castling or promotion can be easily undoed.
 
-
-If you find a game interesting, you can also get the full records of the game by typing 'print' and a standard formated chess records would be printed in the console.
+If you find a game interesting, you can also get the full records of the game by typing 'print' and a standard formated chess records would be printed in the console.a
 To restart a game, you can type 'restart' in the console.
 
 If you have any questions or suggestion, you can contact me at fredzqm@gmail.com

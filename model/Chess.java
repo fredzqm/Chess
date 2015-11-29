@@ -146,8 +146,8 @@ public class Chess {
 		return list;
 	}
 
-	public ArrayList<Move> getRecords() {
-		return records.getArrayList();
+	public Record getRecords() {
+		return records;
 	}
 
 	/**
@@ -367,7 +367,7 @@ public class Chess {
 	public String lastMoveOutPrint() {
 		Move move = lastMove();
 		if (move == null)
-			return "Hasn't start the chess yet!";
+			return null;
 		return move.getPrintOut();
 	}
 
@@ -377,6 +377,8 @@ public class Chess {
 	 *         the top label.
 	 */
 	public String lastMoveDiscript() {
+		if(records.hasEnd())
+			return records.getEndGameDescript();
 		Move move = lastMove();
 		if (move == null)
 			return "Hasn't start the chess yet!";
@@ -503,15 +505,17 @@ public class Chess {
 		whoseTurn = !whoseTurn;
 		time++;
 
-		System.out.println(move);
-		System.out.println(checkMate(!whoseTurn));
-
 		// check end game situations
 		if (checkOrNot(!whoseTurn)) {
 			if (checkMate(whoseTurn)) {
-				endGame(Win.BLACKCHECKMATE);
+				move.note = MoveNote.CHECKMATE;
+				if (!whoseTurn)
+					endGame(Win.WHITECHECKMATE);
+				else
+					endGame(Win.BLACKCHECKMATE);
 				return;
 			}
+			move.note = MoveNote.CHECK;
 		} else {
 			if (checkMate(whoseTurn)) {
 				endGame(Draw.STALEMENT);

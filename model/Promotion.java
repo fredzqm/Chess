@@ -53,8 +53,6 @@ public class Promotion extends Move {
 		s += "Pawn promotes to ";
 		s += promotedTo.getName() + "!!";
 
-		if (endGame != null)
-			s += endGame;
 		return s;
 	}
 	
@@ -65,7 +63,6 @@ public class Promotion extends Move {
 		promotedTo = chess.promotion(wb , end);
 		chess.takeOffBoard(taken);
 		chess.putBackToBoard(promotedTo, end);
-		checkOrNot = chess.checkOrNot(chess.getWhoseTurn());
 	}
 	
 }

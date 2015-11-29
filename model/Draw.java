@@ -39,7 +39,10 @@ public enum Draw implements EndGame{
 
 	@Override
 	public String getDoc() {
-		return "1/2-1/2";
+		switch(this){
+		case AGREEMENT: return "1/2-1/2 (agreement)";
+		default: return "1/2-1/2";
+		}
 	}
 
 	

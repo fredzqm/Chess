@@ -42,8 +42,7 @@ public class Castling extends Move {
 			s = "O-O-O";
 		else
 			s = "O-O";
-		if (checkOrNot)
-			s +="+";
+		s += note.getDocEnd();
 		return s;
 	}
 	
@@ -71,8 +70,6 @@ public class Castling extends Move {
 		else
 			s += "does short castling";
 		
-		if (endGame != null)
-			s += endGame;
 		return s;
 	}
 	
@@ -94,7 +91,5 @@ public class Castling extends Move {
 		}
 		moved.moveTo(kingEnd);
 		rook.moveTo(rookEnd);
-
-		checkOrNot = chess.checkOrNot(chess.getWhoseTurn());
 	}
 }

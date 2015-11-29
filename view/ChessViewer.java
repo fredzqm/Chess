@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import javax.print.DocFlavor.INPUT_STREAM;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -40,17 +41,11 @@ public class ChessViewer extends JFrame {
 	 * @param controller
 	 * @param b
 	 */
-	public ChessViewer(ChessViewerControl controller, boolean whiteOrBlack) {
+	public ChessViewer(ChessViewerControl controller, String title, boolean whiteOrBlack) {
 		this.viewControl = controller;
 		this.wb = whiteOrBlack;
 		highlighted = new ArrayList<>();
-		
-		if (wb) {
-			setTitle("The Great Chess Game white view");
-		} else {
-			setTitle("The Great Chess Game black view");
-		}
-
+		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// configure chess board
@@ -183,20 +178,8 @@ public class ChessViewer extends JFrame {
 		highlighted = new ArrayList<>();
 	}
 
-	public String getResponse() {
-		waitForResponse = true;
-		while (waitForResponse) {
-//			synchronized (listener) {
-//				try {
-//					repaint();
-					System.out.println("start waiting" + waitForResponse);
-//					wait();
-//					System.out.println("finish waiting" + waitForResponse);
-//				} catch (InterruptedException e) {
-//				}
-//			}
-		}
-		return listener.input;
+	public String getResponse(String message) {
+		return JOptionPane.showInputDialog(message);
 	}
 
 	public void notifyResponse() {

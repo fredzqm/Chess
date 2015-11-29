@@ -8,14 +8,15 @@ package model;
  *
  */
 public class Move {
-	protected int round;
-	protected boolean wb;
-	protected Piece moved;
-	protected Square start;
-	protected Piece taken;
-	protected Square end;
-	protected boolean checkOrNot;
-	protected EndGame endGame;
+	protected final int round;
+	protected final boolean wb;
+	protected final Piece moved;
+	protected final Square start;
+	protected final Piece taken;
+	protected final Square end;
+	// protected final EndGame endGame;
+	// protected boolean checkOrNot;
+	protected MoveNote note;
 
 	/**
 	 * constructs a record
@@ -38,7 +39,7 @@ public class Move {
 		this.start = start;
 		this.taken = taken;
 		this.end = end;
-		endGame = null;
+		this.note = MoveNote.NONE;
 	}
 
 	/**
@@ -54,15 +55,13 @@ public class Move {
 		else
 			s += "x";
 		s += end.toString();
+		s += note.getDocEnd();
+		// if (endGame == Win.WHITECHECKMATE || endGame == Win.BLACKCHECKMATE)
+		// s += "+";
 
-		if (checkOrNot)
-			s += "+";
-		if (endGame == Win.WHITECHECKMATE || endGame == Win.BLACKCHECKMATE)
-			s += "+";
-		
-		if (endGame != null) {
-			s += "\n"+endGame.getDoc();
-		}
+		// if (endGame != null) {
+		// s += "\n"+endGame.getDoc();
+		// }
 		return s;
 	}
 
@@ -72,15 +71,13 @@ public class Move {
 	public String getPrintOut() {
 		return getDoc();
 	}
-	
+
 	/**
 	 * 
-	 * @return the description of this move, which will appear in the top label of the window
+	 * @return the description of this move, which will appear in the top label
+	 *         of the window
 	 */
 	public String getDescript() {
-		if (endGame != null)
-			return endGame.getDescript();
-
 		String s = "";
 		if (wb)
 			s += "White";
@@ -98,8 +95,7 @@ public class Move {
 			s += taken.getName();
 			s += " on " + end.toString();
 		}
-		if (checkOrNot)
-			s += " Check!";
+		s += note.getDescriptEnd();
 		return s;
 	}
 
@@ -132,26 +128,8 @@ public class Move {
 	 */
 	public void undo(Chess chess) {
 		moved.moveTo(start);
-		if (taken != null) 
+		if (taken != null)
 			chess.putBackToBoard(taken, end);
-	}
-
-	/**
-	 * called when the users require a full records of the whole game.
-	 * 
-	 * @return the complete results of the game till now.
-	 */
-	public String print() {
-		String s = "";
-		if (wb) {
-			s += round + ". ";
-			s += getDoc();
-		} else {
-			s += " ";
-			s += getDoc();
-			s += "\n";
-		}
-		return s;
 	}
 
 	/**
@@ -186,22 +164,21 @@ public class Move {
 		if (taken != null)
 			chess.takeOffBoard(taken);
 		moved.moveTo(end);
-		checkOrNot = chess.checkOrNot(chess.getWhoseTurn());
 	}
 
 	public boolean getWhoseTurn() {
 		return wb;
 	}
 
-	/**
-	 * 
-	 * ends the game as draw
-	 * 
-	 * @param s
-	 *            the description of how this game ends in draw
-	 */
-	public void endGame(EndGame endgame) {
-		endGame = endgame;
-	}
+	// /**
+	// *
+	// * ends the game as draw
+	// *
+	// * @param s
+	// * the description of how this game ends in draw
+	// */
+	// public void endGame(EndGame endgame) {
+	// endGame = endgame;
+	// }
 
 }

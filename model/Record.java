@@ -5,13 +5,13 @@ import java.util.Iterator;
 
 public class Record implements Iterable<Move> {
 	private ArrayList<Move> list;
-	private boolean hasEnd;
-	
+	private EndGame endgame;
+
 	public Record() {
 		list = new ArrayList<>();
-		hasEnd = false;
+		endgame = null;
 	}
-	
+
 	public int size() {
 		return list.size();
 	}
@@ -45,27 +45,26 @@ public class Record implements Iterable<Move> {
 		return list.remove(i);
 	}
 
-	public void removeLast(){
+	public void removeLast() {
 		list.remove(size() - 1);
 	}
-	
+
 	public Move lastMove() {
 		if (isEmpty())
-			return null ;
-		return get(size() - 1) ;
+			return null;
+		return get(size() - 1);
 	}
-	
+
 	public boolean hasEnd() {
-		return hasEnd;
+		return endgame != null;
 	}
 
-
-	public void endGame(EndGame endgame){
-		hasEnd = true;
-		if(!list.isEmpty())
-			lastMove().endGame(endgame);
+	public void endGame(EndGame endgame) {
+		this.endgame = endgame;
+//		if (!list.isEmpty())
+//			lastMove().endGame(endgame);
 	}
-	
+
 	/**
 	 * 
 	 * @param original
@@ -75,14 +74,38 @@ public class Record implements Iterable<Move> {
 	 * @return true if the original piece has ever moved or be taken since the
 	 *         game started.
 	 */
-	public boolean hasMoved(Square original, Class<? extends Piece> type, int time) { 
+	public boolean hasMoved(Square original, Class<? extends Piece> type, int time) {
 		if (!original.occupied() || !original.getPiece().isType(type))
 			return true;
-		for (int t = 0 ; t < time ; t ++) {
+		for (int t = 0; t < time; t++) {
 			if (original.equals(get(t).getStart()))
 				return true;
 		}
 		return false;
+	}
+
+	public String printDoc() {
+		StringBuilder sb = new StringBuilder();
+		for (Move r : list) {
+			if (r.wb) {
+				sb.append(r.round + ". " + r.getDoc());
+			} else {
+				sb.append("   " + r.getDoc() + "\n");
+			}
+		}
+		if (hasEnd()) {
+			sb.append("\n" + endgame.getDoc());
+		} else {
+			Move last = lastMove();
+			if (last != null)
+				if (last.wb)
+					sb.append("   ...");
+		}
+		return sb.toString();
+	}
+
+	public String getEndGameDescript() {
+		return endgame.getDescript();
 	}
 
 }

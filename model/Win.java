@@ -8,10 +8,10 @@ package model;
  *
  */
 public enum Win implements EndGame {
-	WHITECHECKMATE(true, "White wins! -- CHECKMATE!!" , "WHITE Checkmates the BLACK, WHITE wins!!" ),
-	BLACKCHECKMATE(false, "Black wins! -- CHECKMATE!!" , "BLACK Checkmates the WHITE, BLACK wins!!" ),
-	WHITERESIGN(false, "White resigns! -- Black wins!", "White resigns, Black wins."), 
-	BLACKESIGN(true, "Black resigns! -- White wins!", "Black resigns, White wins");
+	WHITECHECKMATE(true, "White wins! -- CHECKMATE!!" , "WHITE Checkmates the BLACK\n WHITE wins!!" ),
+	BLACKCHECKMATE(false, "Black wins! -- CHECKMATE!!" , "BLACK Checkmates the WHITE\n BLACK wins!!" ),
+	WHITERESIGN(false, "White resigns! -- Black wins!", "White resigns\n Black wins."), 
+	BLACKESIGN(true, "Black resigns! -- White wins!", "Black resigns\n White wins");
 	
 	private final int winner;
 	private final String descript;
@@ -44,10 +44,13 @@ public enum Win implements EndGame {
 
 	@Override
 	public String getDoc() {
-			if (winner > 0)
-				return "1-0";
-			else
-				return "1-0";
+		switch(this){
+		case WHITECHECKMATE: return "1-0";
+		case BLACKCHECKMATE: return "0-1";
+		case BLACKESIGN: return "1-0 (resign)";
+		case WHITERESIGN: return "1-1 (resign)";
+		default: throw new RuntimeException("What the hell!");
+		}
 	}
 	
 }

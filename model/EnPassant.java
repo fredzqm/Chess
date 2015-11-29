@@ -30,12 +30,7 @@ public class EnPassant extends Move {
 		s += " Pawn";
 		s += " moves to " + end.toString();
 		s += " catches En passant pawn on " + pawnPos.toString();
-		if (checkOrNot)
-			s += " Check!";
-
-		if (endGame != null)
-			return s + endGame.getDescript();
-
+		s += note.getDescriptEnd();
 		return s;
 	}
 

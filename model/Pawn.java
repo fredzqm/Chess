@@ -69,7 +69,7 @@ public class Pawn extends Piece {
 		}
 		if (!chess.canEnPassant(end))
 			return null;
-		move = new EnPassant(this, spot, chess.spotAt(end.Y(), spot.X()).getPiece(), end, chess.getRound());
+		move = new EnPassant(this, spot, chess.spotAt(end.X(), spot.Y()).getPiece(), end, chess.getRound());
 		if (chess.giveAwayKing(move))
 			return null;
 		return move;

@@ -368,6 +368,13 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessControll
 
 	@Override
 	public void endGame(EndGame end) {
+		if (end == Win.BLACKCHECKMATE || end == Win.WHITECHECKMATE || end == Draw.STALEMENT){
+			whiteView.cleanTemp();
+			blackView.cleanTemp();
+			whiteView.printOut(chess.lastMoveOutPrint());
+			blackView.printOut(chess.lastMoveOutPrint());
+		}
+		
 		whiteView.setStatusLabelText(end.getDescript());
 		whiteView.printOut(end.getPrintOut());
 		blackView.setStatusLabelText(end.getDescript());
@@ -483,7 +490,7 @@ public class DualPlayerChessControl implements ChessViewerControl, ChessControll
 				chess.endGame(canClaimDraw);
 				return;
 			}
-			if (chess.getWhoseTurn()) {
+			if (whiteOrBlack) {
 				chess.endGame(Win.WHITERESIGN);
 			} else {
 				chess.endGame(Win.BLACKESIGN);

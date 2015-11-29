@@ -27,9 +27,10 @@ It is very easy to play the two-people game with our GUI system. You can just cl
 
 
 <h2>Detect the end of game</h2>
-This smart program is able to show you all those legal moves you can make and determine whether the game has end.
+This smart program is able to detect the game has end. If the game has end, you can only print out the game records or restart a new game
 
 <h3>Checkmate</h3>
+When an checkmate happens, the game 
 
 Some complex rules of chess like En passant and castling are also checked and suggested.
 Here is some quick demo:

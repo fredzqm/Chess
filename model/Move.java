@@ -46,7 +46,7 @@ public class Move {
 	 */
 	public String getDoc() {
 		String s = "";
-		if (moved.isType(Pawn.class))
+		if (!moved.isType(Pawn.class))
 			s += moved.getType();
 		s += start.toString();
 		if (taken == null)

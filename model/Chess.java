@@ -25,7 +25,6 @@ public class Chess {
 	private ChessController control;
 	private Collection<Square> list;
 
-	
 	boolean enableUpdateSquare;
 
 	// ----------------------------------------------------------------------------------------------------------------------------
@@ -246,16 +245,17 @@ public class Chess {
 	 * @return after the opponent makes one move, is it possible for his king
 	 *         not to be in check
 	 */
-	private boolean checkMate() {
+	private boolean checkMate(boolean checked) {
 		ArrayList<Piece> inCheck;
-		if (whoseTurn)
-			inCheck = black;
-		else
+		if (checked)
 			inCheck = white;
+		else
+			inCheck = black;
 		for (Piece i : inCheck) {
 			for (Square p : getAllSquares()) {
-				if (i.canGo(p))
+				if (i.canGo(p)) {
 					return false;
+				}
 			}
 		}
 		return true;
@@ -498,28 +498,33 @@ public class Chess {
 		move.performMove(this);
 		// add rocord
 		records.add(move);
+		
+		// update time
+		whoseTurn = !whoseTurn;
+		time++;
+
+		System.out.println(move);
+		System.out.println(checkMate(!whoseTurn));
+
 		// check end game situations
-		if (checkOrNot(whoseTurn)) {
-			if (checkMate()) {
+		if (checkOrNot(!whoseTurn)) {
+			if (checkMate(whoseTurn)) {
 				endGame(Win.BLACKCHECKMATE);
 				return;
 			}
 		} else {
-			if (checkMate()) {
+			if (checkMate(whoseTurn)) {
 				endGame(Draw.STALEMENT);
 				return;
 			}
 		}
-		// update time
-		whoseTurn = !whoseTurn;
-		time++;
 		// send notification to control
-//		for (ChessListener listener : listeners)
-			control.nextMove(move);
+		// for (ChessListener listener : listeners)
+		control.nextMove(move);
 	}
 
 	protected Piece promotion(boolean wb, Square end) {
-			return control.choosePromotePiece(wb, end);
+		return control.choosePromotePiece(wb, end);
 	}
 
 	public void addChessListener(ChessListener chessListener) {

@@ -62,7 +62,8 @@ public class Record implements Iterable<Move> {
 
 	public void endGame(EndGame endgame){
 		hasEnd = true;
-		lastMove().endGame(endgame);
+		if(!list.isEmpty())
+			lastMove().endGame(endgame);
 	}
 	
 	/**

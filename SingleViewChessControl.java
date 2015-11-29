@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 import model.*;
 import view.*;
 
-public class SingleFrameChessControl implements ChessViewerControl, ChessController {
+public class SingleViewChessControl implements ChessViewerControl, ChessController {
 
 	/**
 	 * printed when command line input cannot be recognized
@@ -70,7 +70,7 @@ public class SingleFrameChessControl implements ChessViewerControl, ChessControl
 	 * @param args
 	 *            ignored
 	 */
-	public SingleFrameChessControl() {
+	public SingleViewChessControl() {
 		chess = new Chess(this);
 		chosen = null;
 		drawRequest = new Request();
@@ -445,7 +445,7 @@ public class SingleFrameChessControl implements ChessViewerControl, ChessControl
 	
 	
 	public static void main(String[] args){
-		new SingleFrameChessControl();
+		new SingleViewChessControl();
 	}
 
 }

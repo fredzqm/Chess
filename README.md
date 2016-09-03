@@ -16,13 +16,13 @@ To make a move in the game, you can either click in the panel or type a command 
 The UI ability makes it vey easy for user to make move.
 If you want to use this software as an library, it would be easier to send instructions via command line.
 
-<h3>use command line to make a move</h3>
+<h3>Use command line to make a move</h3>
 It is very convenience to use command line input by simply typing chess moves like `e2-e4`, `Ng1-f3`. You can also type abbreviation like e4，Nf3. If you only mention the end square and kind of piece, our smart chess model will search the whole board and find the ove you mean. It can happen once in a while, when there are multiply possibilites or none of them. In those situations, you will see a message indicating that there is ambiguity, and you need to be more specific.
 In general, it would be recommend to use the complete command if you are using it as a library, since it will take less time for the model to process.
 <p>As shown in the example, black f6 knight is attacking white e4 pawn, so white can just type `Nc3` and `Enter` to protect its pawn.</p>
 <img src="img/moveCommand.png">
 
-<h3>use Graphical user interface (GUI) to make a move</h3>
+<h3>Use Graphical user interface (GUI) to make a move</h3>
 It is very easy to play the two-people game with our GUI system. You can just click on the piece you want to move, and all the possible square it can go will be hightlighted, then you can just click to make that move. As indicated by the rule of chess, your move can't give away your king. Our model is smart enought to detect and hide those illegal moves.
 In the following example, queen cannot leave e file since rook is attacking the queen.
 <img src="img/moveGUI1.png">

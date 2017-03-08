@@ -1,12 +1,28 @@
+package controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JOptionPane;
-
-import model.*;
-import view.*;
+import model.Bishop;
+import model.Chess;
+import model.ChessController;
+import model.ChessGameException;
+import model.Draw;
+import model.EndGame;
+import model.Knight;
+import model.Move;
+import model.Pawn;
+import model.Piece;
+import model.Queen;
+import model.Record;
+import model.Rook;
+import model.Square;
+import model.Win;
+import view.ChessPieceType;
+import view.ChessViewer;
+import view.ChessViewerControl;
+import view.SquareLabel;
 
 public class DualViewChessControl implements ChessViewerControl, ChessController {
 

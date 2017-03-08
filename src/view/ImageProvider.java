@@ -43,7 +43,7 @@ public class ImageProvider implements ChessSymbolProvider {
 
 		ImageFilter filter = new RGBImageFilter() {
 			// the color we are looking for... Alpha bits are set to opaque
-			public int markerRGB = (new Color(200,200,200)).getRGB() | 0xFF000000;
+			public int markerRGB = (new Color(200, 200, 200)).getRGB() | 0xFF000000;
 
 			@Override
 			public final int filterRGB(int x, int y, int rgb) {
@@ -81,20 +81,20 @@ public class ImageProvider implements ChessSymbolProvider {
 		if (whiteOrBlack)
 			color = 0;
 		else
-			color = 60;
+			color = 67;
 		switch (type) {
 		case Pawn:
-			return imageAt(313, color);
+			return imageAt(333, color);
 		case Rook:
-			return imageAt(127, color);
+			return imageAt(268, color);
 		case Bishop:
-			return imageAt(190, color);
+			return imageAt(135, color);
 		case Knight:
-			return imageAt(252, color);
+			return imageAt(201, color);
 		case Queen:
-			return imageAt(65, color);
+			return imageAt(67, color);
 		case King:
-			return imageAt(5, color);
+			return imageAt(0, color);
 		}
 		return null;
 	}

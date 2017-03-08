@@ -32,7 +32,7 @@ public class SquareLabel extends JLabel {
 	
 	private static final Font FONT_PIECE = new Font("Serif", Font.PLAIN, 40);
 	private static final Color HIGHLIGHT_COLOR = Color.yellow;
-	private ChessSymbolProvider DEFAULT_SYMBOL_PROVIDER = new ImageProvider("icons/Chess_symbols.png");
+	private ChessSymbolProvider DEFAULT_SYMBOL_PROVIDER = new ImageProvider("Chess_symbols.png");
 	
 //	private static final Color TEXT_COLOR_BALCK = Color.black;
 //	private static final Color TEXT_COLOR_WHITE = Color.red;

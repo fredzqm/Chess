@@ -24,6 +24,12 @@ import view.ChessViewer;
 import view.ChessViewerControl;
 import view.SquareLabel;
 
+/**
+ * The chess controller opens a single chess view
+ * 
+ * @author zhang
+ *
+ */
 public class SingleViewChessControl implements ChessViewerControl, ChessController {
 
 	/**
@@ -289,7 +295,7 @@ public class SingleViewChessControl implements ChessViewerControl, ChessControll
 		} else {
 			Square spot = labelToSquare(label);
 			if (chosen != null) {
-				if (label.isHighLight() && !spot.equals(chosen.getP())) {
+				if (label.isHighLight() && !spot.equals(chosen.getSpot())) {
 					if (!chess.performMove(chosen, spot))
 						throw new ChessGameException(
 								"Illegal move of " + chosen.getName() + " did not correctly caught from UI!");
@@ -343,7 +349,7 @@ public class SingleViewChessControl implements ChessViewerControl, ChessControll
 	public void updateSquare(Square sq) {
 		if (sq.occupied()) {
 			view.labelAt(sq.X(), sq.Y()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
-					sq.getPiece().getWb());
+					sq.getPiece().getWOrB());
 		} else {
 			view.labelAt(sq.X(), sq.Y()).clearLabel();
 		}

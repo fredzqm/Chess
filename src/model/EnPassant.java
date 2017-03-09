@@ -18,7 +18,7 @@ public class EnPassant extends Move {
 	 */
 	public EnPassant(Piece moved, Square start, Piece taken, Square end, int round) {
 		super(moved, start, taken, end, round);
-		pawnPos = taken.getP();
+		pawnPos = taken.getSpot();
 	}
 
 	public String getDescript() {

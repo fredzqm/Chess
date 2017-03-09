@@ -34,7 +34,7 @@ public class Move {
 	 */
 	public Move(Piece moved, Square start, Piece taken, Square end, int round) {
 		this.round = round;
-		wb = moved.getWb();
+		wb = moved.getWOrB();
 		this.moved = moved;
 		this.start = start;
 		this.taken = taken;

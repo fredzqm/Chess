@@ -80,7 +80,7 @@ public class Square {
 	 */
 	public boolean occupiedBy(boolean whoseTurn) {
 		if (occupied())
-			return whoseTurn == occupied.getWb();
+			return whoseTurn == occupied.getWOrB();
 		else
 			return false;
 	}

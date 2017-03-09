@@ -3,6 +3,13 @@ package model;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * The magical class that keeps track of move history It tracks a list of played
+ * in the chess, and can be used to query the history or undo steps
+ * 
+ * @author zhang
+ *
+ */
 public class Record implements Iterable<Move> {
 	private ArrayList<Move> list;
 	private EndGame endgame;
@@ -24,16 +31,32 @@ public class Record implements Iterable<Move> {
 		return list.contains(o);
 	}
 
-	public ArrayList<Move> getArrayList() {
-		return list;
-	}
-
+	/**
+	 * add a move to the record
+	 * 
+	 * @param move
+	 */
 	public void add(Move move) {
 		list.add(move);
 	}
 
-	public Move get(int i) {
-		return list.get(i);
+	/**
+	 * remove the last move in the record. Used mostly for undoing steps
+	 */
+	public void removeLast() {
+		list.remove(size() - 1);
+	}
+
+	/**
+	 * Time tracks which move. A move at time happened at (time/2 + 1) round.
+	 * white if even, black if odd
+	 * 
+	 * @param time
+	 *            time represents the order of move
+	 * @return the move at this time
+	 */
+	public Move get(int time) {
+		return list.get(time);
 	}
 
 	@Override
@@ -41,34 +64,37 @@ public class Record implements Iterable<Move> {
 		return list.iterator();
 	}
 
-	public Move remove(int i) {
-		return list.remove(i);
-	}
-
-	public void removeLast() {
-		list.remove(size() - 1);
-	}
-
-	public Move lastMove() {
+	/**
+	 * 
+	 * @return the last move
+	 */
+	public Move getLastMove() {
 		if (isEmpty())
 			return null;
 		return get(size() - 1);
 	}
 
+	/**
+	 * 
+	 * @return true if the game has already ended
+	 */
 	public boolean hasEnd() {
 		return endgame != null;
 	}
 
+	/**
+	 * specify that this game ended with certain end game situation
+	 * 
+	 * @param endgame
+	 */
 	public void endGame(EndGame endgame) {
 		this.endgame = endgame;
-//		if (!list.isEmpty())
-//			lastMove().endGame(endgame);
 	}
 
 	/**
 	 * 
 	 * @param original
-	 *            the original positon of the piece
+	 *            the original position of the piece
 	 * @param type
 	 *            the type of the piece originally at this square
 	 * @return true if the original piece has ever moved or be taken since the
@@ -84,6 +110,10 @@ public class Record implements Iterable<Move> {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @return the documentation for all the records
+	 */
 	public String printDoc() {
 		StringBuilder sb = new StringBuilder();
 		for (Move r : list) {
@@ -96,7 +126,7 @@ public class Record implements Iterable<Move> {
 		if (hasEnd()) {
 			sb.append("\n" + endgame.getDoc());
 		} else {
-			Move last = lastMove();
+			Move last = getLastMove();
 			if (last != null)
 				if (last.wb)
 					sb.append("   ...");
@@ -104,6 +134,10 @@ public class Record implements Iterable<Move> {
 		return sb.toString();
 	}
 
+	/**
+	 * 
+	 * @return the description for the end game
+	 */
 	public String getEndGameDescript() {
 		return endgame.getDescript();
 	}

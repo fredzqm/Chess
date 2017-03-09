@@ -24,6 +24,13 @@ import view.ChessViewer;
 import view.ChessViewerControl;
 import view.SquareLabel;
 
+/**
+ * 
+ * A chess controller that control two ChessView, each views the board separately
+ * 
+ * @author zhang
+ *
+ */
 public class DualViewChessControl implements ChessViewerControl, ChessController {
 
 	/**
@@ -314,7 +321,7 @@ public class DualViewChessControl implements ChessViewerControl, ChessController
 			}
 			Square spot = labelToSquare(label);
 			if (chosen != null) {
-				if (label.isHighLight() && !spot.equals(chosen.getP())) {
+				if (label.isHighLight() && !spot.equals(chosen.getSpot())) {
 					if (!chess.performMove(chosen, spot))
 						throw new ChessGameException(
 								"Illegal move of " + chosen.getName() + " did not correctly caught from UI!");
@@ -368,9 +375,9 @@ public class DualViewChessControl implements ChessViewerControl, ChessController
 	public void updateSquare(Square sq) {
 		if (sq.occupied()) {
 			whiteView.labelAt(sq.X(), sq.Y()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
-					sq.getPiece().getWb());
+					sq.getPiece().getWOrB());
 			blackView.labelAt(sq.X(), sq.Y()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
-					sq.getPiece().getWb());
+					sq.getPiece().getWOrB());
 		} else {
 			whiteView.labelAt(sq.X(), sq.Y()).clearLabel();
 			blackView.labelAt(sq.X(), sq.Y()).clearLabel();

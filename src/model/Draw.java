@@ -12,7 +12,6 @@ public enum Draw implements EndGame{
 	FIFTY_MOVE("Quite" , "Fifty-move rule."), 
 	REPETITION("Repetition", "threefold repetition."),
 	AGREEMENT("Agreement to draw", "Draw by Agreement.");
-	;
 
 	private final String descript;
 	private final String printOut;

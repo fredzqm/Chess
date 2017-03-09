@@ -1,7 +1,8 @@
 package model;
 
 /**
- * the super class for all different kinds of pieces.
+ * The super class for all different kinds of pieces.
+ * 
  * @author zhangq2
  *
  */
@@ -17,33 +18,56 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @param p
 	 *            the square this piece is at initially.
 	 */
-	public Piece( boolean wb, Square p) {
+	public Piece(boolean wb, Square p) {
 		this.chess = p.getChess();
-		this.wb = wb;	
+		this.wb = wb;
 		moveTo(p);
 	}
 
 	// ------------------------------------------------------------------------------------------------------------------------
 	// accessors
-	public String getName(){
-		String s  = getClass().getName();
-		return s.substring(s.lastIndexOf("." ) + 1);
+	public String getName() {
+		String s = getClass().getName();
+		return s.substring(s.lastIndexOf(".") + 1);
 	}
 
-	public Square getP() {
+	/**
+	 * 
+	 * @return the spot this piece is on. {@Code null} if this piece is not on
+	 *         the board (taken away)
+	 */
+	public Square getSpot() {
 		return spot;
 	}
 
-	public boolean getWb() {
+	/**
+	 * 
+	 * @return true if this is a white piece, false if this is a black piece
+	 */
+	public boolean getWOrB() {
 		return wb;
 	}
 
+	/**
+	 * 
+	 * @return the single character that represents this piece
+	 */
 	public abstract char getType();
 
-	public boolean isType(Class<? extends Piece> p) {
-		return getClass() == p;
+	/**
+	 * 
+	 * @param type
+	 * @return true if this piece is of this type
+	 */
+	public boolean isType(Class<? extends Piece> type) {
+		return getClass() == type;
 	}
 
+	/**
+	 * This method is not really used right now
+	 * 
+	 * @return the value or power of this piece
+	 */
 	public abstract int getValue();
 
 	/**
@@ -54,14 +78,22 @@ public abstract class Piece implements Comparable<Piece> {
 		return (a.getValue() - getValue());
 	}
 
+	/**
+	 * 
+	 * @return X position of this spot
+	 */
 	public int getX() {
 		return spot.X();
 	}
 
+	/**
+	 * 
+	 * @return Y position of this spot
+	 */
 	public int getY() {
 		return spot.Y();
 	}
-	
+
 	// modifiers
 
 	/**
@@ -80,6 +112,11 @@ public abstract class Piece implements Comparable<Piece> {
 	}
 
 	/**
+	 * For most pieces in chess, there is a common way of moving. This checks if
+	 * certain move match such common.
+	 * 
+	 * For pawn this method only specifies the move. The capture logic is
+	 * defined in {@link Pawn#getMove(Square)}
 	 * 
 	 * @param end
 	 *            the end position
@@ -90,65 +127,54 @@ public abstract class Piece implements Comparable<Piece> {
 	public abstract Move legalPosition(Square end);
 
 	/**
-	 * This method takes everything into account, including giving away king, castling, En Passant
+	 * This method takes everything into account, including giving away king,
+	 * castling, En Passant.
+	 * 
 	 * 
 	 * @param end
-	 * @return true if it is safe to make this move.
+	 * @return true if it is safe to make this move without violation of the
+	 *         rule
 	 */
-	public boolean canGo(Square end){
-		return getMove(end) != null ;
-//				getCapture(end) !=null || ;
+	public boolean canGo(Square end) {
+		return getMove(end) != null;
 	}
 
 	/**
+	 * This method gets a legitimate move to the end Square if one exists. This
+	 * method is overridden by {@link King} and {@link Pawn}, because they have
+	 * special rules
+	 * 
+	 * For pieces except King and Pawn, @{link {@link Piece#legalPosition}
+	 * capture all possible moves
 	 * 
 	 * @param end
-	 * @param chess
-	 * @return true if it is legal to move this piece to the end position
+	 *            the spot to move to
+	 * @return the legal move of this piece toward the end Square, {@Code null}
+	 *         if this move is illegal
 	 */
 	protected Move getMove(Square end) {
-		if (end.occupiedBy(wb)) 
+		// cannot move to own piece
+		if (end.occupiedBy(wb))
 			return null;
-		Move legalMove =  legalPosition(end) ;
+		Move legalMove = legalPosition(end);
 		if (legalMove == null)
 			return null;
+		// check if this move is giving away the king
 		if (chess.giveAwayKing(legalMove))
 			return null;
 		return legalMove;
 	}
-//	protected Move getMove(Square end) {
-//		if (end.occupied()) 
-//			return null;
-//		Move legalMove =  legalPosition(end) ;
-//		if (legalMove == null)
-//			return null;
-//		if (chess.giveAwayKing(this, spot, end.getPiece(), end, wb))
-//			return null;
-//		return legalMove;
-//	}
-//
-//	/**
-//	 * 
-//	 * @param end
-//	 * @param chess
-//	 * @return true if it is legal to capture the piece at the end
-//	 */
-//	protected Move getCapture(Square end) {
-//		if (! end.occupiedBy(!wb)) 
-//			return null;
-//		Move legalMove =  canAttack(end) ;
-//		if (legalMove == null)
-//			return null;
-//		if (chess.giveAwayKing(this, spot, end.getPiece(), end, wb))
-//			return null;
-//		return legalMove;
-//	}
 
 	/**
+	 * This method is overridden by Pawn because it has special rule for
+	 * attacking
+	 * 
+	 * For other pieces, the all legal position they can move to are the spots
+	 * they can attack
 	 * 
 	 * @param end
-	 * @param chess
-	 * @return true if it is attacking the end spot.
+	 *            the spot to attack
+	 * @return true if this piece can attack this spot
 	 */
 	protected Move canAttack(Square end) {
 		if (spot == null)
@@ -157,23 +183,37 @@ public abstract class Piece implements Comparable<Piece> {
 	}
 
 	/**
+	 * This method convert the character to one type of {@link Piece} class. It
+	 * used mostly for parsing commands like
+	 * <p>
+	 * e2-e4 <br />
+	 * Nb1-c3
+	 * </p>
 	 * 
-	 * @param c
+	 * @param character
+	 *            the character representing the piece
 	 * @return the corresponding class
 	 */
-	public static Class<?extends Piece> getType(char c){
-		switch (Character.toUpperCase(c)) {
-		case 'P':return Pawn.class;
-		case 'R':return Rook.class;
-		case 'N':return Knight.class;
-		case 'B':return Bishop.class;
-		case 'Q':return Queen.class;
-		case 'K':return King.class;
-		default:return Piece.class;
+	public static Class<? extends Piece> getType(char character) {
+		switch (Character.toUpperCase(character)) {
+		case 'P':
+			return Pawn.class;
+		case 'R':
+			return Rook.class;
+		case 'N':
+			return Knight.class;
+		case 'B':
+			return Bishop.class;
+		case 'Q':
+			return Queen.class;
+		case 'K':
+			return King.class;
+		default:
+			return Piece.class;
 		}
 	}
-	
-	public String toString(){
-		return getName()+" at "+getP();
+
+	public String toString() {
+		return getName() + " at " + getSpot();
 	}
 }

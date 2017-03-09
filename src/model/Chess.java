@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * It is the system for a chess game. It has fields to store the condition of
- * the chess and method to acess and modify those information.
+ * the chess and method to access and modify those information.
  * 
  * @author zhangq2
  *
@@ -182,45 +182,48 @@ public class Chess {
 	}
 
 	/**
-	 * find out whether a certain move will put your own king in check
+	 * Find out whether a certain move will put your own king in check.
 	 * 
-	 * @param moved
-	 * @param start
-	 * @param taken
-	 * @param end
-	 * @param wb
-	 * @return
+	 * The concept is simple here, presumably make the first and check if the
+	 * opponent is checking {@link Chess#checkOrNot}. Then undo the move
+	 * 
+	 * @param move
+	 * @return true if this move will give away the king
 	 */
 	public boolean giveAwayKing(Move move) {
 		enableUpdateSquare = false;
-		boolean giveAway = false;
 		move.performMove(this);
-		if (checkOrNot(!move.getWhoseTurn())) {
-			giveAway = true;
-		}
+		boolean giveAway = checkOrNot(!move.getWhoseTurn());
 		move.undo(this);
 		enableUpdateSquare = true;
 		return giveAway;
 	}
 
 	/**
+	 * checkOrNot(true) will return true if the white is checking the black's
+	 * king
 	 * 
-	 * @param attack
+	 * checkOrNot(false) will return true if the black is checking the white's
+	 * king
+	 * 
+	 * @param attacker
 	 *            who is attacking and tries to make this check
 	 * @return whether it is checking
 	 */
-	public boolean checkOrNot(boolean attack) {
-		if (attack)
-			return isAttacked(true, black.get(0).getP());
+	public boolean checkOrNot(boolean attacker) {
+		if (attacker)
+			return isAttacked(true, black.get(0).getSpot());
 		else
-			return isAttacked(false, white.get(0).getP());
+			return isAttacked(false, white.get(0).getSpot());
 	}
 
 	/**
 	 * 
 	 * @param whiteOrBlack
+	 *            who is attacking (true, the while, false, the black)
 	 * @param square
-	 * @return true if square is attacked by white or black
+	 *            the square to check for
+	 * @return true if square is attacked
 	 */
 	public boolean isAttacked(boolean whiteOrBlack, Square square) {
 		ArrayList<Piece> attacker;
@@ -237,11 +240,14 @@ public class Chess {
 	}
 
 	/**
+	 * 
 	 * used to find if there is a checkmake, and stalment. if this method
 	 * returns true, and it is now in check, it is a checkmate; but if it is now
 	 * not in check, the opponent cannot make any legitimate move, so it is a
 	 * draw by stalment.
 	 * 
+	 * @param checked
+	 *            the side that can be potentially checkmaked
 	 * @return after the opponent makes one move, is it possible for his king
 	 *         not to be in check
 	 */
@@ -334,14 +340,14 @@ public class Chess {
 	 */
 	public Move canCastling(King k, boolean longOrShort) {
 		if (longOrShort) {
-			if (canNotLongCastling(k.getY(), !k.getWb()))
+			if (canNotLongCastling(k.getY(), !k.getWOrB()))
 				return null;
-			return new Castling(k, k.getP(), spotAt(3, k.getY()), (Rook) (spotAt(1, k.getY()).getPiece()),
+			return new Castling(k, k.getSpot(), spotAt(3, k.getY()), (Rook) (spotAt(1, k.getY()).getPiece()),
 					spotAt(1, k.getY()), getRound());
 		} else {
-			if (canNotShortCastling(k.getY(), !k.getWb()))
+			if (canNotShortCastling(k.getY(), !k.getWOrB()))
 				return null;
-			return new Castling(k, k.getP(), spotAt(7, k.getY()), (Rook) (spotAt(8, k.getY()).getPiece()),
+			return new Castling(k, k.getSpot(), spotAt(7, k.getY()), (Rook) (spotAt(8, k.getY()).getPiece()),
 					spotAt(8, k.getY()), getRound());
 		}
 	}
@@ -361,8 +367,8 @@ public class Chess {
 
 	/**
 	 * 
-	 * @return the out put of the last move, which will be displayed in the box
-	 *         or as part of the records.
+	 * @return the output of the last move, which will be displayed in the box
+	 *         or as part of the records. null if the game has not started yet
 	 */
 	public String lastMoveOutPrint() {
 		Move move = lastMove();
@@ -377,7 +383,7 @@ public class Chess {
 	 *         the top label.
 	 */
 	public String lastMoveDiscript() {
-		if(records.hasEnd())
+		if (records.hasEnd())
 			return records.getEndGameDescript();
 		Move move = lastMove();
 		if (move == null)
@@ -403,11 +409,11 @@ public class Chess {
 	 *            the piece that is captured
 	 */
 	public void takeOffBoard(Piece taken) {
-		Square p = taken.getP();
+		Square p = taken.getSpot();
 		if (p == null)
 			return;
-		taken.getP().setOccupied(null);
-		if (taken.getWb())
+		taken.getSpot().setOccupied(null);
+		if (taken.getWOrB())
 			white.remove(taken);
 		else
 			black.remove(taken);
@@ -421,7 +427,7 @@ public class Chess {
 	 */
 	public void putBackToBoard(Piece taken, Square spot) {
 		if (taken != null) {
-			if (taken.getWb()) {
+			if (taken.getWOrB()) {
 				white.add(taken);
 			} else {
 				black.add(taken);
@@ -500,7 +506,7 @@ public class Chess {
 		move.performMove(this);
 		// add rocord
 		records.add(move);
-		
+
 		// update time
 		whoseTurn = !whoseTurn;
 		time++;
@@ -523,7 +529,6 @@ public class Chess {
 			}
 		}
 		// send notification to control
-		// for (ChessListener listener : listeners)
 		control.nextMove(move);
 	}
 

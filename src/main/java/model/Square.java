@@ -5,11 +5,13 @@ package model;
  * 
  * It is also the Jlabel that actually appears in the Frame.
  * 
+ * e1,
+ * 
  * @author zhangq2
  *
  */
 public class Square {
-	private Chess chess ;
+	private Chess chess;
 	private int x;
 	private int y;
 	private String name;
@@ -35,7 +37,7 @@ public class Square {
 
 	// ------------------------------------------------------------------------------------------------------------------
 	// accessors
-	
+
 	public String toString() {
 		return name;
 	}
@@ -55,7 +57,7 @@ public class Square {
 	public Piece getPiece() {
 		return occupied;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -63,7 +65,7 @@ public class Square {
 	public Chess getChess() {
 		return chess;
 	}
-	
+
 	/**
 	 * 
 	 * @return true if there is any piece occupy this squre

@@ -13,7 +13,6 @@ import java.util.List;
  *
  */
 public class Chess {
-
 	private int time;
 	private boolean whoseTurn;
 	private Square[][] spots;
@@ -173,6 +172,11 @@ public class Chess {
 		return possible;
 	}
 
+	/**
+	 * 
+	 * @param chosen
+	 * @return the list of Squares that this piece can reach
+	 */
 	public ArrayList<Square> reachable(Piece chosen) {
 		ArrayList<Square> list = new ArrayList<>();
 		for (Square i : getAllSquares())

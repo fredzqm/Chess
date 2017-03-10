@@ -7,23 +7,25 @@ package model;
  */
 public class Bishop extends Piece {
 	private final int VALUE = 4;
-	
+
 	/**
 	 * constructs a Bishop with initial square
+	 * 
 	 * @param wb
 	 * @param Position
 	 */
-	public Bishop( boolean wb, Square Position) {
+	public Bishop(boolean wb, Square Position) {
 		super(wb, Position);
 	}
 
 	@Override
 	public Move legalPosition(Square end) {
-		if ( legalPosition(spot, end, chess))
+		if (legalPosition(spot, end, chess))
 			return new Move(this, spot, end.getPiece(), end, chess.getRound());
 		return null;
 	}
-	protected static boolean legalPosition(Square start , Square end, Chess chess){
+
+	protected static boolean legalPosition(Square start, Square end, Chess chess) {
 		if (start.equals(end))
 			return false;
 

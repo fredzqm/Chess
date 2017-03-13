@@ -20,8 +20,6 @@ public class Chess {
 	private ArrayList<Piece> black;
 	private Record records;
 
-	private List<ChessListener> listeners;
-	private ChessController control;
 	private Collection<Square> list;
 
 	boolean enableUpdateSquare;
@@ -32,7 +30,7 @@ public class Chess {
 	 * construct a default chess with start setting.
 	 * 
 	 */
-	public Chess(ChessController controller) {
+	public Chess() {
 		enableUpdateSquare = false;
 		whoseTurn = true;
 		time = 0;
@@ -40,9 +38,6 @@ public class Chess {
 		spots = new Square[8][8];
 		white = new ArrayList<Piece>();
 		black = new ArrayList<Piece>();
-		control = controller;
-		listeners = new ArrayList<>();
-		listeners.add(control);
 		list = new ArrayList<Square>();
 
 		for (int i = 0; i < 8; i++) {
@@ -467,13 +462,13 @@ public class Chess {
 	 * @param end
 	 * @return true if move is valid, false if not allowed by chess rule
 	 */
-	public boolean performMove(Piece piece, Square end) {
+	public Move performMove(Piece piece, Square end) {
 		Move move = piece.getMove(end);
 		if (move != null) {
 			makeMove(move);
-		} else
-			return false;
-		return true;
+		}
+		
+		return move;
 	}
 
 	/**
@@ -532,20 +527,10 @@ public class Chess {
 				return;
 			}
 		}
-		// send notification to control
-		control.nextMove(move);
 	}
 
 	protected Piece promotion(boolean wb, Square end) {
-		return control.choosePromotePiece(wb, end);
-	}
-
-	public void addChessListener(ChessListener chessListener) {
-		listeners.add(chessListener);
-	}
-
-	public void removeChessListener(ChessListener chessControl) {
-		listeners.remove(chessControl);
+		return new Queen(wb, end);
 	}
 
 	/**
@@ -556,25 +541,6 @@ public class Chess {
 	 */
 	public void endGame(EndGame endgame) {
 		records.endGame(endgame);
-		for (ChessListener listener : listeners)
-			(new Thread(new Runnable() {
-				@Override
-				public void run() {
-					listener.endGame(endgame);
-				}
-			})).start();
-		;
-	}
-
-	public void updateSquare(Square square) {
-		if (enableUpdateSquare)
-			for (ChessListener listener : listeners)
-				(new Thread(new Runnable() {
-					@Override
-					public void run() {
-						listener.updateSquare(square);
-					}
-				})).start();
 	}
 
 }

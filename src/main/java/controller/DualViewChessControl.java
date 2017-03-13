@@ -1,12 +1,12 @@
 package controller;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import model.Bishop;
 import model.Chess;
-import model.ChessController;
 import model.ChessGameException;
 import model.Draw;
 import model.EndGame;
@@ -31,7 +31,7 @@ import view.SquareLabel;
  * @author zhang
  *
  */
-public class DualViewChessControl implements ChessViewerControl, ChessController {
+public class DualViewChessControl implements ChessViewerControl {
 
 	/**
 	 * printed when command line input cannot be recognized
@@ -95,7 +95,7 @@ public class DualViewChessControl implements ChessViewerControl, ChessController
 	 *            ignored
 	 */
 	public DualViewChessControl() {
-		chess = new Chess(this);
+		chess = new Chess();
 //		chess.addChessListener(this);
 		chosen = null;
 		drawRequest = new Request();
@@ -109,8 +109,7 @@ public class DualViewChessControl implements ChessViewerControl, ChessController
 	}
 
 	private void restart() {
-		chess.removeChessListener(this);
-		chess = new Chess(this);
+		chess = new Chess();
 //		chess.addChessListener(this);
 		chosen = null;
 		drawRequest = new Request();
@@ -227,8 +226,12 @@ public class DualViewChessControl implements ChessViewerControl, ChessController
 					whiteView.printOut(
 							"The chessman in the start Position is not corret! \n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
 				}
-				if (!chess.performMove(movedChessman, end))
+				Move move;
+				if ((move = chess.performMove(movedChessman, end)) == null) {
 					whiteView.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
+				} else {
+					updateGuiToMove(move);
+				}
 				// return;
 			} else {
 				System.out.println(" " + type + " " + end);
@@ -237,8 +240,12 @@ public class DualViewChessControl implements ChessViewerControl, ChessController
 				if (possible.size() == 0) {
 					whiteView.printOut("Fail to guess move: No one can reach that spot.");
 				} else if (possible.size() == 1) {
-					if (!chess.performMove(possible.get(0), end))
+					Move move;
+					if ((move = chess.performMove(possible.get(0), end)) == null) {
 						throw new RuntimeException("OOOOO!");
+					} else {
+						updateGuiToMove(move);
+					}
 				} else {
 					whiteView.printOut("Fail to guess move: There is ambiguity, multiple possible moves.");
 				}
@@ -322,9 +329,13 @@ public class DualViewChessControl implements ChessViewerControl, ChessController
 			Square spot = labelToSquare(label);
 			if (chosen != null) {
 				if (label.isHighLight() && !spot.equals(chosen.getSpot())) {
-					if (!chess.performMove(chosen, spot))
+					Move move;
+					if ((move = chess.performMove(chosen, spot)) == null) {
 						throw new ChessGameException(
 								"Illegal move of " + chosen.getName() + " did not correctly caught from UI!");
+					} else {
+						updateGuiToMove(move);
+					}
 				} else
 					clickedView.cleanTemp();
 				chosen = null;
@@ -349,7 +360,6 @@ public class DualViewChessControl implements ChessViewerControl, ChessController
 		repaintAll();
 	}
 
-	@Override
 	public Piece choosePromotePiece(boolean wb, Square end) {
 		chooesView(wb).cleanTemp();
 		while (true) {
@@ -371,7 +381,6 @@ public class DualViewChessControl implements ChessViewerControl, ChessController
 		}
 	}
 
-	@Override
 	public void updateSquare(Square sq) {
 		if (sq.occupied()) {
 			whiteView.labelAt(sq.X(), sq.Y()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
@@ -384,7 +393,6 @@ public class DualViewChessControl implements ChessViewerControl, ChessController
 		}
 	}
 
-	@Override
 	public void endGame(EndGame end) {
 		if (end == Win.BLACKCHECKMATE || end == Win.WHITECHECKMATE || end == Draw.STALEMENT){
 			whiteView.cleanTemp();
@@ -403,8 +411,12 @@ public class DualViewChessControl implements ChessViewerControl, ChessController
 			blackView.printOut("Congratuations! you win!");
 	}
 
-	@Override
-	public void nextMove(Move previousMove) {
+	private void updateGuiToMove(Move previousMove) {
+		Collection<Square> board = chess.getAllSquares();
+		for(Square sq : board) {
+			updateSquare(sq);
+		}
+		
 		ChessViewer pre = chooesView(previousMove.getWhoseTurn());
 		ChessViewer next = chooesView(!previousMove.getWhoseTurn());
 
@@ -415,6 +427,10 @@ public class DualViewChessControl implements ChessViewerControl, ChessController
 		blackView.printOut(chess.lastMoveOutPrint());
 		next.printOut("Please make your move.");
 		pre.printOut("Wait for the " + side(!previousMove.getWhoseTurn()) + " to make a move");
+		
+	}
+	
+	public void nextMove(Move previousMove) {
 		
 	}
 

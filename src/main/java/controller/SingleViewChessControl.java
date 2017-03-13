@@ -1,4 +1,5 @@
 package controller;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -96,11 +97,7 @@ public class SingleViewChessControl implements ChessViewerControl {
 		chess = new Chess();
 		chosen = null;
 		drawRequest = new Request();
-
 		view = new ChessViewer(this, "The Great Chess Game", true);
-
-		for (Square s : chess.getAllSquares())
-			updateSquare(s);
 		repaintAll();
 	}
 
@@ -111,9 +108,8 @@ public class SingleViewChessControl implements ChessViewerControl {
 
 		view.deHighLightWholeBoard();
 		view.setStatusLabelText("       Welcome to Another Wonderful Chess Game         ");
-		for (Square s : chess.getAllSquares())
-			updateSquare(s);
 		view.printOut("Start a new game!");
+		repaintAll();
 	}
 
 	private String side(boolean whoseTurn) {
@@ -213,15 +209,12 @@ public class SingleViewChessControl implements ChessViewerControl {
 				Move move;
 				if ((move = chess.performMove(movedChessman, end)) == null) {
 					view.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
-				}
-				else {
+				} else {
 					updateGuiToMove(move);
 				}
 				// return;
 			} else {
-				System.out.println(" " + type + " " + end);
 				ArrayList<Piece> possible = chess.possibleMovers(type, end);
-				System.out.println(possible);
 				if (possible.size() == 0) {
 					view.printOut("Fail to guess move: No one can reach that spot.");
 				} else if (possible.size() == 1) {
@@ -293,6 +286,11 @@ public class SingleViewChessControl implements ChessViewerControl {
 	}
 
 	private void repaintAll() {
+		Collection<Square> board = chess.getAllSquares();
+		for (Square sq : board) {
+			updateSquare(sq);
+		}
+
 		view.repaint();
 	}
 
@@ -364,7 +362,7 @@ public class SingleViewChessControl implements ChessViewerControl {
 			view.labelAt(sq.X(), sq.Y()).clearLabel();
 		}
 	}
-	
+
 	public void endGame(EndGame end) {
 		if (end == Win.BLACKCHECKMATE || end == Win.WHITECHECKMATE || end == Draw.STALEMENT) {
 			view.cleanTemp();
@@ -374,13 +372,8 @@ public class SingleViewChessControl implements ChessViewerControl {
 		view.setStatusLabelText(end.getDescript());
 		view.printOut(end.getPrintOut());
 	}
-	
+
 	private void updateGuiToMove(Move previousMove) {
-		Collection<Square> board = chess.getAllSquares();
-		for(Square sq : board) {
-			updateSquare(sq);
-		}
-		
 		view.setStatusLabelText(chess.lastMoveDiscript());
 		view.cleanTemp();
 		view.printOut(chess.lastMoveOutPrint());
@@ -476,9 +469,8 @@ public class SingleViewChessControl implements ChessViewerControl {
 			}
 		}
 	}
-	
-	
-	public static void main(String[] args){
+
+	public static void main(String[] args) {
 		new SingleViewChessControl();
 	}
 

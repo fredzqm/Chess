@@ -13,7 +13,6 @@ import java.util.Collections;
  */
 public class Chess {
 	private int time;
-	private boolean whoseTurn;
 	private Square[][] spots;
 	private ArrayList<Piece> white;
 	private ArrayList<Piece> black;
@@ -28,7 +27,6 @@ public class Chess {
 	 * 
 	 */
 	public Chess() {
-		whoseTurn = true;
 		time = 0;
 		records = new Record();
 		spots = new Square[8][8];
@@ -86,7 +84,7 @@ public class Chess {
 	// Accessors
 
 	public boolean getWhoseTurn() {
-		return whoseTurn;
+		return time % 2 == 0;
 	}
 
 	public int getRound() {
@@ -441,7 +439,6 @@ public class Chess {
 		lastMove.undo(this);
 		records.removeLast();// TODO: records can be improved
 		time--;
-		whoseTurn = !whoseTurn;
 		return true;
 	}
 
@@ -460,7 +457,7 @@ public class Chess {
 		if (move != null) {
 			makeMove(move);
 		}
-		
+
 		return move;
 	}
 
@@ -472,7 +469,7 @@ public class Chess {
 	 */
 	public boolean castling(boolean longOrShort) {
 		King king;
-		if (whoseTurn)
+		if (getWhoseTurn())
 			king = (King) white.get(0);
 		else
 			king = (King) black.get(0);
@@ -500,14 +497,13 @@ public class Chess {
 		records.add(move);
 
 		// update time
-		whoseTurn = !whoseTurn;
 		time++;
 
 		// check end game situations
-		if (checkOrNot(!whoseTurn)) {
-			if (checkMate(whoseTurn)) {
+		if (checkOrNot(!getWhoseTurn())) {
+			if (checkMate(getWhoseTurn())) {
 				move.note = MoveNote.CHECKMATE;
-				if (!whoseTurn)
+				if (!getWhoseTurn())
 					endGame(Win.WHITECHECKMATE);
 				else
 					endGame(Win.BLACKCHECKMATE);
@@ -515,7 +511,7 @@ public class Chess {
 			}
 			move.note = MoveNote.CHECK;
 		} else {
-			if (checkMate(whoseTurn)) {
+			if (checkMate(getWhoseTurn())) {
 				endGame(Draw.STALEMENT);
 				return;
 			}

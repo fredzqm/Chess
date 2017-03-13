@@ -3,7 +3,6 @@ package model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * It is the system for a chess game. It has fields to store the condition of
@@ -14,15 +13,12 @@ import java.util.List;
  */
 public class Chess {
 	private int time;
-	private boolean whoseTurn;
 	private Square[][] spots;
 	private ArrayList<Piece> white;
 	private ArrayList<Piece> black;
 	private Record records;
 
 	private Collection<Square> list;
-
-	boolean enableUpdateSquare;
 
 	// ----------------------------------------------------------------------------------------------------------------------------
 	// constructors and methods used to create and initializes the chess game.
@@ -31,8 +27,6 @@ public class Chess {
 	 * 
 	 */
 	public Chess() {
-		enableUpdateSquare = false;
-		whoseTurn = true;
 		time = 0;
 		records = new Record();
 		spots = new Square[8][8];
@@ -59,7 +53,6 @@ public class Chess {
 		}
 		Collections.sort(white);
 		Collections.sort(black);
-		enableUpdateSquare = false;
 	}
 
 	/**
@@ -91,7 +84,7 @@ public class Chess {
 	// Accessors
 
 	public boolean getWhoseTurn() {
-		return whoseTurn;
+		return time % 2 == 0;
 	}
 
 	public int getRound() {
@@ -190,11 +183,9 @@ public class Chess {
 	 * @return true if this move will give away the king
 	 */
 	public boolean giveAwayKing(Move move) {
-		enableUpdateSquare = false;
 		move.performMove(this);
 		boolean giveAway = checkOrNot(!move.getWhoseTurn());
 		move.undo(this);
-		enableUpdateSquare = true;
 		return giveAway;
 	}
 
@@ -448,7 +439,6 @@ public class Chess {
 		lastMove.undo(this);
 		records.removeLast();// TODO: records can be improved
 		time--;
-		whoseTurn = !whoseTurn;
 		return true;
 	}
 
@@ -467,7 +457,7 @@ public class Chess {
 		if (move != null) {
 			makeMove(move);
 		}
-		
+
 		return move;
 	}
 
@@ -479,7 +469,7 @@ public class Chess {
 	 */
 	public boolean castling(boolean longOrShort) {
 		King king;
-		if (whoseTurn)
+		if (getWhoseTurn())
 			king = (King) white.get(0);
 		else
 			king = (King) black.get(0);
@@ -507,14 +497,13 @@ public class Chess {
 		records.add(move);
 
 		// update time
-		whoseTurn = !whoseTurn;
 		time++;
 
 		// check end game situations
-		if (checkOrNot(!whoseTurn)) {
-			if (checkMate(whoseTurn)) {
+		if (checkOrNot(!getWhoseTurn())) {
+			if (checkMate(getWhoseTurn())) {
 				move.note = MoveNote.CHECKMATE;
-				if (!whoseTurn)
+				if (!getWhoseTurn())
 					endGame(Win.WHITECHECKMATE);
 				else
 					endGame(Win.BLACKCHECKMATE);
@@ -522,7 +511,7 @@ public class Chess {
 			}
 			move.note = MoveNote.CHECK;
 		} else {
-			if (checkMate(whoseTurn)) {
+			if (checkMate(getWhoseTurn())) {
 				endGame(Draw.STALEMENT);
 				return;
 			}

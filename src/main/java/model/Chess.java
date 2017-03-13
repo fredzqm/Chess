@@ -3,7 +3,6 @@ package model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * It is the system for a chess game. It has fields to store the condition of
@@ -22,8 +21,6 @@ public class Chess {
 
 	private Collection<Square> list;
 
-	boolean enableUpdateSquare;
-
 	// ----------------------------------------------------------------------------------------------------------------------------
 	// constructors and methods used to create and initializes the chess game.
 	/**
@@ -31,7 +28,6 @@ public class Chess {
 	 * 
 	 */
 	public Chess() {
-		enableUpdateSquare = false;
 		whoseTurn = true;
 		time = 0;
 		records = new Record();
@@ -59,7 +55,6 @@ public class Chess {
 		}
 		Collections.sort(white);
 		Collections.sort(black);
-		enableUpdateSquare = false;
 	}
 
 	/**
@@ -190,11 +185,9 @@ public class Chess {
 	 * @return true if this move will give away the king
 	 */
 	public boolean giveAwayKing(Move move) {
-		enableUpdateSquare = false;
 		move.performMove(this);
 		boolean giveAway = checkOrNot(!move.getWhoseTurn());
 		move.undo(this);
-		enableUpdateSquare = true;
 		return giveAway;
 	}
 

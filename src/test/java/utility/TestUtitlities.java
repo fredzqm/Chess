@@ -25,7 +25,18 @@ public class TestUtitlities {
 	 */
 	public static void performRecordMoves(Chess chess, String filename)
 			throws FileNotFoundException, InvalidMoveException {
-		for (String moveStr : getMoveString(filename)) {
+		performRecordMoves(chess, getMoveString(filename));
+	}
+
+	/**
+	 * perform the list of records in the chess
+	 * 
+	 * @param chess
+	 * @param recordMoves
+	 * @throws InvalidMoveException
+	 */
+	public static void performRecordMoves(Chess chess, List<String> recordMoves) throws InvalidMoveException {
+		for (String moveStr : recordMoves) {
 			Move move = chess.getMove(moveStr);
 			chess.makeMove(move);
 		}

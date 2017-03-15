@@ -14,7 +14,7 @@ import model.InvalidMoveException;
 import model.Move;
 import utility.LoadMoves;
 
-public class ChessGameTest {
+public class EndGameTest {
 
 	@Test
 	public void testWhiteCheckmate() throws FileNotFoundException {

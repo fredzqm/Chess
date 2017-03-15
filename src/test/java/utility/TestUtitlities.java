@@ -21,18 +21,14 @@ public class TestUtitlities {
 	 * 
 	 * @param filename
 	 * @throws FileNotFoundException
+	 * @throws InvalidMoveException
 	 */
-	public static boolean performRecordMoves(Chess chess, String filename) throws FileNotFoundException {
+	public static void performRecordMoves(Chess chess, String filename)
+			throws FileNotFoundException, InvalidMoveException {
 		for (String moveStr : getMoveString(filename)) {
-			Move move;
-			try {
-				move = chess.getMove(moveStr);
-				chess.makeMove(move);
-			} catch (InvalidMoveException e) {
-				return false;
-			}
+			Move move = chess.getMove(moveStr);
+			chess.makeMove(move);
 		}
-		return true;
 	}
 
 	/**
@@ -116,12 +112,13 @@ public class TestUtitlities {
 	}
 
 	/**
-	 * assert if the chess's layout matches the board layout specified in the file
+	 * assert if the chess's layout matches the board layout specified in the
+	 * file
 	 * 
 	 * @param chess
 	 * @param fileName
 	 */
 	public static void assertBoardFile(Chess chess, String fileName) {
-		assertBoard(chess,  getBoardString(fileName));
+		assertBoard(chess, getBoardString(fileName));
 	}
 }

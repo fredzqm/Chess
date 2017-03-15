@@ -11,7 +11,7 @@ import utility.TestUtitlities;
 
 public class EndGameTest {
 
-	private Chess setupChessGame(String fileName) throws FileNotFoundException {
+	private Chess setupChessGame(String fileName) throws FileNotFoundException, InvalidMoveException {
 		Chess chess = new Chess();
 		
 		TestUtitlities.performRecordMoves(chess, "sampleGames/White_Checkmate.txt");
@@ -22,21 +22,21 @@ public class EndGameTest {
 	}
 	
 	@Test
-	public void testWhiteCheckmate() throws FileNotFoundException {
+	public void testWhiteCheckmate() throws FileNotFoundException, InvalidMoveException {
 		Chess chess = setupChessGame("sampleGames/White_Checkmate.txt");
 		
 		assertEquals(1, chess.getRecords().getEndGame().getResult());
 	}
 	
 	@Test
-	public void testBlackCheckmate() throws FileNotFoundException {
+	public void testBlackCheckmate() throws FileNotFoundException, InvalidMoveException {
 		Chess chess = setupChessGame("sampleGames/Black_Checkmate.txt");
 		
 		assertEquals(-1, chess.getRecords().getEndGame().getResult());
 	}
 	
 	@Test
-	public void testStalemate() throws FileNotFoundException {
+	public void testStalemate() throws FileNotFoundException, InvalidMoveException {
 		Chess chess = setupChessGame("sampleGames/Stalemate.txt");
 		
 		assertEquals(0, chess.getRecords().getEndGame().getResult());

@@ -545,7 +545,6 @@ public class Chess {
 	public Move getMove(String s) throws InvalidMoveException {
 		Move move = null;
 		
-		s = s.toUpperCase();
 		if (s.startsWith("O")) {
 			King king;
 			if (getWhoseTurn()) {

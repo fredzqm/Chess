@@ -51,7 +51,7 @@ public class ChessGameTest {
 			
 			if(line.startsWith("[")) continue;
 			
-			String[] parts = line.split("\\d\\.| ");
+			String[] parts = line.split("\\d+\\.| ");
 			for(int i = 0; i < parts.length; i++) {
 				if(parts[i].length() == 0) continue;
 				

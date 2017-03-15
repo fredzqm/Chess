@@ -7,20 +7,25 @@ import org.junit.Test;
 import utility.TestUtitlities;
 
 public class ChessCastlingTest {
-	
+
 	@Test
 	public void testInitalBoardLayout() throws FileNotFoundException {
 		Chess chess = new Chess();
 		TestUtitlities.assertBoardFile(chess, "sampleBoards/start.txt");
 	}
-	
-	
+
 	@Test
-	public void testWhiteShortCastling() throws FileNotFoundException, InvalidMoveException {
+	public void testShortCastlingSuccess() throws FileNotFoundException, InvalidMoveException {
 		Chess chess = new Chess();
-		
-		TestUtitlities.performRecordMoves(chess, "sampleGames/White_Short_Castling1.txt");
-		TestUtitlities.assertBoardFile(chess, "sampleBoards/White_Short_Castling_Board.txt");
+
+		TestUtitlities.performRecordMoves(chess, "sampleGames/White_Short_Castling_success.txt");
+		TestUtitlities.assertBoardFile(chess, "sampleBoards/White_Short_Castling_success.txt");
 	}
-	
+
+	@Test(expected=InvalidMoveException.class)
+	public void testShortCastlingKingMoved() throws FileNotFoundException, InvalidMoveException {
+		Chess chess = new Chess();
+
+		TestUtitlities.performRecordMoves(chess, "sampleGames/White_Short_Castling_moved_king.txt");
+	}
 }

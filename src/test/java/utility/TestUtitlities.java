@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import model.Chess;
@@ -20,8 +22,28 @@ public class TestUtitlities {
 	 * @throws FileNotFoundException
 	 */
 	public static boolean performRecordMoves(Chess chess, String filename) throws FileNotFoundException {
-		Scanner scan = new Scanner(new File(filename));
+		for (String moveStr : getMoveString(filename)) {
+			Move move;
+			try {
+				move = chess.getMove(moveStr);
+				chess.makeMove(move);
+			} catch (InvalidMoveException e) {
+				return false;
+			}
+		}
+		return true;
+	}
 
+	/**
+	 * 
+	 * @param filename
+	 *            the file name of test cases
+	 * @return the list of moves in this file
+	 * @throws FileNotFoundException
+	 */
+	public static List<String> getMoveString(String filename) throws FileNotFoundException {
+		Scanner scan = new Scanner(new File(filename));
+		List<String> ls = new ArrayList<>();
 		while (scan.hasNextLine()) {
 			String line = scan.nextLine();
 
@@ -32,24 +54,26 @@ public class TestUtitlities {
 			for (int i = 0; i < parts.length; i++) {
 				if (parts[i].length() == 0)
 					continue;
-
-				Move move;
-				try {
-					move = chess.getMove(parts[i]);
-					chess.makeMove(move);
-				} catch (InvalidMoveException e) {
-					scan.close();
-					return false;
-				}
+				ls.add(parts[i]);
 			}
 		}
-
-		scan.close();
-		return true;
+		return ls;
 	}
 
 	public static void assertBoard(Chess chess, String board) {
-		String[] sp = board.split("\n");
+		String[] sp = new String[8];
+		Scanner in = null;
+		try {
+			in = new Scanner(new File(board));
+			for (int i = 0; i < 8; i++) {
+				sp[i] = in.nextLine();
+			}
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (in != null)
+				in.close();
+		}
 
 		for (int i = 1; i <= 8; i++) {
 			for (int j = 1; j <= 8; j++) {
@@ -67,10 +91,11 @@ public class TestUtitlities {
 
 				// test the chess side
 				if (piece != null) {
-					boolean type = sp[i - 1].charAt(j * 2 - 2) != '*';
+					boolean type = sp[i - 1].charAt(j * 2 - 2) == ' ';
 					assertEquals(String.format("At %s", square.toString()), type, piece.getWOrB());
 				}
 			}
 		}
+
 	}
 }

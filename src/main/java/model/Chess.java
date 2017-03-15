@@ -139,6 +139,29 @@ public class Chess {
 		return records;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 8; i >= 1; i--) {
+			for (int j = 1; j <= 8; j++) {
+				Square square = spotAt(j, i);
+				Piece piece = square.getPiece();
+				if (piece == null) {
+					sb.append("  ");
+				} else {
+					if (piece.getWOrB()) {
+						sb.append('*');
+					} else {
+						sb.append(' ');
+					}
+					sb.append(piece.getType());
+				}
+			}
+			sb.append('\n');
+		}
+		return sb.toString();
+	}
+
 	/**
 	 * 
 	 * @param type
@@ -533,51 +556,47 @@ public class Chess {
 	public void endGame(EndGame endgame) {
 		records.endGame(endgame);
 	}
-	
+
 	/**
 	 * Create a move object for the standard chess record.
 	 * 
-	 * @param s String for the chess record
+	 * @param s
+	 *            String for the chess record
 	 * 
 	 * @return Move object representing the desired move
 	 * 
 	 */
 	public Move getMove(String s) throws InvalidMoveException {
 		Move move = null;
-		
+
 		if (s.startsWith("O")) {
 			King king;
 			if (getWhoseTurn()) {
 				king = (King) white.get(0);
-			}
-			else {
+			} else {
 				king = (King) black.get(0);
 			}
-			
+
 			if (s.equals("O-O")) {
 				move = canCastling(king, false);
 			} else if (s.equals("O-O-O")) {
 				move = canCastling(king, true);
 			} else {
-				throw new InvalidMoveException(
-						InvalidMoveException.Type.invalidFormat);
+				throw new InvalidMoveException(s, InvalidMoveException.Type.invalidFormat);
 			}
-			
-			if(move != null) {
+
+			if (move != null) {
 				return move;
 			} else {
-				throw new InvalidMoveException(
-						InvalidMoveException.Type.castleNotAllowed);
+				throw new InvalidMoveException(s, InvalidMoveException.Type.castleNotAllowed);
 			}
 		}
 
 		Pattern p = Pattern.compile("([PRNBQK])?([a-h])?([1-8])?.*?([a-h][1-8]).*");
 		Matcher m = p.matcher(s);
-		if (m.matches())
-		{
-			Class<? extends Piece> type =
-					m.group(1) == null ? Pawn.class : Piece.getType(m.group(1).charAt(0));
-			
+		if (m.matches()) {
+			Class<? extends Piece> type = m.group(1) == null ? Pawn.class : Piece.getType(m.group(1).charAt(0));
+
 			Square start = null;
 			if ((m.group(2) != null) && (m.group(3) != null)) {
 				start = getSquare(m.group(2) + m.group(3));
@@ -587,30 +606,25 @@ public class Chess {
 			if (start != null) {
 				Piece movedChessman = start.getPiece();
 				if (movedChessman == null) {
-					throw new InvalidMoveException(
-							InvalidMoveException.Type.pieceNotPresent);
+					throw new InvalidMoveException(s, InvalidMoveException.Type.pieceNotPresent);
 				} else if (!(movedChessman.isType(type))) {
-					throw new InvalidMoveException(
-							InvalidMoveException.Type.incorrectPiece);
+					throw new InvalidMoveException(s, InvalidMoveException.Type.incorrectPiece);
 				}
 				move = movedChessman.getMove(end);
 			} else {
 				ArrayList<Piece> possible = possibleMovers(type, end);
 				if (possible.size() == 0) {
-					throw new InvalidMoveException(
-							InvalidMoveException.Type.impossibleMove);
+					throw new InvalidMoveException(s, InvalidMoveException.Type.impossibleMove);
 				} else if (possible.size() == 1) {
 					move = possible.get(0).getMove(end);
 				} else {
-					throw new InvalidMoveException(
-							InvalidMoveException.Type.ambiguousMove);
+					throw new InvalidMoveException(s, InvalidMoveException.Type.ambiguousMove);
 				}
 			}
 		} else {
-			throw new InvalidMoveException(
-					InvalidMoveException.Type.invalidFormat);
+			throw new InvalidMoveException(s, InvalidMoveException.Type.invalidFormat);
 		}
-		
+
 		return move;
 	}
 

@@ -1,6 +1,7 @@
 package model;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -11,19 +12,23 @@ public class ChessCastlingTest {
 	@Test
 	public void testInitalBoardLayout() throws FileNotFoundException {
 		Chess chess = new Chess();
-		TestUtitlities.assertBoard(chess, "sampleBoards/start.txt");
+		TestUtitlities.assertBoardFile(chess, "sampleBoards/start.txt");
 	}
 	
 	
 	@Test
-	public void testWhiteShortCastling() throws FileNotFoundException {
+	public void testWhiteShortCastling() throws FileNotFoundException, InvalidMoveException {
 		Chess chess = new Chess();
 		
-		TestUtitlities.performRecordMoves(chess, "sampleGames/White_Short_Castling1.txt");
+		List<String> moveStrLs = TestUtitlities.getMoveString("sampleGames/White_Short_Castling1.txt");
+		for (String moveStr : moveStrLs) {
+			System.out.println(moveStr);
+			Move move = chess.getMove(moveStr);
+			chess.makeMove(move);
+			System.out.println(chess);
+		}
 		
-		System.out.println(chess);
-		
-		TestUtitlities.assertBoard(chess, "sampleBoards/White_Short_Castling_Board.txt");
+		TestUtitlities.assertBoardFile(chess, "sampleBoards/White_Short_Castling_Board.txt");
 	}
 	
 }

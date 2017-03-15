@@ -15,6 +15,7 @@ import model.Piece;
 import model.Square;
 
 public class TestUtitlities {
+
 	/**
 	 * Read a file and perform the moves recorded in the file.
 	 * 
@@ -41,6 +42,7 @@ public class TestUtitlities {
 	 * @return the list of moves in this file
 	 * @throws FileNotFoundException
 	 */
+	@SuppressWarnings("resource")
 	public static List<String> getMoveString(String filename) throws FileNotFoundException {
 		Scanner scan = new Scanner(new File(filename));
 		List<String> ls = new ArrayList<>();
@@ -60,13 +62,18 @@ public class TestUtitlities {
 		return ls;
 	}
 
-	public static void assertBoard(Chess chess, String board) {
-		String[] sp = new String[8];
+	/**
+	 * 
+	 * @param fileName
+	 * @return the board string in this file
+	 */
+	public static String getBoardString(String fileName) {
+		StringBuilder sb = new StringBuilder();
 		Scanner in = null;
 		try {
-			in = new Scanner(new File(board));
+			in = new Scanner(new File(fileName));
 			for (int i = 0; i < 8; i++) {
-				sp[i] = in.nextLine();
+				sb.append(in.nextLine() + '\n');
 			}
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
@@ -74,7 +81,17 @@ public class TestUtitlities {
 			if (in != null)
 				in.close();
 		}
+		return sb.toString();
+	}
 
+	/**
+	 * assert if this chess's current layout matches the boardString
+	 * 
+	 * @param chess
+	 * @param boardString
+	 */
+	public static void assertBoard(Chess chess, String boardString) {
+		String[] sp = boardString.split("\n");
 		for (int i = 1; i <= 8; i++) {
 			for (int j = 1; j <= 8; j++) {
 				Square square = chess.spotAt(j, i);
@@ -84,18 +101,27 @@ public class TestUtitlities {
 				char actualType = ' ';
 				if (piece != null)
 					actualType = Character.toUpperCase(piece.getType());
-				char expectedType = sp[i - 1].charAt(j * 2 - 1);
+				char expectedType = sp[8 - i].charAt(j * 2 - 1);
 				assertEquals(
 						String.format("At %s actual: %c expected: %c", square.toString(), actualType, expectedType),
 						actualType, expectedType);
 
 				// test the chess side
 				if (piece != null) {
-					boolean type = sp[i - 1].charAt(j * 2 - 2) == ' ';
+					boolean type = sp[8 - i].charAt(j * 2 - 2) == '*';
 					assertEquals(String.format("At %s", square.toString()), type, piece.getWOrB());
 				}
 			}
 		}
+	}
 
+	/**
+	 * assert if the chess's layout matches the board layout specified in the file
+	 * 
+	 * @param chess
+	 * @param fileName
+	 */
+	public static void assertBoardFile(Chess chess, String fileName) {
+		assertBoard(chess,  getBoardString(fileName));
 	}
 }

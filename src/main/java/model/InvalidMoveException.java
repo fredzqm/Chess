@@ -13,10 +13,11 @@ public class InvalidMoveException extends Exception {
 
 	public Type type;
 	
-	public InvalidMoveException(Type type) {
+	public InvalidMoveException(String message, Type type) {
+		super(message + " : " + type.toString());
 		this.type = type;
 	}
-
+	
 	/**
 	 * 
 	 */

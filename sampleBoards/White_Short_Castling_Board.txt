@@ -1,6 +1,6 @@
- R N B Q K     R
+ R   B Q K   N R
  P P P P   P P P
-   N             
+     N           
      B   P      
     *B  *P      
           *N    

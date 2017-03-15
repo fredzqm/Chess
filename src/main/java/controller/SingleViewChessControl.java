@@ -218,7 +218,7 @@ public class SingleViewChessControl implements ChessViewerControl {
 
 	@Override
 	public void handleCommand(String command, boolean whiteOrBlack) {
-		String c = command.toLowerCase();
+		String c = command;
 		if (c.length() == 0)
 			return;
 		if (c.equals("print")) {

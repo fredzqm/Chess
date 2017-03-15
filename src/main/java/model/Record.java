@@ -141,5 +141,9 @@ public class Record implements Iterable<Move> {
 	public String getEndGameDescript() {
 		return endgame.getDescript();
 	}
+	
+	public EndGame getEndGame() {
+		return endgame;
+	}
 
 }

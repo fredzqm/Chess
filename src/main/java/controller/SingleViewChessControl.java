@@ -1,15 +1,17 @@
 package controller;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import model.Bishop;
 import model.Chess;
-import model.ChessController;
 import model.ChessGameException;
 import model.Draw;
 import model.EndGame;
+import model.InvalidMoveException;
 import model.Knight;
 import model.Move;
 import model.Pawn;
@@ -30,7 +32,7 @@ import view.SquareLabel;
  * @author zhang
  *
  */
-public class SingleViewChessControl implements ChessViewerControl, ChessController {
+public class SingleViewChessControl implements ChessViewerControl {
 
 	/**
 	 * printed when command line input cannot be recognized
@@ -93,28 +95,22 @@ public class SingleViewChessControl implements ChessViewerControl, ChessControll
 	 *            ignored
 	 */
 	public SingleViewChessControl() {
-		chess = new Chess(this);
+		chess = new Chess();
 		chosen = null;
 		drawRequest = new Request();
-
 		view = new ChessViewer(this, "The Great Chess Game", true);
-
-		for (Square s : chess.getAllSquares())
-			updateSquare(s);
 		repaintAll();
 	}
 
 	private void restart() {
-		chess.removeChessListener(this);
-		chess = new Chess(this);
+		chess = new Chess();
 		chosen = null;
 		drawRequest = new Request();
 
 		view.deHighLightWholeBoard();
 		view.setStatusLabelText("       Welcome to Another Wonderful Chess Game         ");
-		for (Square s : chess.getAllSquares())
-			updateSquare(s);
 		view.printOut("Start a new game!");
+		repaintAll();
 	}
 
 	private String side(boolean whoseTurn) {
@@ -170,68 +166,39 @@ public class SingleViewChessControl implements ChessViewerControl, ChessControll
 	 * @return
 	 */
 	private boolean makeMove(String s) {
-		if (s.startsWith("o")) {
-			if (s.equals("o-o")) {
-				if (!chess.castling(false))
-					view.printOut("You cannot do castling, please check the rules for castling.");
-			} else if (s.equals("o-o-o")) {
-				if (!chess.castling(true))
-					view.printOut("You cannot do castling, please check the rules for castling.");
-			} else {
-				view.printOut("For short castling, enter \"O-O\" and for long castling, enter \"O-O-O\".");
+		Move move = null;
+		try {
+			move = chess.getMove(s);
+		} catch (InvalidMoveException e) {
+			switch(e.type) {
+			case invalidFormat:
+				view.printOut("The command is not in a valid format.");
+				break;
+			case ambiguousMove:
+				view.printOut("Fail to guess move: There is ambiguity, multiple possible moves.");
+				break;
+			case castleNotAllowed:
+				view.printOut("You cannot do castling, please check the rules for castling.");
+				break;
+			case impossibleMove:
+				view.printOut("This is not a possible move.");
+				break;
+			case incorrectPiece:
+				view.printOut("The chessman in the start Position is not correct! " +
+						"\n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
+				break;
+			case pieceNotPresent:
+				view.printOut("There is no piece at the start position.");
+				break;
 			}
+		}
+		
+		if(move != null) {
+			chess.makeMove(move);
 			return true;
 		}
-
-		Pattern p = Pattern.compile("([prnbqk])?([a-h])?([1-8])?.*?([a-h][1-8]).*");
-		Matcher m = p.matcher(s);
-		if (m.matches())
-
-		{
-			Class<? extends Piece> type = m.group(1) == null ? Pawn.class : Piece.getType(m.group(1).charAt(0));
-			if (type == Piece.class) {
-				view.printOut(
-						"Please enter valid initial of chessman -- R(Root), N(Knight), B(Bishop), Q(Queen), K(King). If you omit it, it is assumed as Pawn.");
-				// return true;
-			}
-			Square start = null;
-			if ((m.group(2) != null) && (m.group(3) != null)) {
-				start = chess.getSquare(m.group(2) + m.group(3));
-			}
-			Square end = chess.getSquare(m.group(4));
-
-			if (start != null) {
-				Piece movedChessman = start.getPiece();
-				if (movedChessman == null) {
-					if (chess.getWhoseTurn())
-						view.printOut("There should be a white chessman in the start Position!");
-					else
-						view.printOut("There should be a black chessman in the start Position!");
-				} else if (!(movedChessman.isType(type))) {
-					view.printOut(
-							"The chessman in the start Position is not corret! \n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
-				}
-				if (!chess.performMove(movedChessman, end))
-					view.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
-				// return;
-			} else {
-				System.out.println(" " + type + " " + end);
-				ArrayList<Piece> possible = chess.possibleMovers(type, end);
-				System.out.println(possible);
-				if (possible.size() == 0) {
-					view.printOut("Fail to guess move: No one can reach that spot.");
-				} else if (possible.size() == 1) {
-					if (!chess.performMove(possible.get(0), end))
-						throw new RuntimeException("OOOOO!");
-				} else {
-					view.printOut("Fail to guess move: There is ambiguity, multiple possible moves.");
-				}
-
-			}
-			return true;
-		}
+		
 		return false;
-
 	}
 
 	private SquareLabel squareToLabel(Square sqr, boolean whiteOrBlack) {
@@ -285,6 +252,11 @@ public class SingleViewChessControl implements ChessViewerControl, ChessControll
 	}
 
 	private void repaintAll() {
+		Collection<Square> board = chess.getAllSquares();
+		for (Square sq : board) {
+			updateSquare(sq);
+		}
+
 		view.repaint();
 	}
 
@@ -296,9 +268,13 @@ public class SingleViewChessControl implements ChessViewerControl, ChessControll
 			Square spot = labelToSquare(label);
 			if (chosen != null) {
 				if (label.isHighLight() && !spot.equals(chosen.getSpot())) {
-					if (!chess.performMove(chosen, spot))
+					Move move;
+					if ((move = chess.performMove(chosen, spot)) == null) {
 						throw new ChessGameException(
 								"Illegal move of " + chosen.getName() + " did not correctly caught from UI!");
+					} else {
+						updateGuiToMove(move);
+					}
 				} else
 					view.cleanTemp();
 				chosen = null;
@@ -323,7 +299,6 @@ public class SingleViewChessControl implements ChessViewerControl, ChessControll
 		repaintAll();
 	}
 
-	@Override
 	public Piece choosePromotePiece(boolean wb, Square end) {
 		view.cleanTemp();
 		while (true) {
@@ -345,7 +320,6 @@ public class SingleViewChessControl implements ChessViewerControl, ChessControll
 		}
 	}
 
-	@Override
 	public void updateSquare(Square sq) {
 		if (sq.occupied()) {
 			view.labelAt(sq.X(), sq.Y()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
@@ -355,7 +329,6 @@ public class SingleViewChessControl implements ChessViewerControl, ChessControll
 		}
 	}
 
-	@Override
 	public void endGame(EndGame end) {
 		if (end == Win.BLACKCHECKMATE || end == Win.WHITECHECKMATE || end == Draw.STALEMENT) {
 			view.cleanTemp();
@@ -366,13 +339,11 @@ public class SingleViewChessControl implements ChessViewerControl, ChessControll
 		view.printOut(end.getPrintOut());
 	}
 
-	@Override
-	public void nextMove(Move previousMove) {
+	private void updateGuiToMove(Move previousMove) {
 		view.setStatusLabelText(chess.lastMoveDiscript());
 		view.cleanTemp();
 		view.printOut(chess.lastMoveOutPrint());
 		view.printOut("Next move -- " + side(!previousMove.getWhoseTurn()));
-
 	}
 
 	/**
@@ -464,9 +435,8 @@ public class SingleViewChessControl implements ChessViewerControl, ChessControll
 			}
 		}
 	}
-	
-	
-	public static void main(String[] args){
+
+	public static void main(String[] args) {
 		new SingleViewChessControl();
 	}
 

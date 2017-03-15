@@ -3,7 +3,8 @@ package model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * It is the system for a chess game. It has fields to store the condition of
@@ -14,17 +15,12 @@ import java.util.List;
  */
 public class Chess {
 	private int time;
-	private boolean whoseTurn;
 	private Square[][] spots;
 	private ArrayList<Piece> white;
 	private ArrayList<Piece> black;
 	private Record records;
 
-	private List<ChessListener> listeners;
-	private ChessController control;
 	private Collection<Square> list;
-
-	boolean enableUpdateSquare;
 
 	// ----------------------------------------------------------------------------------------------------------------------------
 	// constructors and methods used to create and initializes the chess game.
@@ -32,17 +28,12 @@ public class Chess {
 	 * construct a default chess with start setting.
 	 * 
 	 */
-	public Chess(ChessController controller) {
-		enableUpdateSquare = false;
-		whoseTurn = true;
+	public Chess() {
 		time = 0;
 		records = new Record();
 		spots = new Square[8][8];
 		white = new ArrayList<Piece>();
 		black = new ArrayList<Piece>();
-		control = controller;
-		listeners = new ArrayList<>();
-		listeners.add(control);
 		list = new ArrayList<Square>();
 
 		for (int i = 0; i < 8; i++) {
@@ -64,7 +55,6 @@ public class Chess {
 		}
 		Collections.sort(white);
 		Collections.sort(black);
-		enableUpdateSquare = false;
 	}
 
 	/**
@@ -96,7 +86,7 @@ public class Chess {
 	// Accessors
 
 	public boolean getWhoseTurn() {
-		return whoseTurn;
+		return time % 2 == 0;
 	}
 
 	public int getRound() {
@@ -195,11 +185,9 @@ public class Chess {
 	 * @return true if this move will give away the king
 	 */
 	public boolean giveAwayKing(Move move) {
-		enableUpdateSquare = false;
 		move.performMove(this);
 		boolean giveAway = checkOrNot(!move.getWhoseTurn());
 		move.undo(this);
-		enableUpdateSquare = true;
 		return giveAway;
 	}
 
@@ -453,7 +441,6 @@ public class Chess {
 		lastMove.undo(this);
 		records.removeLast();// TODO: records can be improved
 		time--;
-		whoseTurn = !whoseTurn;
 		return true;
 	}
 
@@ -467,13 +454,13 @@ public class Chess {
 	 * @param end
 	 * @return true if move is valid, false if not allowed by chess rule
 	 */
-	public boolean performMove(Piece piece, Square end) {
+	public Move performMove(Piece piece, Square end) {
 		Move move = piece.getMove(end);
 		if (move != null) {
 			makeMove(move);
-		} else
-			return false;
-		return true;
+		}
+
+		return move;
 	}
 
 	/**
@@ -484,7 +471,7 @@ public class Chess {
 	 */
 	public boolean castling(boolean longOrShort) {
 		King king;
-		if (whoseTurn)
+		if (getWhoseTurn())
 			king = (King) white.get(0);
 		else
 			king = (King) black.get(0);
@@ -501,25 +488,24 @@ public class Chess {
 	// methods that send message to control
 
 	/**
-	 * all moves from the user input will go throw this method
+	 * All moves from the user input will go throw this method
 	 * 
 	 * @param move
 	 */
-	private void makeMove(Move move) {
+	public void makeMove(Move move) {
 		// make the move
 		move.performMove(this);
 		// add rocord
 		records.add(move);
 
 		// update time
-		whoseTurn = !whoseTurn;
 		time++;
 
 		// check end game situations
-		if (checkOrNot(!whoseTurn)) {
-			if (checkMate(whoseTurn)) {
+		if (checkOrNot(!getWhoseTurn())) {
+			if (checkMate(getWhoseTurn())) {
 				move.note = MoveNote.CHECKMATE;
-				if (!whoseTurn)
+				if (!getWhoseTurn())
 					endGame(Win.WHITECHECKMATE);
 				else
 					endGame(Win.BLACKCHECKMATE);
@@ -527,25 +513,15 @@ public class Chess {
 			}
 			move.note = MoveNote.CHECK;
 		} else {
-			if (checkMate(whoseTurn)) {
+			if (checkMate(getWhoseTurn())) {
 				endGame(Draw.STALEMENT);
 				return;
 			}
 		}
-		// send notification to control
-		control.nextMove(move);
 	}
 
 	protected Piece promotion(boolean wb, Square end) {
-		return control.choosePromotePiece(wb, end);
-	}
-
-	public void addChessListener(ChessListener chessListener) {
-		listeners.add(chessListener);
-	}
-
-	public void removeChessListener(ChessListener chessControl) {
-		listeners.remove(chessControl);
+		return new Queen(wb, end);
 	}
 
 	/**
@@ -556,25 +532,86 @@ public class Chess {
 	 */
 	public void endGame(EndGame endgame) {
 		records.endGame(endgame);
-		for (ChessListener listener : listeners)
-			(new Thread(new Runnable() {
-				@Override
-				public void run() {
-					listener.endGame(endgame);
-				}
-			})).start();
-		;
 	}
+	
+	/**
+	 * Create a move object for the standard chess record.
+	 * 
+	 * @param s String for the chess record
+	 * 
+	 * @return Move object representing the desired move
+	 * 
+	 */
+	public Move getMove(String s) throws InvalidMoveException {
+		Move move = null;
+		
+		if (s.startsWith("O")) {
+			King king;
+			if (getWhoseTurn()) {
+				king = (King) white.get(0);
+			}
+			else {
+				king = (King) black.get(0);
+			}
+			
+			if (s.equals("O-O")) {
+				move = canCastling(king, false);
+			} else if (s.equals("O-O-O")) {
+				move = canCastling(king, true);
+			} else {
+				throw new InvalidMoveException(
+						InvalidMoveException.Type.invalidFormat);
+			}
+			
+			if(move != null) {
+				return move;
+			} else {
+				throw new InvalidMoveException(
+						InvalidMoveException.Type.castleNotAllowed);
+			}
+		}
 
-	public void updateSquare(Square square) {
-		if (enableUpdateSquare)
-			for (ChessListener listener : listeners)
-				(new Thread(new Runnable() {
-					@Override
-					public void run() {
-						listener.updateSquare(square);
-					}
-				})).start();
+		Pattern p = Pattern.compile("([PRNBQK])?([a-h])?([1-8])?.*?([a-h][1-8]).*");
+		Matcher m = p.matcher(s);
+		if (m.matches())
+		{
+			Class<? extends Piece> type =
+					m.group(1) == null ? Pawn.class : Piece.getType(m.group(1).charAt(0));
+			
+			Square start = null;
+			if ((m.group(2) != null) && (m.group(3) != null)) {
+				start = getSquare(m.group(2) + m.group(3));
+			}
+			Square end = getSquare(m.group(4));
+
+			if (start != null) {
+				Piece movedChessman = start.getPiece();
+				if (movedChessman == null) {
+					throw new InvalidMoveException(
+							InvalidMoveException.Type.pieceNotPresent);
+				} else if (!(movedChessman.isType(type))) {
+					throw new InvalidMoveException(
+							InvalidMoveException.Type.incorrectPiece);
+				}
+				move = movedChessman.getMove(end);
+			} else {
+				ArrayList<Piece> possible = possibleMovers(type, end);
+				if (possible.size() == 0) {
+					throw new InvalidMoveException(
+							InvalidMoveException.Type.impossibleMove);
+				} else if (possible.size() == 1) {
+					move = possible.get(0).getMove(end);
+				} else {
+					throw new InvalidMoveException(
+							InvalidMoveException.Type.ambiguousMove);
+				}
+			}
+		} else {
+			throw new InvalidMoveException(
+					InvalidMoveException.Type.invalidFormat);
+		}
+		
+		return move;
 	}
 
 }

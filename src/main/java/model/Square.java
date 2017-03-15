@@ -98,7 +98,6 @@ public class Square {
 	 */
 	public void setOccupied(Piece piece) {
 		occupied = piece;
-		chess.updateSquare(this);
 	}
 
 }

@@ -7,14 +7,15 @@ import java.io.FileNotFoundException;
 
 import org.junit.Test;
 
-import model.Chess;
-import utility.LoadMoves;
+import utility.TestUtitlities;
 
 public class EndGameTest {
 
 	private Chess setupChessGame(String fileName) throws FileNotFoundException {
 		Chess chess = new Chess();
-		assertTrue(LoadMoves.performRecordMoves(chess, fileName));
+		
+		TestUtitlities.performRecordMoves(chess, "sampleGames/White_Checkmate.txt");
+		
 		assertTrue(chess.getRecords().hasEnd());
 		
 		return chess;

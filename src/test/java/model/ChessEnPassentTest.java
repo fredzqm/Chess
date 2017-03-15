@@ -25,8 +25,8 @@ public class ChessEnPassentTest {
 	}
 	
 	@Test
-	public void TestWhiteInvalidEnPassent() throws FileNotFoundException, InvalidMoveException{
-		String file = "sampleGames/InvalidEnPassent.txt";
+	public void TestWhiteInvalidWhiteEnPassent() throws FileNotFoundException, InvalidMoveException{
+		String file = "sampleGames/White_InvalidEnPassent.txt";
 		String lastMove = getLastMoveInFile(file);
 		
 		Chess chess = new Chess();
@@ -43,7 +43,7 @@ public class ChessEnPassentTest {
 	public void testBlackEnPassent() throws FileNotFoundException, InvalidMoveException {
 		String file = "sampleGames/Black_EnPassent.txt";
 		String lastMove = getLastMoveInFile(file);
-		
+
 		Chess chess = new Chess();
 		performRecordMovesButLast(chess, file);
 		
@@ -53,6 +53,22 @@ public class ChessEnPassentTest {
 		Square sq = chess.spotAt(x, Character.getNumericValue(move.charAt(1)));
 		assertTrue(chess.canEnPassant(sq));
 	}
+	
+	@Test
+	public void TestWhiteInvalidEnPassent() throws FileNotFoundException, InvalidMoveException{
+		String file = "sampleGames/Black_InvalidEnPassent.txt";
+		String lastMove = getLastMoveInFile(file);
+		
+		Chess chess = new Chess();
+		performRecordMovesButLast(chess, file);
+		
+		String move = lastMove.split("-")[1];
+		int x = findIndex(move.charAt(0));
+		 
+		Square sq = chess.spotAt(x, Character.getNumericValue(move.charAt(1)));
+		assertFalse(chess.canEnPassant(sq));
+	}
+	
 
 	private int findIndex(char c) {
 		int index = 0;

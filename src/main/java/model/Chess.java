@@ -3,6 +3,8 @@ package model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * It is the system for a chess game. It has fields to store the condition of
@@ -486,11 +488,11 @@ public class Chess {
 	// methods that send message to control
 
 	/**
-	 * all moves from the user input will go throw this method
+	 * All moves from the user input will go throw this method
 	 * 
 	 * @param move
 	 */
-	private void makeMove(Move move) {
+	public void makeMove(Move move) {
 		// make the move
 		move.performMove(this);
 		// add rocord
@@ -530,6 +532,87 @@ public class Chess {
 	 */
 	public void endGame(EndGame endgame) {
 		records.endGame(endgame);
+	}
+	
+	/**
+	 * Create a move object for the standard chess record.
+	 * 
+	 * @param s String for the chess record
+	 * 
+	 * @return Move object representing the desired move
+	 * 
+	 */
+	public Move getMove(String s) throws InvalidMoveException {
+		Move move = null;
+		
+		s = s.toUpperCase();
+		if (s.startsWith("O")) {
+			King king;
+			if (getWhoseTurn()) {
+				king = (King) white.get(0);
+			}
+			else {
+				king = (King) black.get(0);
+			}
+			
+			if (s.equals("O-O")) {
+				move = canCastling(king, false);
+			} else if (s.equals("O-O-O")) {
+				move = canCastling(king, true);
+			} else {
+				throw new InvalidMoveException(
+						InvalidMoveException.Type.invalidFormat);
+			}
+			
+			if(move != null) {
+				return move;
+			} else {
+				throw new InvalidMoveException(
+						InvalidMoveException.Type.castleNotAllowed);
+			}
+		}
+
+		Pattern p = Pattern.compile("([PRNBQK])?([a-h])?([1-8])?.*?([a-h][1-8]).*");
+		Matcher m = p.matcher(s);
+		if (m.matches())
+		{
+			Class<? extends Piece> type =
+					m.group(1) == null ? Pawn.class : Piece.getType(m.group(1).charAt(0));
+			
+			Square start = null;
+			if ((m.group(2) != null) && (m.group(3) != null)) {
+				start = getSquare(m.group(2) + m.group(3));
+			}
+			Square end = getSquare(m.group(4));
+
+			if (start != null) {
+				Piece movedChessman = start.getPiece();
+				if (movedChessman == null) {
+					throw new InvalidMoveException(
+							InvalidMoveException.Type.pieceNotPresent);
+				} else if (!(movedChessman.isType(type))) {
+					throw new InvalidMoveException(
+							InvalidMoveException.Type.incorrectPiece);
+				}
+				move = movedChessman.getMove(end);
+			} else {
+				ArrayList<Piece> possible = possibleMovers(type, end);
+				if (possible.size() == 0) {
+					throw new InvalidMoveException(
+							InvalidMoveException.Type.impossibleMove);
+				} else if (possible.size() == 1) {
+					move = possible.get(0).getMove(end);
+				} else {
+					throw new InvalidMoveException(
+							InvalidMoveException.Type.ambiguousMove);
+				}
+			}
+		} else {
+			throw new InvalidMoveException(
+					InvalidMoveException.Type.invalidFormat);
+		}
+		
+		return move;
 	}
 
 }

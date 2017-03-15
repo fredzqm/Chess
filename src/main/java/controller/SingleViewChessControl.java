@@ -11,6 +11,7 @@ import model.Chess;
 import model.ChessGameException;
 import model.Draw;
 import model.EndGame;
+import model.InvalidMoveException;
 import model.Knight;
 import model.Move;
 import model.Pawn;
@@ -165,74 +166,39 @@ public class SingleViewChessControl implements ChessViewerControl {
 	 * @return
 	 */
 	private boolean makeMove(String s) {
-		if (s.startsWith("o")) {
-			if (s.equals("o-o")) {
-				if (!chess.castling(false))
-					view.printOut("You cannot do castling, please check the rules for castling.");
-			} else if (s.equals("o-o-o")) {
-				if (!chess.castling(true))
-					view.printOut("You cannot do castling, please check the rules for castling.");
-			} else {
-				view.printOut("For short castling, enter \"O-O\" and for long castling, enter \"O-O-O\".");
+		Move move = null;
+		try {
+			move = chess.getMove(s);
+		} catch (InvalidMoveException e) {
+			switch(e.type) {
+			case invalidFormat:
+				view.printOut("The command is not in a valid format.");
+				break;
+			case ambiguousMove:
+				view.printOut("Fail to guess move: There is ambiguity, multiple possible moves.");
+				break;
+			case castleNotAllowed:
+				view.printOut("You cannot do castling, please check the rules for castling.");
+				break;
+			case impossibleMove:
+				view.printOut("This is not a possible move.");
+				break;
+			case incorrectPiece:
+				view.printOut("The chessman in the start Position is not correct! " +
+						"\n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
+				break;
+			case pieceNotPresent:
+				view.printOut("There is no piece at the start position.");
+				break;
 			}
+		}
+		
+		if(move != null) {
+			chess.makeMove(move);
 			return true;
 		}
-
-		Pattern p = Pattern.compile("([prnbqk])?([a-h])?([1-8])?.*?([a-h][1-8]).*");
-		Matcher m = p.matcher(s);
-		if (m.matches())
-
-		{
-			Class<? extends Piece> type = m.group(1) == null ? Pawn.class : Piece.getType(m.group(1).charAt(0));
-			if (type == Piece.class) {
-				view.printOut(
-						"Please enter valid initial of chessman -- R(Root), N(Knight), B(Bishop), Q(Queen), K(King). If you omit it, it is assumed as Pawn.");
-				// return true;
-			}
-			Square start = null;
-			if ((m.group(2) != null) && (m.group(3) != null)) {
-				start = chess.getSquare(m.group(2) + m.group(3));
-			}
-			Square end = chess.getSquare(m.group(4));
-
-			if (start != null) {
-				Piece movedChessman = start.getPiece();
-				if (movedChessman == null) {
-					if (chess.getWhoseTurn())
-						view.printOut("There should be a white chessman in the start Position!");
-					else
-						view.printOut("There should be a black chessman in the start Position!");
-				} else if (!(movedChessman.isType(type))) {
-					view.printOut(
-							"The chessman in the start Position is not corret! \n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
-				}
-				Move move;
-				if ((move = chess.performMove(movedChessman, end)) == null) {
-					view.printOut("Illegal move! Please check the rule of " + movedChessman.getName() + "!");
-				} else {
-					updateGuiToMove(move);
-				}
-				// return;
-			} else {
-				ArrayList<Piece> possible = chess.possibleMovers(type, end);
-				if (possible.size() == 0) {
-					view.printOut("Fail to guess move: No one can reach that spot.");
-				} else if (possible.size() == 1) {
-					Move move;
-					if ((move = chess.performMove(possible.get(0), end)) == null) {
-						throw new RuntimeException("OOOOO!");
-					} else {
-						updateGuiToMove(move);
-					}
-				} else {
-					view.printOut("Fail to guess move: There is ambiguity, multiple possible moves.");
-				}
-
-			}
-			return true;
-		}
+		
 		return false;
-
 	}
 
 	private SquareLabel squareToLabel(Square sqr, boolean whiteOrBlack) {

@@ -1,33 +1,57 @@
 package model;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-
-import org.junit.Before;
 import org.junit.Test;
 
 public class ChessEnPassentTest {
-	private String lastMove;
-	private String file;
-
-	@Before
-	public void setup() throws FileNotFoundException {
-		file = "sampleGames/EnPassent.txt";
-		lastMove = getLastMoveInFile(file);
-	}
-
+	
 	@Test
-	public void testWhiteCheckmate() throws FileNotFoundException, InvalidMoveException {
+	public void testWhiteEnPassent() throws FileNotFoundException, InvalidMoveException {
+		String file = "sampleGames/White_EnPassent.txt";
+		String lastMove = getLastMoveInFile(file);
+		
 		Chess chess = new Chess();
 		performRecordMovesButLast(chess, file);
 		
 		String move = lastMove.split("-")[1];
 		int x = findIndex(move.charAt(0));
+		 
 		Square sq = chess.spotAt(x, Character.getNumericValue(move.charAt(1)));
+		assertTrue(chess.canEnPassant(sq));
+	}
+	
+	@Test
+	public void TestWhiteInvalidEnPassent() throws FileNotFoundException, InvalidMoveException{
+		String file = "sampleGames/InvalidEnPassent.txt";
+		String lastMove = getLastMoveInFile(file);
 		
+		Chess chess = new Chess();
+		performRecordMovesButLast(chess, file);
+		
+		String move = lastMove.split("-")[1];
+		int x = findIndex(move.charAt(0));
+		 
+		Square sq = chess.spotAt(x, Character.getNumericValue(move.charAt(1)));
+		assertFalse(chess.canEnPassant(sq));
+	}
+
+	@Test
+	public void testBlackEnPassent() throws FileNotFoundException, InvalidMoveException {
+		String file = "sampleGames/Black_EnPassent.txt";
+		String lastMove = getLastMoveInFile(file);
+		
+		Chess chess = new Chess();
+		performRecordMovesButLast(chess, file);
+		
+		String move = lastMove.split("-")[1];
+		int x = findIndex(move.charAt(0));
+		 
+		Square sq = chess.spotAt(x, Character.getNumericValue(move.charAt(1)));
+		assertTrue(chess.canEnPassant(sq));
 	}
 
 	private int findIndex(char c) {

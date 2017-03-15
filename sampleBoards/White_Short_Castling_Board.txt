@@ -1,8 +1,8 @@
- R   B Q K   N R
+ R   B Q   R K
  P P P P   P P P
-     N           
+     N     N      
      B   P      
     *B  *P      
-          *N    
+    *N    *N    
 *P*P*P*P  *P*P*P
-*R*N*B*Q  *R*K  
+*R  *B*Q  *R*K  

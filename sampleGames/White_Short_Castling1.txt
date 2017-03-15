@@ -1,1 +1,5 @@
-1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 6. O-O
+1. e4 e5 
+2. Nf3 Nc6 
+3. Bc4 Bc5 
+6. O-O Nf6
+7. Nc3 O-O

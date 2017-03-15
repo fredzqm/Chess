@@ -69,7 +69,11 @@ public class TestUtitlities {
 		try {
 			in = new Scanner(new File(fileName));
 			for (int i = 0; i < 8; i++) {
-				sb.append(in.nextLine() + '\n');
+				String line = in.nextLine();
+				sb.append(line);
+				for (int x = line.length(); x < 16; x++)
+					sb.append(' ');
+				sb.append('\n');
 			}
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);

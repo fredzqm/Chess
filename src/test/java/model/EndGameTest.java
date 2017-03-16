@@ -14,7 +14,7 @@ public class EndGameTest {
 	private Chess setupChessGame(String fileName) throws FileNotFoundException, InvalidMoveException {
 		Chess chess = new Chess();
 		
-		TestUtitlities.performRecordMoves(chess, "sampleGames/White_Checkmate.txt");
+		TestUtitlities.performRecordMoves(chess, fileName);
 		
 		assertTrue(chess.getRecords().hasEnd());
 		

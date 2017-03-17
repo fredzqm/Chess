@@ -14,7 +14,7 @@ import model.Move;
 import model.Piece;
 import model.Square;
 
-public class TestUtitlities {
+public class TestUtility {
 
 	/**
 	 * Read a file and perform the moves recorded in the file.

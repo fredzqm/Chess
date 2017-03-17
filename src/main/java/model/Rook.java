@@ -12,11 +12,11 @@ public class Rook extends Piece {
 	 * constructs a Rook with initial square
 	 * 
 	 * @param type
-	 * @param wb
+	 * @param c
 	 * @param Position
 	 */
-	public Rook( boolean wb, Square Position) {
-		super(wb, Position);
+	public Rook( Color c, Square Position) {
+		super(c, Position);
 	}
 
 	@Override

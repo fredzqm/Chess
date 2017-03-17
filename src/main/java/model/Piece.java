@@ -8,8 +8,13 @@ package model;
  */
 public abstract class Piece implements Comparable<Piece> {
 	protected Chess chess;
-	protected boolean wb;
+	protected Color color;
 	protected Square spot;
+	
+	public enum Color {
+		WHITE,
+		BLACK
+	}
 
 	/**
 	 * 
@@ -18,14 +23,12 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @param p
 	 *            the square this piece is at initially.
 	 */
-	public Piece(boolean wb, Square p) {
+	public Piece(Color c, Square p) {
 		this.chess = p.getChess();
-		this.wb = wb;
+		this.color = c;
 		moveTo(p);
 	}
 
-	// ------------------------------------------------------------------------------------------------------------------------
-	// accessors
 	public String getName() {
 		String s = getClass().getName();
 		return s.substring(s.lastIndexOf(".") + 1);
@@ -44,8 +47,8 @@ public abstract class Piece implements Comparable<Piece> {
 	 * 
 	 * @return true if this is a white piece, false if this is a black piece
 	 */
-	public boolean getWOrB() {
-		return wb;
+	public Color getWhiteOrBlack() {
+		return this.color;
 	}
 
 	/**
@@ -154,7 +157,7 @@ public abstract class Piece implements Comparable<Piece> {
 	 */
 	protected Move getMove(Square end) {
 		// cannot move to own piece
-		if (end.occupiedBy(wb))
+		if (end.occupiedBy(this.color))
 			return null;
 		Move legalMove = legalPosition(end);
 		if (legalMove == null)

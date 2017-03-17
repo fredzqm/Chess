@@ -14,8 +14,8 @@ public class King extends Piece {
 	 * @param wb
 	 * @param Position
 	 */
-	public King(boolean wb, Square Position) {
-		super(wb, Position);
+	public King(Color c, Square Position) {
+		super(c, Position);
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class King extends Piece {
 
 	@Override
 	protected Move getMove(Square end) {
-		if (end.occupiedBy(wb)) 
+		if (end.occupiedBy(super.color)) 
 			return null;
 		
 		Move legalMove =  legalPosition(end) ;

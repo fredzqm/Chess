@@ -1,5 +1,7 @@
 package model;
 
+import model.Piece.Color;
+
 public class Promotion extends Move {
 	private Piece promotedTo;
 
@@ -46,7 +48,7 @@ public class Promotion extends Move {
 
 	public String getDescript() {
 		String s = "";
-		if (wb)
+		if (super.color == Color.WHITE)
 			s += "White ";
 		else
 			s += "Black ";
@@ -60,7 +62,7 @@ public class Promotion extends Move {
 		if (taken != null)
 			chess.takeOffBoard(taken);
 		moved.moveTo(end);
-		promotedTo = chess.promotion(wb , end);
+		promotedTo = chess.promotion(super.color , end);
 		chess.takeOffBoard(taken);
 		chess.putBackToBoard(promotedTo, end);
 	}

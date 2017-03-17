@@ -15,13 +15,13 @@ public class Pawn extends Piece {
 	 * @param wb
 	 * @param p
 	 */
-	public Pawn(boolean wb, Square p) {
-		super(wb, p);
+	public Pawn(Color c, Square p) {
+		super(c, p);
 	}
 
 	@Override
 	public Move legalPosition(Square end) {
-		if (legalPosition(spot, end, chess, getWOrB())) {
+		if (legalPosition(spot, end, chess, getWhiteOrBlack())) {
 			if (canPromote(end))
 				return new Promotion(this, spot, end.getPiece(), end, chess.getRound());
 			return new Move(this, spot, end.getPiece(), end, chess.getRound());
@@ -29,12 +29,12 @@ public class Pawn extends Piece {
 		return null;
 	}
 
-	public static boolean legalPosition(Square spot, Square end, Chess chess, boolean wb) {
+	public static boolean legalPosition(Square spot, Square end, Chess chess, Color c) {
 		if (end.occupied() || spot == null)
 			return false;
 
 		if (spot.X() == end.X()) {
-			if (wb) {
+			if (c == Color.WHITE) {
 				if (end.Y() - spot.Y() == 1)
 					return true;
 				if (end.Y() == 4 && spot.Y() == 2)
@@ -62,7 +62,15 @@ public class Pawn extends Piece {
 		move = canAttack(end);
 		if (move == null)
 			return null;
-		if (end.occupiedBy(!wb)) {
+		
+		Color otherColor;
+		if(super.color == Color.WHITE) {
+			otherColor = Color.BLACK;
+		} else {
+			otherColor = Color.WHITE;
+		}
+		
+		if (end.occupiedBy(otherColor)) {
 			if (chess.giveAwayKing(move))
 				return null;
 			return move;
@@ -88,7 +96,7 @@ public class Pawn extends Piece {
 		if (spot == null)
 			return false;
 		if (Math.abs(end.X() - spot.X()) == 1) {
-			if (wb) {
+			if (super.color == Color.WHITE) {
 				if (end.Y() - spot.Y() == 1)
 					return true;
 			} else {
@@ -101,7 +109,7 @@ public class Pawn extends Piece {
 
 	protected boolean canPromote(Square end) {
 		boolean promotion = false;
-		if (wb) {
+		if (super.color == Color.WHITE) {
 			if (end.Y() == 8)
 				promotion = true;
 		} else {

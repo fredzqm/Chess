@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import model.Piece.Color;
+
 /**
  * It is the system for a chess game. It has fields to store the condition of
  * the chess and method to access and modify those information.
@@ -42,13 +44,13 @@ public class Chess {
 				spots[i][j] = t;
 				int y = t.Y();
 				if (y == 1) {
-					white.add(startSet(t.X(), true, t));
+					white.add(startSet(t.X(), Color.WHITE, t));
 				} else if (y == 2) {
-					white.add(new Pawn(true, t));
+					white.add(new Pawn(Color.WHITE, t));
 				} else if (y == 7) {
-					black.add(new Pawn(false, t));
+					black.add(new Pawn(Color.BLACK, t));
 				} else if (y == 8) {
-					black.add(startSet(t.X(), false, t));
+					black.add(startSet(t.X(), Color.BLACK, t));
 				}
 				list.add(t);
 			}
@@ -61,23 +63,23 @@ public class Chess {
 	 * 
 	 * @param x
 	 *            which file of this piece
-	 * @param b
+	 * @param c
 	 *            White or Black
 	 * @param p
 	 *            original position of this piece
 	 * @return creates new pieces to put into the start chessboard.
 	 */
-	private Piece startSet(int x, boolean b, Square p) {
+	private Piece startSet(int x, Color c, Square p) {
 		if (x == 1 || x == 8)
-			return new Rook(b, p);
+			return new Rook(c, p);
 		else if (x == 2 || x == 7)
-			return new Knight(b, p);
+			return new Knight(c, p);
 		else if (x == 3 || x == 6)
-			return new Bishop(b, p);
+			return new Bishop(c, p);
 		else if (x == 4)
-			return new Queen(b, p);
+			return new Queen(c, p);
 		else if (x == 5)
-			return new King(b, p);
+			return new King(c, p);
 		else
 			return null;
 	}
@@ -85,8 +87,12 @@ public class Chess {
 	// ---------------------------------------------------------------------------
 	// Accessors
 
-	public boolean getWhoseTurn() {
-		return time % 2 == 0;
+	public Color getWhoseTurn() {
+		if(time % 2 == 0) {
+			return Color.WHITE;
+		} else {
+			return Color.BLACK;
+		}
 	}
 
 	public int getRound() {
@@ -149,7 +155,7 @@ public class Chess {
 				if (piece == null) {
 					sb.append("  ");
 				} else {
-					if (piece.getWOrB()) {
+					if (piece.getWhiteOrBlack() == Color.WHITE) {
 						sb.append('*');
 					} else {
 						sb.append(' ');
@@ -173,7 +179,7 @@ public class Chess {
 	public ArrayList<Piece> possibleMovers(Class<? extends Piece> type, Square end) {
 		ArrayList<Piece> possible = new ArrayList<Piece>();
 		ArrayList<Piece> set;
-		if (getWhoseTurn())
+		if (getWhoseTurn() == Color.WHITE)
 			set = white;
 		else
 			set = black;
@@ -209,7 +215,7 @@ public class Chess {
 	 */
 	public boolean giveAwayKing(Move move) {
 		move.performMove(this);
-		boolean giveAway = checkOrNot(!move.getWhoseTurn());
+		boolean giveAway = checkOrNot(move.getWhoseTurn() == Color.BLACK);
 		move.undo(this);
 		return giveAway;
 	}
@@ -355,12 +361,12 @@ public class Chess {
 	 */
 	public Move canCastling(King k, boolean longOrShort) {
 		if (longOrShort) {
-			if (canNotLongCastling(k.getY(), !k.getWOrB()))
+			if (canNotLongCastling(k.getY(), k.getWhiteOrBlack() == Color.BLACK))
 				return null;
 			return new Castling(k, k.getSpot(), spotAt(3, k.getY()), (Rook) (spotAt(1, k.getY()).getPiece()),
 					spotAt(1, k.getY()), getRound());
 		} else {
-			if (canNotShortCastling(k.getY(), !k.getWOrB()))
+			if (canNotShortCastling(k.getY(), k.getWhiteOrBlack() == Color.BLACK))
 				return null;
 			return new Castling(k, k.getSpot(), spotAt(7, k.getY()), (Rook) (spotAt(8, k.getY()).getPiece()),
 					spotAt(8, k.getY()), getRound());
@@ -428,7 +434,7 @@ public class Chess {
 		if (p == null)
 			return;
 		taken.getSpot().setOccupied(null);
-		if (taken.getWOrB())
+		if (taken.getWhiteOrBlack() == Color.WHITE)
 			white.remove(taken);
 		else
 			black.remove(taken);
@@ -442,7 +448,7 @@ public class Chess {
 	 */
 	public void putBackToBoard(Piece taken, Square spot) {
 		if (taken != null) {
-			if (taken.getWOrB()) {
+			if (taken.getWhiteOrBlack() == Color.WHITE) {
 				white.add(taken);
 			} else {
 				black.add(taken);
@@ -494,7 +500,7 @@ public class Chess {
 	 */
 	public boolean castling(boolean longOrShort) {
 		King king;
-		if (getWhoseTurn())
+		if (getWhoseTurn() == Color.WHITE)
 			king = (King) white.get(0);
 		else
 			king = (King) black.get(0);
@@ -525,10 +531,10 @@ public class Chess {
 		time++;
 
 		// check end game situations
-		if (checkOrNot(!getWhoseTurn())) {
-			if (checkMate(getWhoseTurn())) {
+		if (checkOrNot(getWhoseTurn() == Color.BLACK)) {
+			if (checkMate(getWhoseTurn() == Color.WHITE)) {
 				move.note = MoveNote.CHECKMATE;
-				if (!getWhoseTurn())
+				if (getWhoseTurn() == Color.BLACK)
 					endGame(Win.WHITECHECKMATE);
 				else
 					endGame(Win.BLACKCHECKMATE);
@@ -536,15 +542,15 @@ public class Chess {
 			}
 			move.note = MoveNote.CHECK;
 		} else {
-			if (checkMate(getWhoseTurn())) {
+			if (checkMate(getWhoseTurn() == Color.WHITE)) {
 				endGame(Draw.STALEMENT);
 				return;
 			}
 		}
 	}
 
-	protected Piece promotion(boolean wb, Square end) {
-		return new Queen(wb, end);
+	protected Piece promotion(Color c, Square end) {
+		return new Queen(c, end);
 	}
 
 	/**
@@ -571,7 +577,7 @@ public class Chess {
 
 		if (s.startsWith("O")) {
 			King king;
-			if (getWhoseTurn()) {
+			if (getWhoseTurn() == Color.WHITE) {
 				king = (King) white.get(0);
 			} else {
 				king = (King) black.get(0);

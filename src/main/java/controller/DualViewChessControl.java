@@ -212,9 +212,9 @@ public class DualViewChessControl implements ChessViewerControl {
 			}
 			Square start = null;
 			if ((m.group(2) != null) && (m.group(3) != null)) {
-				start = chess.getSquare(m.group(2) + m.group(3));
+				start = chess.getBoard().getSquare(m.group(2) + m.group(3));
 			}
-			Square end = chess.getSquare(m.group(4));
+			Square end = chess.getBoard().getSquare(m.group(4));
 
 			if (start != null) {
 				Piece movedChessman = start.getPiece();

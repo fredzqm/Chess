@@ -11,6 +11,9 @@ import model.Piece.Player;
 public class Board {
 	private Square[][] spots;
 
+	/**
+	 * create a standard chess board
+	 */
 	public Board() {
 		spots = new Square[8][8];
 		for (int i = 0; i < 8; i++) {

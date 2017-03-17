@@ -107,15 +107,11 @@ public class Chess {
 	}
 
 	/**
-	 * s needs to be a string of length 2, like a3, e8.
 	 * 
-	 * @param s
-	 *            the name of the square
-	 * @return the position of the square, null if fail to find a corresponding
-	 *         square
+	 * @return the board of the chess
 	 */
-	public Square getSquare(String s) {
-		return board.getSquare(s);
+	public Board getBoard() {
+		return board;
 	}
 
 	/**
@@ -580,9 +576,9 @@ public class Chess {
 
 			Square start = null;
 			if ((m.group(2) != null) && (m.group(3) != null)) {
-				start = getSquare(m.group(2) + m.group(3));
+				start = board.getSquare(m.group(2) + m.group(3));
 			}
-			Square end = getSquare(m.group(4));
+			Square end = board.getSquare(m.group(4));
 
 			if (start != null) {
 				Piece movedChessman = start.getPiece();

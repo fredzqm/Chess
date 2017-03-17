@@ -7,14 +7,14 @@ import java.io.FileNotFoundException;
 
 import org.junit.Test;
 
-import utility.TestUtitlities;
+import utility.TestUtility;
 
 public class EndGameTest {
 
 	private Chess setupChessGame(String fileName) throws FileNotFoundException, InvalidMoveException {
 		Chess chess = new Chess();
 		
-		TestUtitlities.performRecordMoves(chess, fileName);
+		TestUtility.performRecordMoves(chess, fileName);
 		
 		assertTrue(chess.getRecords().hasEnd());
 		

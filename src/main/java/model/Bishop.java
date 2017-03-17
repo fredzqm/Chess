@@ -14,7 +14,7 @@ public class Bishop extends Piece {
 	 * @param wb
 	 * @param Position
 	 */
-	public Bishop(Color c, Square Position) {
+	public Bishop(Player c, Square Position) {
 		super(c, Position);
 	}
 

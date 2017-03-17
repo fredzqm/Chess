@@ -1,6 +1,6 @@
 package model;
 
-import model.Piece.Color;
+import model.Piece.Player;
 
 /**
  * this class is a record of all the moves in this game, so we can undo steps or
@@ -11,7 +11,7 @@ import model.Piece.Color;
  */
 public class Move {
 	protected final int round;
-	protected final Color color;
+	protected final Player color;
 	protected final Piece moved;
 	protected final Square start;
 	protected final Piece taken;
@@ -81,7 +81,7 @@ public class Move {
 	 */
 	public String getDescript() {
 		String s = "";
-		if (this.color == Color.WHITE)
+		if (this.color == Player.WHITE)
 			s += "White";
 		else
 			s += "Black";
@@ -90,7 +90,7 @@ public class Move {
 			s += " moves to " + end.toString();
 		else {
 			s += " catches ";
-			if (this.color == Color.WHITE)
+			if (this.color == Player.WHITE)
 				s += "black ";
 			else
 				s += "white ";
@@ -168,7 +168,7 @@ public class Move {
 		moved.moveTo(end);
 	}
 
-	public Color getWhoseTurn() {
+	public Player getWhoseTurn() {
 		return this.color;
 	}
 

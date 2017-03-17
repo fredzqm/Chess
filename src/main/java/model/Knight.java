@@ -14,7 +14,7 @@ public class Knight extends Piece {
 	 * @param wb
 	 * @param Position
 	 */
-	public Knight(Color c, Square Position) {
+	public Knight(Player c, Square Position) {
 		super( c, Position);
 	}
 

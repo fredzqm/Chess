@@ -1,6 +1,6 @@
 package model;
 
-import model.Piece.Color;
+import model.Piece.Player;
 
 public class Promotion extends Move {
 	private Piece promotedTo;
@@ -48,7 +48,7 @@ public class Promotion extends Move {
 
 	public String getDescript() {
 		String s = "";
-		if (super.color == Color.WHITE)
+		if (super.color == Player.WHITE)
 			s += "White ";
 		else
 			s += "Black ";

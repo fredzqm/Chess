@@ -3,7 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import model.Piece.Color;
+import model.Piece.Player;
 
 /**
  * The magical class that keeps track of move history It tracks a list of played
@@ -119,7 +119,7 @@ public class Record implements Iterable<Move> {
 	public String printDoc() {
 		StringBuilder sb = new StringBuilder();
 		for (Move r : list) {
-			if (r.color == Color.WHITE) {
+			if (r.color == Player.WHITE) {
 				sb.append(r.round + ". " + r.getDoc());
 			} else {
 				sb.append("   " + r.getDoc() + "\n");
@@ -130,7 +130,7 @@ public class Record implements Iterable<Move> {
 		} else {
 			Move last = getLastMove();
 			if (last != null)
-				if (last.color == Color.WHITE)
+				if (last.color == Player.WHITE)
 					sb.append("   ...");
 		}
 		return sb.toString();

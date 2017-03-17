@@ -15,7 +15,7 @@ public class Pawn extends Piece {
 	 * @param wb
 	 * @param p
 	 */
-	public Pawn(Color c, Square p) {
+	public Pawn(Player c, Square p) {
 		super(c, p);
 	}
 
@@ -29,12 +29,12 @@ public class Pawn extends Piece {
 		return null;
 	}
 
-	public static boolean legalPosition(Square spot, Square end, Chess chess, Color c) {
+	public static boolean legalPosition(Square spot, Square end, Chess chess, Player c) {
 		if (end.occupied() || spot == null)
 			return false;
 
 		if (spot.X() == end.X()) {
-			if (c == Color.WHITE) {
+			if (c == Player.WHITE) {
 				if (end.Y() - spot.Y() == 1)
 					return true;
 				if (end.Y() == 4 && spot.Y() == 2)
@@ -63,11 +63,11 @@ public class Pawn extends Piece {
 		if (move == null)
 			return null;
 		
-		Color otherColor;
-		if(super.color == Color.WHITE) {
-			otherColor = Color.BLACK;
+		Player otherColor;
+		if(super.color == Player.WHITE) {
+			otherColor = Player.BLACK;
 		} else {
-			otherColor = Color.WHITE;
+			otherColor = Player.WHITE;
 		}
 		
 		if (end.occupiedBy(otherColor)) {
@@ -96,7 +96,7 @@ public class Pawn extends Piece {
 		if (spot == null)
 			return false;
 		if (Math.abs(end.X() - spot.X()) == 1) {
-			if (super.color == Color.WHITE) {
+			if (super.color == Player.WHITE) {
 				if (end.Y() - spot.Y() == 1)
 					return true;
 			} else {
@@ -109,7 +109,7 @@ public class Pawn extends Piece {
 
 	protected boolean canPromote(Square end) {
 		boolean promotion = false;
-		if (super.color == Color.WHITE) {
+		if (super.color == Player.WHITE) {
 			if (end.Y() == 8)
 				promotion = true;
 		} else {

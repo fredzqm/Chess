@@ -14,7 +14,7 @@ public class King extends Piece {
 	 * @param wb
 	 * @param Position
 	 */
-	public King(Color c, Square Position) {
+	public King(Player c, Square Position) {
 		super(c, Position);
 	}
 

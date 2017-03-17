@@ -19,7 +19,7 @@ import model.Record;
 import model.Rook;
 import model.Square;
 import model.Win;
-import model.Piece.Color;
+import model.Piece.Player;
 import view.ChessPieceType;
 import view.ChessViewer;
 import view.ChessViewerControl;
@@ -219,7 +219,7 @@ public class DualViewChessControl implements ChessViewerControl {
 			if (start != null) {
 				Piece movedChessman = start.getPiece();
 				if (movedChessman == null) {
-					if (chess.getWhoseTurn() == Color.WHITE)
+					if (chess.getWhoseTurn() == Player.WHITE)
 						whiteView.printOut("There should be a white chessman in the start Position!");
 					else
 						whiteView.printOut("There should be a black chessman in the start Position!");
@@ -298,7 +298,7 @@ public class DualViewChessControl implements ChessViewerControl {
 				drawRequest.resign(whiteOrBlack);
 			} else if (c.equals("draw")) {
 				drawRequest.askForDraw(whiteOrBlack);
-			} else if (whiteOrBlack != (chess.getWhoseTurn() == Color.WHITE)) {
+			} else if (whiteOrBlack != (chess.getWhoseTurn() == Player.WHITE)) {
 				if (c.equals("undo"))
 					undo();
 				else
@@ -323,7 +323,7 @@ public class DualViewChessControl implements ChessViewerControl {
 		if (chess.hasEnd()) {
 			clickedView.printOut("Game is already over! Type restart to start a new game");
 		} else {
-			if (whiteOrBlack != (chess.getWhoseTurn() == Color.WHITE)) {
+			if (whiteOrBlack != (chess.getWhoseTurn() == Player.WHITE)) {
 				clickedView.printOut("Please wait for your opponnet to finish");
 				return;
 			}
@@ -361,12 +361,12 @@ public class DualViewChessControl implements ChessViewerControl {
 		repaintAll();
 	}
 
-	public Piece choosePromotePiece(Color wb, Square end) {
-		chooesView(wb == Color.WHITE).cleanTemp();
+	public Piece choosePromotePiece(Player wb, Square end) {
+		chooesView(wb == Player.WHITE).cleanTemp();
 		while (true) {
-			chooesView(wb== Color.WHITE).printOut("Please choose one kind of piece to promote to -- Q, N, R, B");
+			chooesView(wb== Player.WHITE).printOut("Please choose one kind of piece to promote to -- Q, N, R, B");
 			repaintAll();
-			String s = chooesView(wb == Color.WHITE).getResponse("What piece do you want your pawn to romotion to ?");
+			String s = chooesView(wb == Player.WHITE).getResponse("What piece do you want your pawn to romotion to ?");
 			if (!s.isEmpty()) {
 				s = s.toUpperCase();
 				char a = s.charAt(0);
@@ -385,9 +385,9 @@ public class DualViewChessControl implements ChessViewerControl {
 	public void updateSquare(Square sq) {
 		if (sq.occupied()) {
 			whiteView.labelAt(sq.X(), sq.Y()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
-					sq.getPiece().getWhiteOrBlack() == Color.WHITE);
+					sq.getPiece().getWhiteOrBlack() == Player.WHITE);
 			blackView.labelAt(sq.X(), sq.Y()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
-					sq.getPiece().getWhiteOrBlack() == Color.WHITE);
+					sq.getPiece().getWhiteOrBlack() == Player.WHITE);
 		} else {
 			whiteView.labelAt(sq.X(), sq.Y()).clearLabel();
 			blackView.labelAt(sq.X(), sq.Y()).clearLabel();
@@ -418,8 +418,8 @@ public class DualViewChessControl implements ChessViewerControl {
 			updateSquare(sq);
 		}
 		
-		ChessViewer pre = chooesView(previousMove.getWhoseTurn() == Color.WHITE);
-		ChessViewer next = chooesView(previousMove.getWhoseTurn() == Color.BLACK);
+		ChessViewer pre = chooesView(previousMove.getWhoseTurn() == Player.WHITE);
+		ChessViewer next = chooesView(previousMove.getWhoseTurn() == Player.BLACK);
 
 		whiteView.setStatusLabelText(chess.lastMoveDiscript());
 		blackView.setStatusLabelText(chess.lastMoveDiscript());
@@ -427,7 +427,7 @@ public class DualViewChessControl implements ChessViewerControl {
 		whiteView.printOut(chess.lastMoveOutPrint());
 		blackView.printOut(chess.lastMoveOutPrint());
 		next.printOut("Please make your move.");
-		pre.printOut("Wait for the " + side(previousMove.getWhoseTurn() == Color.BLACK) + " to make a move");
+		pre.printOut("Wait for the " + side(previousMove.getWhoseTurn() == Player.BLACK) + " to make a move");
 		
 	}
 	

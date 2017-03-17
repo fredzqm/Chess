@@ -8,10 +8,10 @@ package model;
  */
 public abstract class Piece implements Comparable<Piece> {
 	protected Chess chess;
-	protected Color color;
+	protected Player color;
 	protected Square spot;
 	
-	public enum Color {
+	public enum Player {
 		WHITE,
 		BLACK
 	}
@@ -23,7 +23,7 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @param p
 	 *            the square this piece is at initially.
 	 */
-	public Piece(Color c, Square p) {
+	public Piece(Player c, Square p) {
 		this.chess = p.getChess();
 		this.color = c;
 		moveTo(p);
@@ -47,7 +47,7 @@ public abstract class Piece implements Comparable<Piece> {
 	 * 
 	 * @return true if this is a white piece, false if this is a black piece
 	 */
-	public Color getWhiteOrBlack() {
+	public Player getWhiteOrBlack() {
 		return this.color;
 	}
 

@@ -16,7 +16,7 @@ import model.Knight;
 import model.Move;
 import model.Pawn;
 import model.Piece;
-import model.Piece.Color;
+import model.Piece.Player;
 import model.Queen;
 import model.Record;
 import model.Rook;
@@ -300,7 +300,7 @@ public class SingleViewChessControl implements ChessViewerControl {
 		repaintAll();
 	}
 
-	public Piece choosePromotePiece(Color wb, Square end) {
+	public Piece choosePromotePiece(Player wb, Square end) {
 		view.cleanTemp();
 		while (true) {
 			view.printOut("Please choose one kind of piece to promote to -- Q, N, R, B");
@@ -324,7 +324,7 @@ public class SingleViewChessControl implements ChessViewerControl {
 	public void updateSquare(Square sq) {
 		if (sq.occupied()) {
 			view.labelAt(sq.X(), sq.Y()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
-					sq.getPiece().getWhiteOrBlack() == Color.WHITE);
+					sq.getPiece().getWhiteOrBlack() == Player.WHITE);
 		} else {
 			view.labelAt(sq.X(), sq.Y()).clearLabel();
 		}
@@ -344,7 +344,7 @@ public class SingleViewChessControl implements ChessViewerControl {
 		view.setStatusLabelText(chess.lastMoveDiscript());
 		view.cleanTemp();
 		view.printOut(chess.lastMoveOutPrint());
-		view.printOut("Next move -- " + side(previousMove.getWhoseTurn() == Color.BLACK));
+		view.printOut("Next move -- " + side(previousMove.getWhoseTurn() == Player.BLACK));
 	}
 
 	/**
@@ -390,7 +390,7 @@ public class SingleViewChessControl implements ChessViewerControl {
 		 */
 		public void askForDraw() {
 			Draw canClaimDraw = chess.canClaimDraw();
-			boolean whiteOrBlack = chess.getWhoseTurn() == Color.WHITE;
+			boolean whiteOrBlack = chess.getWhoseTurn() == Player.WHITE;
 			if (canClaimDraw == null) {
 				if (canAskFordraw(whiteOrBlack)) {
 					while (true) {
@@ -429,7 +429,7 @@ public class SingleViewChessControl implements ChessViewerControl {
 				chess.endGame(canClaimDraw);
 				return;
 			}
-			if (chess.getWhoseTurn() == Color.WHITE) {
+			if (chess.getWhoseTurn() == Player.WHITE) {
 				chess.endGame(Win.WHITERESIGN);
 			} else {
 				chess.endGame(Win.BLACKESIGN);

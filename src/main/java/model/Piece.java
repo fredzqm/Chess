@@ -22,9 +22,10 @@ public abstract class Piece implements Comparable<Piece> {
 	 *            whether this piece is white or black
 	 * @param p
 	 *            the square this piece is at initially.
+	 * @param chess
 	 */
-	public Piece(Player c, Square p) {
-		this.chess = p.getChess();
+	public Piece(Player c, Square p, Chess chess) {
+		this.chess = chess;
 		this.color = c;
 		moveTo(p);
 	}

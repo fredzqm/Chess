@@ -3,8 +3,6 @@ package controller;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import model.Bishop;
 import model.Chess;
@@ -171,7 +169,7 @@ public class SingleViewChessControl implements ChessViewerControl {
 		try {
 			move = chess.getMove(s);
 		} catch (InvalidMoveException e) {
-			switch(e.type) {
+			switch (e.type) {
 			case invalidFormat:
 				view.printOut("The command is not in a valid format.");
 				break;
@@ -185,20 +183,20 @@ public class SingleViewChessControl implements ChessViewerControl {
 				view.printOut("This is not a possible move.");
 				break;
 			case incorrectPiece:
-				view.printOut("The chessman in the start Position is not correct! " +
-						"\n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
+				view.printOut("The chessman in the start Position is not correct! "
+						+ "\n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
 				break;
 			case pieceNotPresent:
 				view.printOut("There is no piece at the start position.");
 				break;
 			}
 		}
-		
-		if(move != null) {
+
+		if (move != null) {
 			chess.makeMove(move);
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -310,13 +308,13 @@ public class SingleViewChessControl implements ChessViewerControl {
 				s = s.toUpperCase();
 				char a = s.charAt(0);
 				if (a == 'Q')
-					return new Queen(wb, end);
+					return new Queen(wb, end, chess);
 				else if (a == 'R')
-					return new Rook(wb, end);
+					return new Rook(wb, end, chess);
 				else if (a == 'B')
-					return new Bishop(wb, end);
+					return new Bishop(wb, end, chess);
 				else if (a == 'N')
-					return new Knight(wb, end);
+					return new Knight(wb, end, chess);
 			}
 		}
 	}

@@ -371,13 +371,13 @@ public class DualViewChessControl implements ChessViewerControl {
 				s = s.toUpperCase();
 				char a = s.charAt(0);
 				if (a == 'Q')
-					return new Queen(wb, end);
+					return new Queen(wb, end, chess);
 				else if (a == 'R')
-					return new Rook(wb, end);
+					return new Rook(wb, end, chess);
 				else if (a == 'B')
-					return new Bishop(wb, end);
+					return new Bishop(wb, end, chess);
 				else if (a == 'N')
-					return new Knight(wb, end);
+					return new Knight(wb, end, chess);
 			}
 		}
 	}

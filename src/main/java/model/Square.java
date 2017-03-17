@@ -1,5 +1,7 @@
 package model;
 
+import model.Piece.Player;
+
 /**
  * A class that represents the squares on the chess board.
  * 
@@ -78,11 +80,11 @@ public class Square {
 	 * 
 	 * @param whoseTurn
 	 *            white or black
-	 * @return whether this square is ocupied by piece of that color.
+	 * @return whether this square is occupied by piece of that color.
 	 */
-	public boolean occupiedBy(boolean whoseTurn) {
+	public boolean occupiedBy(Player color) {
 		if (occupied())
-			return whoseTurn == occupied.getWOrB();
+			return color == (occupied.getWhiteOrBlack());
 		else
 			return false;
 	}

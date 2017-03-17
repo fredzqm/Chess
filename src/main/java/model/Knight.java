@@ -14,8 +14,8 @@ public class Knight extends Piece {
 	 * @param wb
 	 * @param Position
 	 */
-	public Knight(boolean wb, Square Position) {
-		super( wb, Position);
+	public Knight(Player c, Square Position) {
+		super( c, Position);
 	}
 
 	@Override

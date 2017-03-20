@@ -344,7 +344,7 @@ public class DualViewChessControl implements ChessViewerControl {
 			} else {
 				if (spot.occupiedBy(chess.getWhoseTurn())) {
 					chosen = spot.getPiece();
-					ArrayList<Square> reachable = chess.reachable(chosen);
+					ArrayList<Square> reachable = chosen.getReachableSquares();
 					reachable.add(spot);
 					ArrayList<SquareLabel> hightlight = squareToLabel(reachable, whiteOrBlack);
 					clickedView.highLightAll(hightlight);

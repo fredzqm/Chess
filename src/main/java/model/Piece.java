@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 /**
  * The super class for all different kinds of pieces.
  * 
@@ -45,7 +47,7 @@ public abstract class Piece implements Comparable<Piece> {
 
 	/**
 	 * 
-	 * @return true if this is a white piece, false if this is a black piece
+	 * @return Whether this piece is owned by white or black
 	 */
 	public Player getWhiteOrBlack() {
 		return this.color;
@@ -97,8 +99,6 @@ public abstract class Piece implements Comparable<Piece> {
 		return spot.Y();
 	}
 
-	// modifiers
-
 	/**
 	 * Only place in this program that can change the position of a spot.
 	 * 
@@ -113,22 +113,7 @@ public abstract class Piece implements Comparable<Piece> {
 		}
 		spot = p;
 	}
-
-	/**
-	 * For most pieces in chess, there is a common way of moving. This checks if
-	 * certain move match such common.
-	 * 
-	 * For pawn this method only specifies the move. The capture logic is
-	 * defined in {@link Pawn#getMove(Square)}
-	 * 
-	 * @param end
-	 *            the end position
-	 * @param chess
-	 * @return true if it is legal to move this piece to the end, regardless of
-	 *         the piece at the end position
-	 */
-	public abstract Move legalPosition(Square end);
-
+	
 	/**
 	 * This method takes everything into account, including giving away king,
 	 * castling, En Passant.
@@ -167,6 +152,19 @@ public abstract class Piece implements Comparable<Piece> {
 			return null;
 		return legalMove;
 	}
+	
+	/**
+	 * 
+	 * @param chosen
+	 * @return the list of Squares that this piece can reach
+	 */
+	public ArrayList<Square> getReachableSquares() {
+		ArrayList<Square> list = new ArrayList<>();
+		for (Square i : this.chess.getAllSquares())
+			if (this.canGo(i))
+				list.add(i);
+		return list;
+	}
 
 	/**
 	 * This method is overridden by Pawn because it has special rule for
@@ -184,6 +182,21 @@ public abstract class Piece implements Comparable<Piece> {
 			return null;
 		return legalPosition(end);
 	}
+	
+	/**
+	 * For most pieces in chess, there is a common way of moving. This checks if
+	 * certain move match such common.
+	 * 
+	 * For pawn this method only specifies the move. The capture logic is
+	 * defined in {@link Pawn#getMove(Square)}
+	 * 
+	 * @param end
+	 *            the end position
+	 * @param chess
+	 * @return true if it is legal to move this piece to the end, regardless of
+	 *         the piece at the end position
+	 */
+	public abstract Move legalPosition(Square end);
 
 	/**
 	 * This method convert the character to one type of {@link Piece} class. It

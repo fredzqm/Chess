@@ -25,7 +25,7 @@ public class King extends Piece {
 		if (spot.equals(end))
 			return null;
 		else {
-			return new Move(this, spot, end.getPiece(), end, chess.getRound());
+			return new RegularMove(this, spot, end.getPiece(), end);
 		}
 	}
 

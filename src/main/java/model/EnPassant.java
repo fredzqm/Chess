@@ -20,27 +20,27 @@ public class EnPassant extends Move {
 	 *            which round this move happens
 	 */
 	public EnPassant(Piece moved, Square start, Piece taken, Square end, int round) {
-		super(moved, start, taken, end, round);
+		super(moved, start, taken, end);
 		pawnPos = taken.getSpot();
 	}
 
 	public String getDescript() {
 		String s = "";
-		if (this.color == Player.WHITE)
+		if (this.playerColor == Player.WHITE)
 			s += "White";
 		else
 			s += "Black";
 		s += " Pawn";
-		s += " moves to " + end.toString();
+		s += " moves to " + lastPosition.toString();
 		s += " catches En passant pawn on " + pawnPos.toString();
 		s += note.getDescriptEnd();
 		return s;
 	}
 
 	public void undo(Chess chess) {
-		moved.moveTo(start);
-		if (taken != null) {
-			chess.putBackToBoard(taken, pawnPos);
+		movedPiece.moveTo(startPosition);
+		if (capturedPiece != null) {
+			chess.putBackToBoard(capturedPiece, pawnPos);
 		}
 	}
 }

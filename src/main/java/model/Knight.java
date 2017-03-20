@@ -25,7 +25,7 @@ public class Knight extends Piece {
 		int a = Math.abs(spot.X() - end.X());
 		int b = Math.abs(spot.Y() - end.Y());
 		if (a + b == 3 && (a != 0 && b != 0))
-			return new Move(this, spot, end.getPiece(), end, chess.getRound());
+			return new RegularMove(this, spot, end.getPiece(), end);
 		else
 			return null;
 	}

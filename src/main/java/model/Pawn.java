@@ -24,7 +24,7 @@ public class Pawn extends Piece {
 		if (legalPosition(spot, end, chess, getWhiteOrBlack())) {
 			if (canPromote(end))
 				return new Promotion(this, spot, end.getPiece(), end, chess.getRound());
-			return new Move(this, spot, end.getPiece(), end, chess.getRound());
+			return new RegularMove(this, spot, end.getPiece(), end);
 		}
 		return null;
 	}
@@ -87,7 +87,7 @@ public class Pawn extends Piece {
 		if (legalPostionCapture(end)) {
 			if (canPromote(end))
 				return new Promotion(this, spot, end.getPiece(), end, chess.getRound());
-			return new Move(this, spot, end.getPiece(), end, chess.getRound());
+			return new RegularMove(this, spot, end.getPiece(), end);
 		}
 		return null;
 	}

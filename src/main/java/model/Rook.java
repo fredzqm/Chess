@@ -22,7 +22,7 @@ public class Rook extends Piece {
 	@Override
 	public Move legalPosition(Square end) {
 		if (legalPosition(spot, end, chess))
-			return new Move(this, spot, end.getPiece(), end, chess.getRound());
+			return new RegularMove(this, spot, end.getPiece(), end);
 		return null;
 	}
 

@@ -29,7 +29,7 @@ public class Castling extends Move {
 	 *            the round number of this casting
 	 */
 	public Castling(King king, Square kingStart, Square kingEnd, Rook rook,Square rookStart , int round) {
-		super(king, kingStart, null, kingEnd, round);
+		super(king, kingStart, null, kingEnd);
 		this.rook = rook;
 		if (rook.getX()<4)
 			this.longOrShort = true;
@@ -53,7 +53,7 @@ public class Castling extends Move {
 	}
 	
 	public void undo(Chess c){
-		moved.moveTo(start);
+		movedPiece.moveTo(startPosition);
 		rook.moveTo(rookStart);
 	}
 	
@@ -63,7 +63,7 @@ public class Castling extends Move {
 	
 	public String getDescript() {
 		String s = "";
-		if (this.color == Player.WHITE)
+		if (this.playerColor == Player.WHITE)
 			s += "White ";
 		else
 			s += "Black ";
@@ -79,7 +79,7 @@ public class Castling extends Move {
 		Square kingEnd;
 		Square rookEnd;
 		Piece rook;
-		int y = moved.getY();
+		int y = movedPiece.getY();
 		if (longOrShort) {
 			kingEnd = chess.spotAt(3, y);
 			rookStart = chess.spotAt(1, y);
@@ -91,7 +91,7 @@ public class Castling extends Move {
 			rookEnd = chess.spotAt(6, y);
 			rook = chess.spotAt(8, y).getPiece();
 		}
-		moved.moveTo(kingEnd);
+		movedPiece.moveTo(kingEnd);
 		rook.moveTo(rookEnd);
 	}
 }

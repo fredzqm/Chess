@@ -9,105 +9,43 @@ import model.Piece.Player;
  * @author zhangq2
  *
  */
-public class Move {
-	protected final int round;
-	protected final Player color;
-	protected final Piece moved;
-	protected final Square start;
-	protected final Piece taken;
-	protected final Square end;
-	// protected final EndGame endGame;
-	// protected boolean checkOrNot;
+public abstract class Move {
+	protected final Player playerColor;
+	protected final Piece movedPiece;
+	protected final Square startPosition;
+	protected final Piece capturedPiece;
+	protected final Square lastPosition;
 	protected MoveNote note;
 
 	/**
 	 * constructs a record
 	 * 
-	 * @param moved
+	 * @param movedPiece
 	 *            the piece moved
-	 * @param start
+	 * @param startPosition
 	 *            the start position of this move
-	 * @param taken
+	 * @param capturedPiece
 	 *            the piece that is captured, null if there is nothing captured.
-	 * @param end
+	 * @param lastPosition
 	 *            the end position of this move
 	 * @param time
 	 *            which round this move happens
 	 */
-	public Move(Piece moved, Square start, Piece taken, Square end, int round) {
-		this.round = round;
-		this.color = moved.getWhiteOrBlack();
-		this.moved = moved;
-		this.start = start;
-		this.taken = taken;
-		this.end = end;
+	public Move(Piece movedPiece, Square startPosition, Piece capturedPiece, Square lastPosition) {
+		this.playerColor = movedPiece.getWhiteOrBlack();
+		this.movedPiece = movedPiece;
+		this.startPosition = startPosition;
+		this.capturedPiece = capturedPiece;
+		this.lastPosition = lastPosition;
 		this.note = MoveNote.NONE;
 	}
 
-	/**
-	 * @return the documentation in standard chess convention
-	 */
-	public String getDoc() {
-		String s = "";
-		if (!moved.isType(Pawn.class))
-			s += moved.getType();
-		s += start.toString();
-		if (taken == null)
-			s += "-";
-		else
-			s += "x";
-		s += end.toString();
-		s += note.getDocEnd();
-		// if (endGame == Win.WHITECHECKMATE || endGame == Win.BLACKCHECKMATE)
-		// s += "+";
-
-		// if (endGame != null) {
-		// s += "\n"+endGame.getDoc();
-		// }
-		return s;
-	}
-
-	/**
-	 * @return the messages necessary to printOut in the console
-	 */
-	public String getPrintOut() {
-		return getDoc();
-	}
-
-	/**
-	 * 
-	 * @return the description of this move, which will appear in the top label
-	 *         of the window
-	 */
-	public String getDescript() {
-		String s = "";
-		if (this.color == Player.WHITE)
-			s += "White";
-		else
-			s += "Black";
-		s += " " + moved.getName();
-		if (taken == null)
-			s += " moves to " + end.toString();
-		else {
-			s += " catches ";
-			if (this.color == Player.WHITE)
-				s += "black ";
-			else
-				s += "white ";
-			s += taken.getName();
-			s += " on " + end.toString();
-		}
-		s += note.getDescriptEnd();
-		return s;
-	}
-
-	// accessor
 	/**
 	 * 
 	 * @return start square
 	 */
 	public Square getStart() {
-		return start;
+		return startPosition;
 	}
 
 	/**
@@ -119,29 +57,8 @@ public class Move {
 	 *         castling
 	 */
 	public boolean canEnPassant(Square p) {
-		return moved.isType(Pawn.class)
-				&& (start.X() == p.X() && end.X() == p.X() && (start.Y() + end.Y()) == (p.Y() * 2));
-	}
-
-	/**
-	 * undo the last move, and restore the board
-	 * 
-	 * @param c
-	 */
-	public void undo(Chess chess) {
-		moved.moveTo(start);
-		if (taken != null)
-			chess.putBackToBoard(taken, end);
-	}
-
-	/**
-	 * This method is called to examine whether the game has meets the
-	 * requirement of 'Fifty move rule".
-	 * 
-	 * @return true if this move can be redo over and over again later.
-	 */
-	protected boolean notQuiet() {
-		return taken != null || moved.isType(Pawn.class);
+		return movedPiece.isType(Pawn.class) && (startPosition.X() == p.X() && lastPosition.X() == p.X()
+				&& (startPosition.Y() + lastPosition.Y()) == (p.Y() * 2));
 	}
 
 	/**
@@ -155,32 +72,60 @@ public class Move {
 			return false;
 		if (x instanceof Castling)
 			return false;
-		return moved.equals(x.moved) && start.equals(x.start) && end.equals(x.end);
+		return movedPiece.equals(x.movedPiece) && startPosition.equals(x.startPosition)
+				&& lastPosition.equals(x.lastPosition);
 	}
 
 	public String toString() {
 		return getPrintOut() + " " + getDescript();
 	}
 
-	public void performMove(Chess chess) {
-		if (taken != null)
-			chess.takeOffBoard(taken);
-		moved.moveTo(end);
-	}
-
 	public Player getWhoseTurn() {
-		return this.color;
+		return playerColor;
 	}
 
-	// /**
-	// *
-	// * ends the game as draw
-	// *
-	// * @param s
-	// * the description of how this game ends in draw
-	// */
-	// public void endGame(EndGame endgame) {
-	// endGame = endgame;
-	// }
+	/**
+	 * @return the documentation in standard chess convention
+	 */
+	public String getDoc() {
+		String doc = "";
+		if (!movedPiece.isType(Pawn.class))
+			doc += movedPiece.getType();
+		doc += startPosition.toString();
+		if (capturedPiece == null)
+			doc += "-";
+		else
+			doc += "x";
+		doc += lastPosition.toString();
+		doc += note.getDocEnd();
+		return doc;
+	}
+
+	/**
+	 * @return the messages necessary to printOut in the console
+	 */
+	public String getPrintOut() {
+		return getDoc();
+	}
+
+	/**
+	 * This method is called to examine whether the game has meets the
+	 * requirement of 'Fifty move rule".
+	 * 
+	 * @return true if this move can be redo over and over again later.
+	 */
+	public boolean notQuiet() {
+		return capturedPiece != null || movedPiece.isType(Pawn.class);
+	}
+
+	public void performMove(Chess chess) {
+		if (capturedPiece != null)
+			chess.takeOffBoard(capturedPiece);
+		movedPiece.moveTo(lastPosition);
+	}
+
+	abstract public String getDescript();
+
+	abstract public void undo(Chess chess);
 
 }

@@ -24,18 +24,16 @@ import javax.swing.JLabel;
 public class SquareLabel extends JLabel {
 
 	public static final int SQUARE_WIDTH = 65;
-	
-	
+
 	private static final Font FONT_PIECE = new Font("Serif", Font.PLAIN, 40);
 	private static final Color HIGHLIGHT_COLOR = Color.yellow;
-	private ChessSymbolProvider DEFAULT_SYMBOL_PROVIDER = new ImageProvider("Chess_symbols.png");
-	
-//	private static final Color TEXT_COLOR_BALCK = Color.black;
-//	private static final Color TEXT_COLOR_WHITE = Color.red;
+
+	// private static final Color TEXT_COLOR_BALCK = Color.black;
+	// private static final Color TEXT_COLOR_WHITE = Color.red;
 
 	private int x;
 	private int y;
-	private boolean wb;
+	private boolean isWhite;
 	private Color originalColor;
 	private boolean highLight;
 	private BufferedImage image;
@@ -46,7 +44,7 @@ public class SquareLabel extends JLabel {
 		setPreferredSize(new Dimension(SquareLabel.SQUARE_WIDTH, SquareLabel.SQUARE_WIDTH));
 		setFont(FONT_PIECE);
 	}
-	
+
 	/**
 	 * 
 	 * @param i
@@ -54,40 +52,43 @@ public class SquareLabel extends JLabel {
 	 * @param j
 	 *            rank of this square
 	 * @param chess
+	 * @param symbolProvider2
 	 */
-	public SquareLabel(int i, int j, ChessViewerControl chess, boolean whiteOrBlack) {
+	public SquareLabel(int i, int j, ChessViewerControl chess, boolean whiteOrBlack,
+			ChessSymbolProvider symbolProvider) {
 		this();
-		if (whiteOrBlack){
+		if (whiteOrBlack) {
 			x = i;
 			y = 8 - j;
-		}else{
+		} else {
 			x = 9 - i;
 			y = 1 + j;
 		}
-		wb = whiteOrBlack;
+		isWhite = whiteOrBlack;
 		if ((i + j) % 2 != 0)
 			originalColor = Color.white;
 		else
 			originalColor = Color.gray;
+		this.symbolProvider = symbolProvider;
+
 		setBackground(originalColor);
 		setBorder(BorderFactory.createLineBorder(Color.black, 1));
 		setOpaque(true);
-		addMouseListener(new MouseAdapter(){
+		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				chess.click(SquareLabel.this, wb);
+				chess.click(SquareLabel.this, isWhite);
 			}
 		});
-		symbolProvider = DEFAULT_SYMBOL_PROVIDER;
 	}
 
 	// ------------------------------------------------------------------------------------------------------------------
 	// accessors
-	
+
 	public String toString() {
-		return "("+x+","+y+")";
+		return "(" + x + "," + y + ")";
 	}
-	
+
 	public int X() {
 		return x;
 	}
@@ -116,27 +117,23 @@ public class SquareLabel extends JLabel {
 		setBackground(originalColor);
 	}
 
-	protected void setSymbolProvider(ChessSymbolProvider symProvider){
-		this.symbolProvider = symProvider;
-	}
-	
 	/**
 	 * upDate the color and text of this JLabel.
 	 */
 	public void upDatePiece(ChessPieceType chessPieceType, boolean wb) {
 		image = symbolProvider.getSymbol(chessPieceType, wb);
 	}
-	
+
 	public void clearLabel() {
 		image = null;
 	}
 
-	protected void paintComponent(Graphics g){
+	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		if (image != null ){
+		if (image != null) {
 			Graphics2D g2 = (Graphics2D) g;
 			g2.drawImage(image, null, 0, 0);
 		}
 	}
-	
+
 }

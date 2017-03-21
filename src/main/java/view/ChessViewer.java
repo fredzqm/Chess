@@ -17,16 +17,18 @@ import javax.swing.JTextArea;
 
 @SuppressWarnings("serial")
 public class ChessViewer extends JFrame {
-
 	private static final Font FONT_STATUS_LABEL = new Font("Serif", Font.PLAIN, 40);
 	private static final int CONSOLE_FONT_SIZE = 20;
 	private static final Font FONT_CONSOLE = new Font("Serif", Font.PLAIN, CONSOLE_FONT_SIZE);
+	private static final ChessSymbolProvider DEFAULT_SYMBOL_PROVIDER = new ImageProvider("Chess_symbols.png");
 
-	private boolean isWhiteTurn;
+	private boolean isWhiteView;
 	private ChessViewerControl viewControl;
-	
+
 	private JLabel statusLabel;
+
 	private SquareLabel[][] labels;
+
 	private JTextArea myConsole;
 	private String existence;
 	private ConsoleListener listener;
@@ -40,13 +42,13 @@ public class ChessViewer extends JFrame {
 	 */
 	public ChessViewer(ChessViewerControl controller, String title, boolean whiteOrBlack) {
 		this.viewControl = controller;
-		this.isWhiteTurn = whiteOrBlack;
+		this.isWhiteView = whiteOrBlack;
 		highlighted = new ArrayList<>();
 		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// configure chess board
-		JPanel chessBoardSpace = setupChessBoard(controller);
+		JPanel chessBoardSpace = setupChessBoard(controller, DEFAULT_SYMBOL_PROVIDER);
 
 		// configure status label
 		setupStatusLabel();
@@ -61,7 +63,7 @@ public class ChessViewer extends JFrame {
 		pack();
 	}
 
-	private JPanel setupChessBoard(ChessViewerControl controller) {
+	private JPanel setupChessBoard(ChessViewerControl controller, ChessSymbolProvider symbolProvider) {
 		JPanel chessBoardSpace = new JPanel();
 		chessBoardSpace.setLayout(new FlowLayout());
 		chessBoardSpace.setVisible(true);
@@ -70,24 +72,24 @@ public class ChessViewer extends JFrame {
 		chessBoard.setLayout(new GridLayout(9, 9));
 		chessBoard.setVisible(true);
 		labels = new SquareLabel[9][9];
-	
+
 		for (int j = 0; j < 9; j++) {
 			for (int i = 0; i < 9; i++) {
 				if (j == 8) {
 					labels[i][j] = new SquareLabel();
 					String s = "";
 					if (i > 0)
-						s += (char) (isWhiteTurn ? (i + 96) : (105 - i));
+						s += (char) (isWhiteView ? (i + 96) : (105 - i));
 					labels[i][j].setText(s);
 					labels[i][j].setOpaque(false);
 				} else if (i == 0) {
 					labels[i][j] = new SquareLabel();
 					String s = "";
-					s += isWhiteTurn ? (8 - j) : j + 1;
+					s += isWhiteView ? (8 - j) : j + 1;
 					labels[i][j].setText(s);
 					labels[i][j].setOpaque(false);
 				} else {
-					labels[i][j] = new SquareLabel(i, j, controller, isWhiteTurn);
+					labels[i][j] = new SquareLabel(i, j, controller, isWhiteView, symbolProvider);
 				}
 				chessBoard.add(labels[i][j]);
 			}
@@ -116,14 +118,6 @@ public class ChessViewer extends JFrame {
 		return consolePanel;
 	}
 
-	public void setSymbolProvider(ChessSymbolProvider symProvider) {
-		for (SquareLabel[] sqlist : labels) {
-			for (SquareLabel sq : sqlist) {
-				sq.setSymbolProvider(symProvider);
-			}
-		}
-	}
-
 	/**
 	 * 
 	 * @param x
@@ -131,7 +125,7 @@ public class ChessViewer extends JFrame {
 	 * @return {link {@link SquareLabel} at (x , y) coordinate
 	 */
 	public SquareLabel labelAt(int x, int y) {
-		return isWhiteTurn ? labels[x][8 - y] : labels[9 - x][y - 1];
+		return isWhiteView ? labels[x][8 - y] : labels[9 - x][y - 1];
 	}
 
 	/**
@@ -203,7 +197,7 @@ public class ChessViewer extends JFrame {
 				if (existence.length() < text.length()) {
 					input = text.substring(existence.length(), text.length() - 1);
 					if (input.length() > 0) {
-						viewControl.handleCommand(input, isWhiteTurn);
+						viewControl.handleCommand(input, isWhiteView);
 					}
 				}
 			}

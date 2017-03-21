@@ -32,7 +32,7 @@ public class SquareLabel extends JLabel {
 	private Color originalColor;
 	private boolean highLight;
 	private BufferedImage image;
-	private ChessSymbolProvider symbolProvider;
+	private ISpriteProvider symbolProvider;
 
 	public SquareLabel() {
 		super("", JLabel.CENTER);
@@ -49,8 +49,7 @@ public class SquareLabel extends JLabel {
 	 * @param chess
 	 * @param symbolProvider2
 	 */
-	public SquareLabel(int i, int j, ChessViewerControl chess, boolean whiteOrBlack,
-			ChessSymbolProvider symbolProvider) {
+	public SquareLabel(int i, int j, ChessViewerControl chess, boolean whiteOrBlack, ISpriteProvider symbolProvider) {
 		this();
 		if (whiteOrBlack) {
 			x = i;
@@ -116,7 +115,31 @@ public class SquareLabel extends JLabel {
 	 * upDate the color and text of this JLabel.
 	 */
 	public void upDatePiece(ChessPieceType chessPieceType, boolean wb) {
-		image = symbolProvider.getSymbol(chessPieceType, wb);
+		image = getSymbol(chessPieceType, wb);
+	}
+
+	public BufferedImage getSymbol(ChessPieceType type, boolean whiteOrBlack) {
+		int color;
+		if (whiteOrBlack)
+			color = 0;
+		else
+			color = 67;
+		switch (type) {
+		case Pawn:
+			return symbolProvider.imageAt(333, color, SQUARE_WIDTH, SQUARE_WIDTH);
+		case Rook:
+			return symbolProvider.imageAt(268, color, SQUARE_WIDTH, SQUARE_WIDTH);
+		case Bishop:
+			return symbolProvider.imageAt(135, color, SQUARE_WIDTH, SQUARE_WIDTH);
+		case Knight:
+			return symbolProvider.imageAt(201, color, SQUARE_WIDTH, SQUARE_WIDTH);
+		case Queen:
+			return symbolProvider.imageAt(67, color, SQUARE_WIDTH, SQUARE_WIDTH);
+		case King:
+			return symbolProvider.imageAt(0, color, SQUARE_WIDTH, SQUARE_WIDTH);
+		default:
+			throw new RuntimeException("Invalid type of ChessPiece " + type);
+		}
 	}
 
 	public void clearLabel() {

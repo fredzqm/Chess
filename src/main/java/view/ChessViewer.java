@@ -22,7 +22,7 @@ public class ChessViewer extends JFrame {
 	private static final Font FONT_STATUS_LABEL = new Font("Serif", Font.PLAIN, 40);
 	private static final int CONSOLE_FONT_SIZE = 20;
 	private static final Font FONT_CONSOLE = new Font("Serif", Font.PLAIN, CONSOLE_FONT_SIZE);
-	private static final ChessSymbolProvider DEFAULT_SYMBOL_PROVIDER = new ImageProvider("Chess_symbols.png");
+	private static final ISpriteProvider DEFAULT_SYMBOL_PROVIDER = new SpriteProvider("Chess_symbols.png");
 
 	private boolean isWhiteView;
 	private ChessViewerControl viewControl;
@@ -56,7 +56,7 @@ public class ChessViewer extends JFrame {
 		pack();
 	}
 
-	private SquareLabel[][] setupChessBoard(ChessViewerControl controller, ChessSymbolProvider symbolProvider) {
+	private SquareLabel[][] setupChessBoard(ChessViewerControl controller, ISpriteProvider symbolProvider) {
 		JPanel chessBoardSpace = new JPanel();
 		chessBoardSpace.setLayout(new FlowLayout());
 		chessBoardSpace.setVisible(true);

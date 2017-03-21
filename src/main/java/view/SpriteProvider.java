@@ -6,7 +6,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
 import java.awt.image.RGBImageFilter;
 import java.io.File;
@@ -14,23 +13,18 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class ImageProvider implements ChessSymbolProvider {
+/**
+ * This class provides the sprite for displaying the image
+ * 
+ * @author zhang
+ *
+ */
+public class SpriteProvider implements ISpriteProvider {
 	private static final Color TRANSPARENT_COLOR = new Color(200, 200, 200);
-	private int width;
-	private int height;
 	private BufferedImage spriteSheet;
 
-	private int maxWidth;
-	private int maxHeight;
-
-	public ImageProvider(String file) {
-		this.width = SquareLabel.SQUARE_WIDTH;
-		this.height = SquareLabel.SQUARE_WIDTH;
+	public SpriteProvider(String file) {
 		this.spriteSheet = loadImage(file);
-
-		maxWidth = spriteSheet.getWidth() / width;
-		maxHeight = spriteSheet.getHeight() / height;
-
 	}
 
 	private BufferedImage loadImage(String file) {
@@ -80,37 +74,26 @@ public class ImageProvider implements ChessSymbolProvider {
 		return bimage;
 	}
 
-	public BufferedImage imageAt(int xGrid, int yGrid) {
-		if (xGrid < spriteSheet.getWidth() && yGrid < spriteSheet.getHeight()) {
-			BufferedImage img = spriteSheet.getSubimage(xGrid, yGrid, width, height);
-			return img;
-		}
-		return null;
+	/**
+	 * get this part of the image
+	 * 
+	 * @param xGrid
+	 * @param yGrid
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+	public BufferedImage imageAt(int xGrid, int yGrid, int width, int height) {
+		if (xGrid < 0)
+			throw new IndexOutOfBoundsException("xGrid cannot be negative");
+		if (yGrid < 0)
+			throw new IndexOutOfBoundsException("yGrid cannot be negative");
+		if (xGrid + width > spriteSheet.getWidth())
+			throw new IndexOutOfBoundsException("xGrid exceed the width");
+		if (yGrid + height > spriteSheet.getHeight())
+			throw new IndexOutOfBoundsException("yGrid exceed the height");
+		return spriteSheet.getSubimage(xGrid, yGrid, width, height);
 	}
 
-	@Override
-	public BufferedImage getSymbol(ChessPieceType type, boolean whiteOrBlack) {
-		int color;
-		if (whiteOrBlack)
-			color = 0;
-		else
-			color = 67;
-		switch (type) {
-		case Pawn:
-			return imageAt(333, color);
-		case Rook:
-			return imageAt(268, color);
-		case Bishop:
-			return imageAt(135, color);
-		case Knight:
-			return imageAt(201, color);
-		case Queen:
-			return imageAt(67, color);
-		case King:
-			return imageAt(0, color);
-		default:
-			return null;
-		}
-	}
 
 }

@@ -47,6 +47,22 @@ public class ChessViewer extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// configure chess board
+		JPanel chessBoardSpace = setupChessBoard(controller);
+
+		// configure status label
+		setupStatusLabel();
+
+		// configure console panel
+		JPanel consolePanel = setupConsole();
+
+		add(statusLabel, BorderLayout.NORTH);
+		add(chessBoardSpace, BorderLayout.CENTER);
+		add(consolePanel, BorderLayout.SOUTH);
+		setVisible(true);
+		pack();
+	}
+
+	private JPanel setupChessBoard(ChessViewerControl controller) {
 		JPanel chessBoardSpace = new JPanel();
 		chessBoardSpace.setLayout(new FlowLayout());
 		chessBoardSpace.setVisible(true);
@@ -55,7 +71,7 @@ public class ChessViewer extends JFrame {
 		chessBoard.setLayout(new GridLayout(9, 9));
 		chessBoard.setVisible(true);
 		labels = new SquareLabel[9][9];
-
+	
 		for (int j = 0; j < 9; j++) {
 			for (int i = 0; i < 9; i++) {
 				if (j == 8) {
@@ -78,13 +94,16 @@ public class ChessViewer extends JFrame {
 			}
 		}
 		chessBoardSpace.add(chessBoard);
+		return chessBoardSpace;
+	}
 
-		// configure status label
+	private void setupStatusLabel() {
 		statusLabel = new JLabel("            Welcome to Wonderful Chess Game             ", JLabel.CENTER);
 		statusLabel.setFont(FONT_STATUS_LABEL);
 		statusLabel.setVisible(true);
+	}
 
-		// configure console panel
+	private JPanel setupConsole() {
 		JPanel consolePanel = new JPanel();
 		consolePanel.setLayout(new FlowLayout());
 		consolePanel.setVisible(true);
@@ -95,12 +114,7 @@ public class ChessViewer extends JFrame {
 		myConsole.addKeyListener(listener);
 		existence = myConsole.getText();
 		consolePanel.add(new JScrollPane(myConsole));
-
-		add(statusLabel, BorderLayout.NORTH);
-		add(chessBoardSpace, BorderLayout.CENTER);
-		add(consolePanel, BorderLayout.SOUTH);
-		setVisible(true);
-		pack();
+		return consolePanel;
 	}
 
 	public void setSymbolProvider(ChessSymbolProvider symProvider) {

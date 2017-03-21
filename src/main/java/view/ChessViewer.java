@@ -22,8 +22,9 @@ public class ChessViewer extends JFrame {
 	private static final int CONSOLE_FONT_SIZE = 20;
 	private static final Font FONT_CONSOLE = new Font("Serif", Font.PLAIN, CONSOLE_FONT_SIZE);
 
-	private boolean wb;
+	private boolean isWhiteTurn;
 	private ChessViewerControl viewControl;
+	
 	private JLabel statusLabel;
 	private SquareLabel[][] labels;
 	private JTextArea myConsole;
@@ -31,8 +32,6 @@ public class ChessViewer extends JFrame {
 	private ConsoleListener listener;
 	private ArrayList<SquareLabel> highlighted;
 
-	private boolean waitForResponse;
-	
 	/**
 	 * construct a chess view given a controller
 	 * 
@@ -41,7 +40,7 @@ public class ChessViewer extends JFrame {
 	 */
 	public ChessViewer(ChessViewerControl controller, String title, boolean whiteOrBlack) {
 		this.viewControl = controller;
-		this.wb = whiteOrBlack;
+		this.isWhiteTurn = whiteOrBlack;
 		highlighted = new ArrayList<>();
 		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -78,17 +77,17 @@ public class ChessViewer extends JFrame {
 					labels[i][j] = new SquareLabel();
 					String s = "";
 					if (i > 0)
-						s += (char) (wb ? (i + 96) : (105 - i));
+						s += (char) (isWhiteTurn ? (i + 96) : (105 - i));
 					labels[i][j].setText(s);
 					labels[i][j].setOpaque(false);
 				} else if (i == 0) {
 					labels[i][j] = new SquareLabel();
 					String s = "";
-					s += wb ? (8 - j) : j + 1;
+					s += isWhiteTurn ? (8 - j) : j + 1;
 					labels[i][j].setText(s);
 					labels[i][j].setOpaque(false);
 				} else {
-					labels[i][j] = new SquareLabel(i, j, controller, wb);
+					labels[i][j] = new SquareLabel(i, j, controller, isWhiteTurn);
 				}
 				chessBoard.add(labels[i][j]);
 			}
@@ -132,7 +131,7 @@ public class ChessViewer extends JFrame {
 	 * @return {link {@link SquareLabel} at (x , y) coordinate
 	 */
 	public SquareLabel labelAt(int x, int y) {
-		return wb ? labels[x][8 - y] : labels[9 - x][y - 1];
+		return isWhiteTurn ? labels[x][8 - y] : labels[9 - x][y - 1];
 	}
 
 	/**
@@ -194,11 +193,6 @@ public class ChessViewer extends JFrame {
 		return JOptionPane.showInputDialog(message);
 	}
 
-	public void notifyResponse() {
-		waitForResponse = false;
-		this.notifyAll();
-	}
-
 	class ConsoleListener extends KeyAdapter {
 		String input;
 
@@ -209,7 +203,7 @@ public class ChessViewer extends JFrame {
 				if (existence.length() < text.length()) {
 					input = text.substring(existence.length(), text.length() - 1);
 					if (input.length() > 0) {
-						viewControl.handleCommand(input, wb);
+						viewControl.handleCommand(input, isWhiteTurn);
 					}
 				}
 			}

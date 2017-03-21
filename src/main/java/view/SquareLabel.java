@@ -22,14 +22,9 @@ import javax.swing.JLabel;
  */
 @SuppressWarnings("serial")
 public class SquareLabel extends JLabel {
-
 	public static final int SQUARE_WIDTH = 65;
-
-	private static final Font FONT_PIECE = new Font("Serif", Font.PLAIN, 40);
-	private static final Color HIGHLIGHT_COLOR = Color.yellow;
-
-	// private static final Color TEXT_COLOR_BALCK = Color.black;
-	// private static final Color TEXT_COLOR_WHITE = Color.red;
+	public static final Font FONT_PIECE = new Font("Serif", Font.PLAIN, 40);
+	public static final Color HIGHLIGHT_COLOR = Color.yellow;
 
 	private int x;
 	private int y;

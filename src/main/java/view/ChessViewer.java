@@ -7,6 +7,8 @@ import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,13 +28,11 @@ public class ChessViewer extends JFrame {
 	private ChessViewerControl viewControl;
 
 	private JLabel statusLabel;
-
 	private SquareLabel[][] labels;
-
+	private Collection<SquareLabel> highlighted;
+	
 	private JTextArea myConsole;
 	private String existence;
-	private ConsoleListener listener;
-	private ArrayList<SquareLabel> highlighted;
 
 	/**
 	 * construct a chess view given a controller
@@ -43,27 +43,20 @@ public class ChessViewer extends JFrame {
 	public ChessViewer(ChessViewerControl controller, String title, boolean whiteOrBlack) {
 		this.viewControl = controller;
 		this.isWhiteView = whiteOrBlack;
-		highlighted = new ArrayList<>();
+		this.highlighted = Collections.emptyList();
 		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		// configure chess board
-		JPanel chessBoardSpace = setupChessBoard(controller, DEFAULT_SYMBOL_PROVIDER);
-
-		// configure status label
-		setupStatusLabel();
-
-		// configure console panel
+		this.labels = setupChessBoard(controller, DEFAULT_SYMBOL_PROVIDER);
+		this.statusLabel = setupStatusLabel();
 		JPanel consolePanel = setupConsole();
 
-		add(statusLabel, BorderLayout.NORTH);
-		add(chessBoardSpace, BorderLayout.CENTER);
 		add(consolePanel, BorderLayout.SOUTH);
 		setVisible(true);
 		pack();
 	}
 
-	private JPanel setupChessBoard(ChessViewerControl controller, ChessSymbolProvider symbolProvider) {
+	private SquareLabel[][] setupChessBoard(ChessViewerControl controller, ChessSymbolProvider symbolProvider) {
 		JPanel chessBoardSpace = new JPanel();
 		chessBoardSpace.setLayout(new FlowLayout());
 		chessBoardSpace.setVisible(true);
@@ -71,7 +64,7 @@ public class ChessViewer extends JFrame {
 		chessBoard.setSize(SquareLabel.SQUARE_WIDTH * 9, SquareLabel.SQUARE_WIDTH * 9);
 		chessBoard.setLayout(new GridLayout(9, 9));
 		chessBoard.setVisible(true);
-		labels = new SquareLabel[9][9];
+		SquareLabel[][] labels = new SquareLabel[9][9];
 
 		for (int j = 0; j < 9; j++) {
 			for (int i = 0; i < 9; i++) {
@@ -95,13 +88,16 @@ public class ChessViewer extends JFrame {
 			}
 		}
 		chessBoardSpace.add(chessBoard);
-		return chessBoardSpace;
+		add(chessBoardSpace, BorderLayout.CENTER);
+		return labels;
 	}
 
-	private void setupStatusLabel() {
-		statusLabel = new JLabel("            Welcome to Wonderful Chess Game             ", JLabel.CENTER);
-		statusLabel.setFont(FONT_STATUS_LABEL);
-		statusLabel.setVisible(true);
+	private JLabel setupStatusLabel() {
+		JLabel label = new JLabel("            Welcome to Wonderful Chess Game             ", JLabel.CENTER);
+		label.setFont(FONT_STATUS_LABEL);
+		label.setVisible(true);
+		add(label, BorderLayout.NORTH);
+		return label;
 	}
 
 	private JPanel setupConsole() {
@@ -111,8 +107,7 @@ public class ChessViewer extends JFrame {
 		myConsole = new JTextArea("Welcome to little Chess Game. Enter \"help\" for instructions.\n",
 				130 / CONSOLE_FONT_SIZE, 1000 / CONSOLE_FONT_SIZE);
 		myConsole.setFont(FONT_CONSOLE);
-		listener = new ConsoleListener();
-		myConsole.addKeyListener(listener);
+		myConsole.addKeyListener(new ConsoleListener());
 		existence = myConsole.getText();
 		consolePanel.add(new JScrollPane(myConsole));
 		return consolePanel;
@@ -168,7 +163,7 @@ public class ChessViewer extends JFrame {
 		statusLabel.setText(str);
 	}
 
-	public void highLightAll(ArrayList<SquareLabel> hightlight) {
+	public void highLightAll(Collection<SquareLabel> hightlight) {
 		highlighted = hightlight;
 		for (SquareLabel sqrl : highlighted)
 			sqrl.highLight();

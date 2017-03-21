@@ -15,7 +15,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class ImageProvider implements ChessSymbolProvider {
-
+	private static final Color TRANSPARENT_COLOR = new Color(200, 200, 200);
 	private int width;
 	private int height;
 	private BufferedImage spriteSheet;
@@ -26,44 +26,64 @@ public class ImageProvider implements ChessSymbolProvider {
 	public ImageProvider(String file) {
 		this.width = SquareLabel.SQUARE_WIDTH;
 		this.height = SquareLabel.SQUARE_WIDTH;
-		spriteSheet = null;
-
-		try {
-			spriteSheet = ImageIO.read(new File(file));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		ImageFilter filter = new RGBImageFilter() {
-			// the color we are looking for... Alpha bits are set to opaque
-			public int markerRGB = (new Color(200, 200, 200)).getRGB() | 0xFF000000;
-
-			@Override
-			public final int filterRGB(int x, int y, int rgb) {
-				if ((rgb | 0xFF000000) == markerRGB) {
-					// Mark the alpha bits as zero - transparent
-					return 0x00FFFFFF & rgb;
-				} else {
-					// nothing to do
-					return rgb;
-				}
-			}
-		};
-
-		ImageProducer ip = new FilteredImageSource(spriteSheet.getSource(), filter);
-		Image img = Toolkit.getDefaultToolkit().createImage(ip);
-		spriteSheet = toBufferedImage(img);
+		this.spriteSheet = loadImage(file);
 
 		maxWidth = spriteSheet.getWidth() / width;
 		maxHeight = spriteSheet.getHeight() / height;
 
 	}
 
+	private BufferedImage loadImage(String file) {
+		BufferedImage rawImage;
+		try {
+			rawImage = ImageIO.read(new File(file));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		ImageProducer ip = createTransparentPart(rawImage, TRANSPARENT_COLOR);
+		return toBufferedImage(Toolkit.getDefaultToolkit().createImage(ip));
+	}
+
+	private ImageProducer createTransparentPart(BufferedImage rawImage, Color transparent) {
+		int markerRGB = transparent.getRGB() | 0xFF000000;
+		ImageProducer ip = new FilteredImageSource(rawImage.getSource(), new RGBImageFilter() {
+			@Override
+			public final int filterRGB(int x, int y, int rgb) {
+				if ((rgb | 0xFF000000) == markerRGB) {
+					return 0x00FFFFFF & rgb; // transparent
+				} else {
+					return rgb;
+				}
+			}
+		});
+		return ip;
+	}
+
+	/**
+	 * Converts a given Image into a BufferedImage
+	 *
+	 * @param img
+	 *            The Image to be converted
+	 * @return The converted BufferedImage
+	 */
+	private static BufferedImage toBufferedImage(Image img) {
+		if (img instanceof BufferedImage) {
+			return (BufferedImage) img;
+		}
+		// Create a buffered image with transparency
+		BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+		// Draw the image on to the buffered image
+		Graphics2D bGr = bimage.createGraphics();
+		bGr.drawImage(img, 0, 0, null);
+		bGr.dispose();
+		// Return the buffered image
+		return bimage;
+	}
+
 	public BufferedImage imageAt(int xGrid, int yGrid) {
 		if (xGrid < spriteSheet.getWidth() && yGrid < spriteSheet.getHeight()) {
 			BufferedImage img = spriteSheet.getSubimage(xGrid, yGrid, width, height);
 			return img;
-
 		}
 		return null;
 	}
@@ -88,32 +108,9 @@ public class ImageProvider implements ChessSymbolProvider {
 			return imageAt(67, color);
 		case King:
 			return imageAt(0, color);
+		default:
+			return null;
 		}
-		return null;
-	}
-
-	/**
-	 * Converts a given Image into a BufferedImage
-	 *
-	 * @param img
-	 *            The Image to be converted
-	 * @return The converted BufferedImage
-	 */
-	public static BufferedImage toBufferedImage(Image img) {
-		if (img instanceof BufferedImage) {
-			return (BufferedImage) img;
-		}
-
-		// Create a buffered image with transparency
-		BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-		// Draw the image on to the buffered image
-		Graphics2D bGr = bimage.createGraphics();
-		bGr.drawImage(img, 0, 0, null);
-		bGr.dispose();
-
-		// Return the buffered image
-		return bimage;
 	}
 
 }

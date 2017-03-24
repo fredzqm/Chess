@@ -259,7 +259,7 @@ public class DualViewChessControl implements ChessViewerControl {
 	}
 
 	private SquareLabel squareToLabel(Square sqr, boolean whiteOrBlack) {
-		return chooesView(whiteOrBlack).labelAt(sqr.X(), sqr.Y());
+		return chooesView(whiteOrBlack).labelAt(sqr.getX(), sqr.getY());
 	}
 
 	private ArrayList<SquareLabel> squareToLabel(ArrayList<Square> squares, boolean whiteOrBlack) {
@@ -383,14 +383,14 @@ public class DualViewChessControl implements ChessViewerControl {
 	}
 
 	public void updateSquare(Square sq) {
-		if (sq.occupied()) {
-			whiteView.labelAt(sq.X(), sq.Y()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
+		if (sq.isOccupied()) {
+			whiteView.labelAt(sq.getX(), sq.getY()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
 					sq.getPiece().getWhiteOrBlack() == Player.WHITE);
-			blackView.labelAt(sq.X(), sq.Y()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
+			blackView.labelAt(sq.getX(), sq.getY()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
 					sq.getPiece().getWhiteOrBlack() == Player.WHITE);
 		} else {
-			whiteView.labelAt(sq.X(), sq.Y()).clearLabel();
-			blackView.labelAt(sq.X(), sq.Y()).clearLabel();
+			whiteView.labelAt(sq.getX(), sq.getY()).clearLabel();
+			blackView.labelAt(sq.getX(), sq.getY()).clearLabel();
 		}
 	}
 

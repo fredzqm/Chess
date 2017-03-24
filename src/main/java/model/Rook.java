@@ -30,17 +30,17 @@ public class Rook extends Piece {
 		if (start.equals(end))
 			return false;
 
-		if (end.X() == start.X()) {
-			int k = (end.Y() - start.Y()) / (Math.abs(end.Y() - start.Y()));
-			for (int i = start.Y() + k; i != end.Y(); i += k) {
-				if (chess.spotAt(start.X(), i).occupied())
+		if (end.getX() == start.getX()) {
+			int k = (end.getY() - start.getY()) / (Math.abs(end.getY() - start.getY()));
+			for (int i = start.getY() + k; i != end.getY(); i += k) {
+				if (chess.spotAt(start.getX(), i).isOccupied())
 					return false;
 			}
 			return true;
-		} else if (end.Y() == start.Y()) {
-			int k = (end.X() - start.X()) / (Math.abs(end.X() - start.X()));
-			for (int i = start.X() + k; i != end.X(); i += k) {
-				if (chess.spotAt(i, start.Y()).occupied())
+		} else if (end.getY() == start.getY()) {
+			int k = (end.getX() - start.getX()) / (Math.abs(end.getX() - start.getX()));
+			for (int i = start.getX() + k; i != end.getX(); i += k) {
+				if (chess.spotAt(i, start.getY()).isOccupied())
 					return false;
 			}
 			return true;

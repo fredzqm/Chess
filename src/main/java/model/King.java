@@ -21,7 +21,7 @@ public class King extends Piece {
 
 	@Override
 	public Move legalPosition(Square end) {
-		if (Math.abs(spot.X() - end.X()) > 1 || Math.abs(spot.Y() - end.Y()) > 1)
+		if (Math.abs(spot.getX() - end.getX()) > 1 || Math.abs(spot.getY() - end.getY()) > 1)
 			return null;
 		if (spot.equals(end))
 			return null;
@@ -37,10 +37,10 @@ public class King extends Piece {
 
 		Move legalMove = legalPosition(end);
 		if (legalMove == null) {
-			if (getX() == 5 && getY() == end.Y()) {
-				if (end.X() == 3) {
+			if (getX() == 5 && getY() == end.getY()) {
+				if (end.getX() == 3) {
 					return chess.canCastling(this, true);
-				} else if (end.X() == 7) {
+				} else if (end.getX() == 7) {
 					return chess.canCastling(this, false);
 				}
 			}

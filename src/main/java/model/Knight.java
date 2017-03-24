@@ -24,8 +24,8 @@ public class Knight extends Piece {
 	public Move legalPosition(Square end) {
 		if (spot.equals(end))
 			return null;
-		int a = Math.abs(spot.X() - end.X());
-		int b = Math.abs(spot.Y() - end.Y());
+		int a = Math.abs(spot.getX() - end.getX());
+		int b = Math.abs(spot.getY() - end.getY());
 		if (a + b == 3 && (a != 0 && b != 0))
 			return new RegularMove(this, spot, end.getPiece(), end);
 		else

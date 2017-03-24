@@ -57,8 +57,8 @@ public abstract class Move {
 	 *         castling
 	 */
 	public boolean canEnPassant(Square p) {
-		return movedPiece.isType(Pawn.class) && (startPosition.X() == p.X() && lastPosition.X() == p.X()
-				&& (startPosition.Y() + lastPosition.Y()) == (p.Y() * 2));
+		return movedPiece.isType(Pawn.class) && (startPosition.getX() == p.getX() && lastPosition.getX() == p.getX()
+				&& (startPosition.getY() + lastPosition.getY()) == (p.getY() * 2));
 	}
 
 	/**

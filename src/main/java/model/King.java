@@ -1,4 +1,5 @@
 package model;
+
 /**
  * 
  * @author zhangq2
@@ -10,12 +11,12 @@ public class King extends Piece {
 	/**
 	 * constructs a King with initial square
 	 * 
-	 * @param type
-	 * @param wb
+	 * @param c
 	 * @param Position
+	 * @param chess
 	 */
-	public King(Player c, Square Position) {
-		super(c, Position);
+	public King(Player c, Square Position, Chess chess) {
+		super(c, Position, chess);
 	}
 
 	@Override
@@ -33,14 +34,14 @@ public class King extends Piece {
 	protected Move getMove(Square end) {
 		if (end.occupiedBy(super.color)) 
 			return null;
-		
-		Move legalMove =  legalPosition(end) ;
+
+		Move legalMove = legalPosition(end);
 		if (legalMove == null) {
 			if (getX() == 5 && getY() == end.getY()) {
 				if (end.getX() == 3) {
-					return chess.canCastling(this, true) ;
+					return chess.canCastling(this, true);
 				} else if (end.getX() == 7) {
-					return chess.canCastling(this, false) ;
+					return chess.canCastling(this, false);
 				}
 			}
 			return null;

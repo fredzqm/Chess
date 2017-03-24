@@ -17,7 +17,7 @@ import model.Piece.Player;
  */
 public class Chess {
 	private int time;
-	private Square[][] spots;
+	private Board board;
 	private ArrayList<Piece> white;
 	private ArrayList<Piece> black;
 	private Record records;
@@ -33,22 +33,21 @@ public class Chess {
 	public Chess() {
 		time = 0;
 		records = new Record();
-		spots = new Square[8][8];
+		board = new Board();
 		white = new ArrayList<Piece>();
 		black = new ArrayList<Piece>();
 		list = new ArrayList<Square>();
 
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				Square t = new Square(i, j, this);
-				spots[i][j] = t;
+		for (int i = 1; i <= 8; i++) {
+			for (int j = 1; j <= 8; j++) {
+				Square t = board.spotAt(i, j);
 				int y = t.getY();
 				if (y == 1) {
 					white.add(startSet(t.getX(), Player.WHITE, t));
 				} else if (y == 2) {
-					white.add(new Pawn(Player.WHITE, t));
+					white.add(new Pawn(Player.WHITE, t, this));
 				} else if (y == 7) {
-					black.add(new Pawn(Player.BLACK, t));
+					black.add(new Pawn(Player.BLACK, t, this));
 				} else if (y == 8) {
 					black.add(startSet(t.getX(), Player.BLACK, t));
 				}
@@ -71,15 +70,15 @@ public class Chess {
 	 */
 	private Piece startSet(int x, Player c, Square p) {
 		if (x == 1 || x == 8)
-			return new Rook(c, p);
+			return new Rook(c, p, this);
 		else if (x == 2 || x == 7)
-			return new Knight(c, p);
+			return new Knight(c, p, this);
 		else if (x == 3 || x == 6)
-			return new Bishop(c, p);
+			return new Bishop(c, p, this);
 		else if (x == 4)
-			return new Queen(c, p);
+			return new Queen(c, p, this);
 		else if (x == 5)
-			return new King(c, p);
+			return new King(c, p, this);
 		else
 			return null;
 	}
@@ -108,21 +107,11 @@ public class Chess {
 	}
 
 	/**
-	 * s needs to be a string of length 2, like a3, e8.
 	 * 
-	 * @param s
-	 *            the name of the square
-	 * @return the position of the square, null if fail to find a corresponding
-	 *         square
+	 * @return the board of the chess
 	 */
-	public Square getSquare(String s) {
-		if (s.length() != 2)
-			return null;
-		char x = s.charAt(0);
-		char y = s.charAt(1);
-		if (x < 'a' || x > 'h' || y < '1' || y > '8')
-			return null;
-		return spots[(int) (x - 'a')][7 - (int) (y - '1')];
+	public Board getBoard() {
+		return board;
 	}
 
 	/**
@@ -134,7 +123,7 @@ public class Chess {
 	 * @return the position of the square
 	 */
 	public Square spotAt(int x, int y) {
-		return spots[x - 1][8 - y];
+		return board.spotAt(x, y);
 	}
 
 	public Collection<Square> getAllSquares() {
@@ -147,25 +136,7 @@ public class Chess {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 8; i >= 1; i--) {
-			for (int j = 1; j <= 8; j++) {
-				Square square = spotAt(j, i);
-				Piece piece = square.getPiece();
-				if (piece == null) {
-					sb.append("  ");
-				} else {
-					if (piece.getWhiteOrBlack() == Player.WHITE) {
-						sb.append('*');
-					} else {
-						sb.append(' ');
-					}
-					sb.append(piece.getType());
-				}
-			}
-			sb.append('\n');
-		}
-		return sb.toString();
+		return board.toString();
 	}
 
 	/**
@@ -550,7 +521,7 @@ public class Chess {
 	}
 
 	protected Piece promotion(Player c, Square end) {
-		return new Queen(c, end);
+		return new Queen(c, end, this);
 	}
 
 	/**
@@ -605,9 +576,9 @@ public class Chess {
 
 			Square start = null;
 			if ((m.group(2) != null) && (m.group(3) != null)) {
-				start = getSquare(m.group(2) + m.group(3));
+				start = board.getSquare(m.group(2) + m.group(3));
 			}
-			Square end = getSquare(m.group(4));
+			Square end = board.getSquare(m.group(4));
 
 			if (start != null) {
 				Piece movedChessman = start.getPiece();

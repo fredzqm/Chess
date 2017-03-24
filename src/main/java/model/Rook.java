@@ -15,8 +15,8 @@ public class Rook extends Piece {
 	 * @param c
 	 * @param Position
 	 */
-	public Rook( Player c, Square Position) {
-		super(c, Position);
+	public Rook( Player c, Square Position, Chess chess) {
+		super(c, Position, chess);
 	}
 
 	@Override

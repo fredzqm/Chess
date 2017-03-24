@@ -1,4 +1,5 @@
 package model;
+
 /**
  * 
  * @author zhangq2
@@ -6,16 +7,17 @@ package model;
  */
 public class Knight extends Piece {
 	private final int VALUE = 3;
-	
+
 	/**
 	 * constructs a Knight with initial square
 	 * 
 	 * @param type
-	 * @param wb
+	 * @param c
 	 * @param Position
+	 * @param chess
 	 */
-	public Knight(Player c, Square Position) {
-		super( c, Position);
+	public Knight(Player c, Square Position, Chess chess) {
+		super( c, Position, chess);
 	}
 
 	@Override
@@ -29,12 +31,12 @@ public class Knight extends Piece {
 		else
 			return null;
 	}
-	
+
 	@Override
 	public int getValue() {
 		return VALUE;
 	}
-	
+
 	@Override
 	public char getType() {
 		return 'N';

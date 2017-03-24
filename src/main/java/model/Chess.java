@@ -42,15 +42,15 @@ public class Chess {
 			for (int j = 0; j < 8; j++) {
 				Square t = new Square(i, j, this);
 				spots[i][j] = t;
-				int y = t.Y();
+				int y = t.getY();
 				if (y == 1) {
-					white.add(startSet(t.X(), Player.WHITE, t));
+					white.add(startSet(t.getX(), Player.WHITE, t));
 				} else if (y == 2) {
 					white.add(new Pawn(Player.WHITE, t));
 				} else if (y == 7) {
 					black.add(new Pawn(Player.BLACK, t));
 				} else if (y == 8) {
-					black.add(startSet(t.X(), Player.BLACK, t));
+					black.add(startSet(t.getX(), Player.BLACK, t));
 				}
 				list.add(t);
 			}
@@ -374,14 +374,14 @@ public class Chess {
 	}
 
 	private boolean canNotLongCastling(int y, boolean attack) {
-		return spotAt(2, y).occupied() || spotAt(3, y).occupied() || spotAt(4, y).occupied()
+		return spotAt(2, y).isOccupied() || spotAt(3, y).isOccupied() || spotAt(4, y).isOccupied()
 				|| isAttacked(attack, spotAt(5, y)) || isAttacked(attack, spotAt(3, y))
 				|| isAttacked(attack, spotAt(4, y)) || records.hasMoved(spotAt(1, y), Rook.class, time)
 				|| records.hasMoved(spotAt(5, y), King.class, time);
 	}
 
 	private boolean canNotShortCastling(int y, boolean attack) {
-		return spotAt(6, y).occupied() || spotAt(7, y).occupied() || isAttacked(attack, spotAt(5, y))
+		return spotAt(6, y).isOccupied() || spotAt(7, y).isOccupied() || isAttacked(attack, spotAt(5, y))
 				|| isAttacked(attack, spotAt(6, y)) || isAttacked(attack, spotAt(7, y))
 				|| records.hasMoved(spotAt(8, y), Rook.class, time) || records.hasMoved(spotAt(5, y), King.class, time);
 	}

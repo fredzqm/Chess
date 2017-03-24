@@ -103,7 +103,7 @@ public class Record implements Iterable<Move> {
 	 *         game started.
 	 */
 	public boolean hasMoved(Square original, Class<? extends Piece> type, int time) {
-		if (!original.occupied() || !original.getPiece().isType(type))
+		if (!original.isOccupied() || !original.getPiece().isType(type))
 			return true;
 		for (int t = 0; t < time; t++) {
 			if (original.equals(get(t).getStart()))

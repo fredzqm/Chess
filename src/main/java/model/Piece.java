@@ -86,7 +86,7 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @return X position of this spot
 	 */
 	public int getX() {
-		return spot.X();
+		return spot.getX();
 	}
 
 	/**
@@ -94,7 +94,7 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @return Y position of this spot
 	 */
 	public int getY() {
-		return spot.Y();
+		return spot.getY();
 	}
 
 	// modifiers

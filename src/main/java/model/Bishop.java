@@ -29,12 +29,12 @@ public class Bishop extends Piece {
 		if (start.equals(end))
 			return false;
 
-		if (Math.abs(start.X() - end.X()) == Math.abs(start.Y() - end.Y())) {
-			int k = (end.X() - start.X()) / (Math.abs(end.X() - start.X()));
-			int l = (end.Y() - start.Y()) / (Math.abs(end.Y() - start.Y()));
-			int j = start.Y() + l;
-			for (int i = start.X() + k; i != end.X(); i += k, j += l) {
-				if (chess.spotAt(i, j).occupied())
+		if (Math.abs(start.getX() - end.getX()) == Math.abs(start.getY() - end.getY())) {
+			int k = (end.getX() - start.getX()) / (Math.abs(end.getX() - start.getX()));
+			int l = (end.getY() - start.getY()) / (Math.abs(end.getY() - start.getY()));
+			int j = start.getY() + l;
+			for (int i = start.getX() + k; i != end.getX(); i += k, j += l) {
+				if (chess.spotAt(i, j).isOccupied())
 					return false;
 			}
 			return true;

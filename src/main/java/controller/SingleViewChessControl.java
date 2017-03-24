@@ -203,7 +203,7 @@ public class SingleViewChessControl implements ChessViewerControl {
 	}
 
 	private SquareLabel squareToLabel(Square sqr, boolean whiteOrBlack) {
-		return view.labelAt(sqr.X(), sqr.Y());
+		return view.labelAt(sqr.getX(), sqr.getY());
 	}
 
 	private ArrayList<SquareLabel> squareToLabel(ArrayList<Square> squares, boolean whiteOrBlack) {
@@ -322,11 +322,11 @@ public class SingleViewChessControl implements ChessViewerControl {
 	}
 
 	public void updateSquare(Square sq) {
-		if (sq.occupied()) {
-			view.labelAt(sq.X(), sq.Y()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
+		if (sq.isOccupied()) {
+			view.labelAt(sq.getX(), sq.getY()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
 					sq.getPiece().getWhiteOrBlack() == Player.WHITE);
 		} else {
-			view.labelAt(sq.X(), sq.Y()).clearLabel();
+			view.labelAt(sq.getX(), sq.getY()).clearLabel();
 		}
 	}
 

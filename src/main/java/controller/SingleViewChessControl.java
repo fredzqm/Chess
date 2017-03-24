@@ -130,7 +130,7 @@ public class SingleViewChessControl extends ViewController implements IChessView
 			chosen = null;
 			view.deHighLightWholeBoard();
 			if (c.equals("resign")) {
-				drawRequest.resign();
+				resign(view, chess);
 			} else if (c.equals("draw")) {
 				drawRequest.askForDraw();
 			} else if (c.equals("undo")) {
@@ -283,27 +283,6 @@ public class SingleViewChessControl extends ViewController implements IChessView
 				}
 			} else {
 				chess.endGame(canClaimDraw);
-			}
-		}
-
-		/**
-		 * Invoked if a player resigns. It will ends the game. However, if the
-		 * game satisfied automatic draw condition, the game will be draw
-		 * instead.
-		 * 
-		 * @return
-		 */
-		public void resign() {
-			Draw canClaimDraw = chess.canClaimDraw();
-			if (canClaimDraw != null) {
-				view.printOut("Actually, the game is alreayd an automatic draw!");
-				chess.endGame(canClaimDraw);
-				return;
-			}
-			if (chess.getWhoseTurn() == Player.WHITE) {
-				chess.endGame(Win.WHITERESIGN);
-			} else {
-				chess.endGame(Win.BLACKESIGN);
 			}
 		}
 	}

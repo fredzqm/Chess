@@ -3,15 +3,12 @@ package view;
 import java.util.ArrayList;
 import java.util.Map;
 
-import model.Bishop;
 import model.Chess;
-import model.Knight;
-import model.Piece;
-import model.Queen;
-import model.Record;
-import model.Rook;
-import model.Square;
+import model.Draw;
 import model.Piece.Player;
+import model.Record;
+import model.Square;
+import model.Win;
 
 public abstract class ViewController {
 	protected String side(boolean whoseTurn) {
@@ -72,5 +69,19 @@ public abstract class ViewController {
 	
 	protected Square labelToSquare(SquareLabel sql, Chess chess) {
 		return chess.spotAt(sql.X(), sql.Y());
+	}
+	
+	public void resign(ChessViewer view, Chess chess) {
+		Draw canClaimDraw = chess.canClaimDraw();
+		if (canClaimDraw != null) {
+			view.printOut("Actually, you can go with a draw!");
+			chess.endGame(canClaimDraw);
+			return;
+		}
+		if (chess.getWhoseTurn() == Player.WHITE) {
+			chess.endGame(Win.WHITERESIGN);
+		} else {
+			chess.endGame(Win.BLACKESIGN);
+		}
 	}
 }

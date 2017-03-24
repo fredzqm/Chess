@@ -185,7 +185,7 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 			chosen = null;
 			chooesView(whiteOrBlack).deHighLightWholeBoard();
 			if (c.equals("resign")) {
-				drawRequest.resign(whiteOrBlack);
+				resign(chooesView(whiteOrBlack), chess);
 			} else if (c.equals("draw")) {
 				drawRequest.askForDraw(whiteOrBlack);
 			} else if (whiteOrBlack != (chess.getWhoseTurn() == Player.WHITE)) {
@@ -355,7 +355,6 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 					while (true) {
 						response.printOut(side(whiteOrBlack) + " ask for draw, do you agreed?");
 						String command = response.getResponse("Do you agree draw?");
-						command = "no";
 						if (command.isEmpty())
 							continue;
 						if (command.toLowerCase().startsWith("yes")) {
@@ -384,19 +383,6 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 		 * 
 		 * @return
 		 */
-		public void resign(boolean whiteOrBlack) {
-			Draw canClaimDraw = chess.canClaimDraw();
-			if (canClaimDraw != null) {
-				chooesView(whiteOrBlack).printOut("Actually, you can go with a draw!");
-				chess.endGame(canClaimDraw);
-				return;
-			}
-			if (whiteOrBlack) {
-				chess.endGame(Win.WHITERESIGN);
-			} else {
-				chess.endGame(Win.BLACKESIGN);
-			}
-		}
 	}
 
 	public static void main(String[] args) {

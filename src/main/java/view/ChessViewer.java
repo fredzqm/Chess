@@ -25,7 +25,7 @@ public class ChessViewer extends JFrame {
 	private static final ISpriteProvider DEFAULT_SYMBOL_PROVIDER = new SpriteProvider("Chess_symbols.png");
 
 	private boolean isWhiteView;
-	private ChessViewerControl viewControl;
+	private IChessViewerControl viewControl;
 
 	private JLabel statusLabel;
 	private SquareLabel[][] labels;
@@ -40,7 +40,7 @@ public class ChessViewer extends JFrame {
 	 * @param controller
 	 * @param b
 	 */
-	public ChessViewer(ChessViewerControl controller, String title, boolean whiteOrBlack) {
+	public ChessViewer(IChessViewerControl controller, String title, boolean whiteOrBlack) {
 		this.viewControl = controller;
 		this.isWhiteView = whiteOrBlack;
 		this.highlighted = Collections.emptyList();
@@ -56,7 +56,7 @@ public class ChessViewer extends JFrame {
 		pack();
 	}
 
-	private SquareLabel[][] setupChessBoard(ChessViewerControl controller, ISpriteProvider symbolProvider) {
+	private SquareLabel[][] setupChessBoard(IChessViewerControl controller, ISpriteProvider symbolProvider) {
 		JPanel chessBoardSpace = new JPanel();
 		chessBoardSpace.setLayout(new FlowLayout());
 		chessBoardSpace.setVisible(true);

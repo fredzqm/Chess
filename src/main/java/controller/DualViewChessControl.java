@@ -1,7 +1,7 @@
 package controller;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,75 +14,27 @@ import model.Knight;
 import model.Move;
 import model.Pawn;
 import model.Piece;
+import model.Piece.Player;
 import model.Queen;
 import model.Record;
 import model.Rook;
 import model.Square;
 import model.Win;
-import model.Piece.Player;
 import view.ChessPieceType;
 import view.ChessViewer;
-import view.ChessViewerControl;
+import view.IChessViewerControl;
 import view.SquareLabel;
+import view.ViewController;
 
 /**
  * 
- * A chess controller that control two ChessView, each views the board separately
+ * A chess controller that control two ChessView, each views the board
+ * separately
  * 
  * @author zhang
  *
  */
-public class DualViewChessControl implements ChessViewerControl {
-
-	/**
-	 * printed when command line input cannot be recognized
-	 */
-	public static final String ERROR_MESSAGE = "Please enter the move as (The type of chessman)(the start position)(its action)(the end position)\n"
-			+ "you can omit the \"P\" at the begining for a pawn." + "for casting, enter \"O-O\" or \"O-O-O\"\n"
-			+ "for examples, \"e2-e4\", \"Nb2-c3\" \n" + "If you need further help, type \"help\"";
-
-	/**
-	 * printed when asked for help message
-	 */
-	public static final String HELP_MESSAGE = "Enter commands:\n" + "enter 'undo' to undo the previous round;\n"
-			+ "enter 'restart' to start a new game over;\n'" + "enter 'print' to print all the records;\n"
-			+ "enter 'resign' to give up;\n" + "enter 'draw' to request for draw;\n"
-			+ "enter complete or abbreviated algebraic chess notation to make a move;\n"
-			+ "enter 'rules for ....' to get help about the rules of chess.\n"
-			+ "    Castling, Pawn, King, Queen, Rook, Bishop, Knight, En Passant, Promotion.";
-
-	/**
-	 * rule message
-	 */
-	public static final HashMap<String, String> rules = new HashMap<String, String>() {
-		{
-			put("castling",
-					"Only under those circumstances, you can castling\n"
-							+ "1.Your king and the corresponding rook has never been moved.\n"
-							+ "2.There is no chessman between your king and rook.\n"
-							+ "3.The squres that your king goes over should not under attack by any pieces of the opponent.\n"
-							+ "4.Your king cannot be in check either before and after the castling.");
-			put("pawn",
-					"The pawn may move forward to the unoccupied square immediately in front of it on the same file without capturing, "
-							+ "or advance two squares along the same file without capturing on its first move;"
-							+ "or capture an opponent's piece on a square diagonally in front of it on an adjacent file.\n"
-							+ "En Passant and promotion are also special rules for pawn.");
-			put("king", "The king moves one square in any direction. You always want to protect your king.\n"
-					+ "Castling is also a special rule for king.");
-			put("queen",
-					"The queen combines the power of the rook and bishop and can move any number of squares along rank, file, or diagonal, without going over any pieces");
-			put("rook", "The rook can move any number of squares along any rank or file without going over any pieces");
-			put("bishop", "The bishop can move any number of squares diagonally, without going over any pieces.");
-			put("knight",
-					"The knight moves to any of the closest squares that are not on the same rank, file, or diagonal, thus the move forms an \"L\"-shape:");
-			put("en passant", "En passant move:\n"
-					+ "When a player moves a pawn 2 squares then on the very next move, the other player moves their pawn diagonally forward 1 square to the square that pawn moved through, capturing it in the process, the latter is said to be doing en passant. "
-					+ "Note that the pawn does not move to the square of the pawn it captured in en passant.\n");
-			put("promotion",
-					"When a pawn reaches its eighth rank, it is immediately changed into the player's choice of a queen, knight, rook, or bishop of the same color.");
-		}
-	};
-
+public class DualViewChessControl extends ViewController implements IChessViewerControl {
 	private ChessViewer whiteView;
 	private ChessViewer blackView;
 	private Chess chess;
@@ -97,21 +49,19 @@ public class DualViewChessControl implements ChessViewerControl {
 	 */
 	public DualViewChessControl() {
 		chess = new Chess();
-//		chess.addChessListener(this);
 		chosen = null;
 		drawRequest = new Request();
 
-		whiteView = new ChessViewer(this, "The Great Chess Game white view" , true);
-		blackView = new ChessViewer(this, "The Great Chess Game black view" , false);
-		
+		whiteView = new ChessViewer(this, "The Great Chess Game white view", true);
+		blackView = new ChessViewer(this, "The Great Chess Game black view", false);
+
 		for (Square s : chess.getAllSquares())
 			updateSquare(s);
 		repaintAll();
 	}
 
-	private void restart() {
+	public void restart() {
 		chess = new Chess();
-//		chess.addChessListener(this);
 		chosen = null;
 		drawRequest = new Request();
 
@@ -129,52 +79,6 @@ public class DualViewChessControl implements ChessViewerControl {
 		return whiteOrBlack ? whiteView : blackView;
 	}
 
-	private String side(boolean whoseTurn) {
-		return whoseTurn ? "White" : "Black";
-	}
-
-	/**
-	 * return the requested rules text.
-	 * 
-	 * @param command
-	 * @param whiteOrBlack
-	 * @return
-	 */
-	private void showRules(String command, boolean whiteOrBlack) {
-		ChessViewer view = chooesView(whiteOrBlack);
-		if (rules.containsKey(command))
-			view.printOut(rules.get(command));
-		view.printOut("You can get rules for castling, pawn, king, queen, rook, bishop, knight, En Passant, promotion");
-	}
-
-	/**
-	 * This method is called if the user enter a command to undo his move. It
-	 * will undo two moves.
-	 * 
-	 */
-	private void undo() {
-		if (!chess.undoLastMove())
-			whiteView.printOut("It is already the start of Game");
-		else
-			whiteView.printOut("Undo the Previous Move!");
-	}
-
-	/**
-	 * print out the records of the game in starndart chess recording language
-	 * 
-	 * @param whiteOrBlack
-	 * 
-	 * @return records
-	 */
-	private void printRecords(boolean whiteOrBlack) {
-		Record records = chess.getRecords();
-		if (records.isEmpty()) {
-			chooesView(whiteOrBlack).printOut("Game hasn't started yet.");
-			return;
-		}
-		chooesView(whiteOrBlack).printOut(records.printDoc());
-	}
-
 	/**
 	 * This method will be called, if the user types a command to make a move.
 	 * 
@@ -185,7 +89,7 @@ public class DualViewChessControl implements ChessViewerControl {
 	 *            the input command
 	 * @return
 	 */
-	private boolean makeMove(String s) {
+	public boolean makeMove(String s) {
 		if (s.startsWith("o")) {
 			if (s.equals("o-o")) {
 				if (!chess.castling(false))
@@ -233,7 +137,6 @@ public class DualViewChessControl implements ChessViewerControl {
 				} else {
 					updateGuiToMove(move);
 				}
-				// return;
 			} else {
 				System.out.println(" " + type + " " + end);
 				ArrayList<Piece> possible = chess.possibleMovers(type, end);
@@ -258,32 +161,19 @@ public class DualViewChessControl implements ChessViewerControl {
 
 	}
 
-	private SquareLabel squareToLabel(Square sqr, boolean whiteOrBlack) {
-		return chooesView(whiteOrBlack).labelAt(sqr.getX(), sqr.getY());
-	}
-
-	private ArrayList<SquareLabel> squareToLabel(ArrayList<Square> squares, boolean whiteOrBlack) {
-		ArrayList<SquareLabel> list = new ArrayList<SquareLabel>();
-		for (Square sqr : squares)
-			list.add(squareToLabel(sqr, whiteOrBlack));
-		return list;
-	}
-
-	private Square labelToSquare(SquareLabel sql) {
-		return chess.spotAt(sql.X(), sql.Y());
-	}
-
 	@Override
 	public void handleCommand(String command, boolean whiteOrBlack) {
 		String c = command.toLowerCase();
 		if (c.length() == 0)
 			return;
 		if (c.equals("print")) {
-			printRecords(whiteOrBlack);
+			ChessViewer viewer = chooesView(whiteOrBlack);
+			printRecords(viewer, chess);
 		} else if (c.equals("help")) {
 			chooesView(whiteOrBlack).printOut(HELP_MESSAGE);
 		} else if (c.startsWith("rules for ")) {
-			showRules(c.substring(10), whiteOrBlack);
+			ChessViewer view = chooesView(whiteOrBlack);
+			showRules(c.substring(10), view, rules);
 		} else if (c.equals("quit")) {
 			System.exit(0);
 		} else if (chess.hasEnd()) {
@@ -300,7 +190,7 @@ public class DualViewChessControl implements ChessViewerControl {
 				drawRequest.askForDraw(whiteOrBlack);
 			} else if (whiteOrBlack != (chess.getWhoseTurn() == Player.WHITE)) {
 				if (c.equals("undo"))
-					undo();
+					undo(chess, whiteView);
 				else
 					chooesView(whiteOrBlack).printOut("Please wait for " + side(!whiteOrBlack) + " to finish");
 			} else if (!makeMove(c)) {
@@ -308,11 +198,11 @@ public class DualViewChessControl implements ChessViewerControl {
 				chooesView(whiteOrBlack).printOut(ERROR_MESSAGE);
 			}
 		}
-		
+
 		repaintAll();
 	}
 
-	private void repaintAll() {
+	public void repaintAll() {
 		whiteView.repaint();
 		blackView.repaint();
 	}
@@ -327,7 +217,7 @@ public class DualViewChessControl implements ChessViewerControl {
 				clickedView.printOut("Please wait for your opponnet to finish");
 				return;
 			}
-			Square spot = labelToSquare(label);
+			Square spot = labelToSquare(label, chess);
 			if (chosen != null) {
 				if (label.isHighLight() && !spot.equals(chosen.getSpot())) {
 					Move move;
@@ -346,7 +236,7 @@ public class DualViewChessControl implements ChessViewerControl {
 					chosen = spot.getPiece();
 					ArrayList<Square> reachable = chess.reachable(chosen);
 					reachable.add(spot);
-					ArrayList<SquareLabel> hightlight = squareToLabel(reachable, whiteOrBlack);
+					ArrayList<SquareLabel> hightlight = getAllViewLabels(reachable, chooesView(whiteOrBlack));
 					clickedView.highLightAll(hightlight);
 
 					if (spot.getPiece().isType(Pawn.class))
@@ -357,29 +247,8 @@ public class DualViewChessControl implements ChessViewerControl {
 				}
 			}
 		}
-		
-		repaintAll();
-	}
 
-	public Piece choosePromotePiece(Player wb, Square end) {
-		chooesView(wb == Player.WHITE).cleanTemp();
-		while (true) {
-			chooesView(wb== Player.WHITE).printOut("Please choose one kind of piece to promote to -- Q, N, R, B");
-			repaintAll();
-			String s = chooesView(wb == Player.WHITE).getResponse("What piece do you want your pawn to romotion to ?");
-			if (!s.isEmpty()) {
-				s = s.toUpperCase();
-				char a = s.charAt(0);
-				if (a == 'Q')
-					return new Queen(wb, end, chess);
-				else if (a == 'R')
-					return new Rook(wb, end, chess);
-				else if (a == 'B')
-					return new Bishop(wb, end, chess);
-				else if (a == 'N')
-					return new Knight(wb, end, chess);
-			}
-		}
+		repaintAll();
 	}
 
 	public void updateSquare(Square sq) {
@@ -395,13 +264,13 @@ public class DualViewChessControl implements ChessViewerControl {
 	}
 
 	public void endGame(EndGame end) {
-		if (end == Win.BLACKCHECKMATE || end == Win.WHITECHECKMATE || end == Draw.STALEMENT){
+		if (end == Win.BLACKCHECKMATE || end == Win.WHITECHECKMATE || end == Draw.STALEMENT) {
 			whiteView.cleanTemp();
 			blackView.cleanTemp();
 			whiteView.printOut(chess.lastMoveOutPrint());
 			blackView.printOut(chess.lastMoveOutPrint());
 		}
-		
+
 		whiteView.setStatusLabelText(end.getDescript());
 		whiteView.printOut(end.getPrintOut());
 		blackView.setStatusLabelText(end.getDescript());
@@ -414,10 +283,10 @@ public class DualViewChessControl implements ChessViewerControl {
 
 	private void updateGuiToMove(Move previousMove) {
 		Collection<Square> board = chess.getAllSquares();
-		for(Square sq : board) {
+		for (Square sq : board) {
 			updateSquare(sq);
 		}
-		
+
 		ChessViewer pre = chooesView(previousMove.getWhoseTurn() == Player.WHITE);
 		ChessViewer next = chooesView(previousMove.getWhoseTurn() == Player.BLACK);
 
@@ -428,11 +297,7 @@ public class DualViewChessControl implements ChessViewerControl {
 		blackView.printOut(chess.lastMoveOutPrint());
 		next.printOut("Please make your move.");
 		pre.printOut("Wait for the " + side(previousMove.getWhoseTurn() == Player.BLACK) + " to make a move");
-		
-	}
-	
-	public void nextMove(Move previousMove) {
-		
+
 	}
 
 	/**
@@ -473,9 +338,11 @@ public class DualViewChessControl implements ChessViewerControl {
 		 * 
 		 * Find out if the game satisfied automatic draw condition due to
 		 * FIFTY_MOVE or REPETITION {@link Draw. End
-		 * @param whiteOrBlack  the game and claim draw if
-		 * those conditions are met. Otherwise, send a request for draw, and
-		 * wait for the reply of opponent.
+		 * 
+		 * @param whiteOrBlack
+		 *            the game and claim draw if those conditions are met.
+		 *            Otherwise, send a request for draw, and wait for the reply
+		 *            of opponent.
 		 * 
 		 * @return
 		 */
@@ -531,8 +398,8 @@ public class DualViewChessControl implements ChessViewerControl {
 			}
 		}
 	}
-	
-	public static void main(String[] args){
+
+	public static void main(String[] args) {
 		new DualViewChessControl();
 	}
 

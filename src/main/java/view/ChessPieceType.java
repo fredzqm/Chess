@@ -1,5 +1,6 @@
 package view;
 
+
 public enum ChessPieceType {
 	Pawn, Rook, Bishop, Knight, Queen, King;
 
@@ -18,7 +19,7 @@ public enum ChessPieceType {
 		case 'K':
 			return King;
 		default:
-			throw new ChessGameWrongTypeException(type);
+			throw new RuntimeException("Invalid chessPieceType: " + type);
 		}
 	}
 }

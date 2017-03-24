@@ -13,11 +13,10 @@ import model.Piece.Player;
  *
  */
 public class Square {
-	private Chess chess;
 	private int x;
 	private int y;
-	private String name;
-	private Piece occupied;
+	private String position;
+	private Piece occupiedPiece;
 
 	/**
 	 * 
@@ -27,28 +26,27 @@ public class Square {
 	 *            rank of this square
 	 * @param chess
 	 */
-	public Square(int i, int j, Chess chess) {
-		this.chess = chess;
+	public Square(int i, int j) {
 		x = i + 1;
 		y = 8 - j;
 		char col = (char) (97 + i);
 		int row = 8 - j;
-		name = "" + col + row;
-		occupied = null;
+		position = "" + col + row;
+		occupiedPiece = null;
 	}
 
 	// ------------------------------------------------------------------------------------------------------------------
 	// accessors
 
 	public String toString() {
-		return name;
+		return position;
 	}
 
-	public int X() {
+	public int getX() {
 		return x;
 	}
 
-	public int Y() {
+	public int getY() {
 		return y;
 	}
 
@@ -57,23 +55,15 @@ public class Square {
 	 * @return the piece at that square
 	 */
 	public Piece getPiece() {
-		return occupied;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public Chess getChess() {
-		return chess;
+		return occupiedPiece;
 	}
 
 	/**
 	 * 
 	 * @return true if there is any piece occupy this squre
 	 */
-	public boolean occupied() {
-		return occupied != null;
+	public boolean isOccupied() {
+		return occupiedPiece != null;
 	}
 
 	/**
@@ -83,8 +73,8 @@ public class Square {
 	 * @return whether this square is occupied by piece of that color.
 	 */
 	public boolean occupiedBy(Player color) {
-		if (occupied())
-			return color == (occupied.getWhiteOrBlack());
+		if (isOccupied())
+			return color == (occupiedPiece.getWhiteOrBlack());
 		else
 			return false;
 	}
@@ -99,7 +89,7 @@ public class Square {
 	 *            the piece
 	 */
 	public void setOccupied(Piece piece) {
-		occupied = piece;
+		occupiedPiece = piece;
 	}
 
 }

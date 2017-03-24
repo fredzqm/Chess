@@ -103,7 +103,7 @@ public class Record implements Iterable<Move> {
 	 *         game started.
 	 */
 	public boolean hasMoved(Square original, Class<? extends Piece> type, int time) {
-		if (!original.occupied() || !original.getPiece().isType(type))
+		if (!original.isOccupied() || !original.getPiece().isType(type))
 			return true;
 		for (int t = 0; t < time; t++) {
 			if (original.equals(get(t).getStart()))
@@ -118,10 +118,13 @@ public class Record implements Iterable<Move> {
 	 */
 	public String printDoc() {
 		StringBuilder sb = new StringBuilder();
+		int round = 1;
+		
 		for (Move r : list) {
-			if (r.color == Player.WHITE) {
-				sb.append(r.round + ". " + r.getDoc());
+			if (r.playerColor == Player.WHITE) {
+				sb.append(round + ". " + r.getDoc());
 			} else {
+				round++;
 				sb.append("   " + r.getDoc() + "\n");
 			}
 		}
@@ -130,7 +133,7 @@ public class Record implements Iterable<Move> {
 		} else {
 			Move last = getLastMove();
 			if (last != null)
-				if (last.color == Player.WHITE)
+				if (last.playerColor == Player.WHITE)
 					sb.append("   ...");
 		}
 		return sb.toString();

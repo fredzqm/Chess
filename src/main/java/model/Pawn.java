@@ -12,11 +12,12 @@ public class Pawn extends Piece {
 	/**
 	 * constructs a Pawn with initial square
 	 * 
-	 * @param wb
+	 * @param c
 	 * @param p
+	 * @param chess
 	 */
-	public Pawn(Player c, Square p) {
-		super(c, p);
+	public Pawn(Player c, Square p, Chess chess) {
+		super(c, p, chess);
 	}
 
 	@Override
@@ -24,28 +25,28 @@ public class Pawn extends Piece {
 		if (legalPosition(spot, end, chess, getWhiteOrBlack())) {
 			if (canPromote(end))
 				return new Promotion(this, spot, end.getPiece(), end, chess.getRound());
-			return new Move(this, spot, end.getPiece(), end, chess.getRound());
+			return new RegularMove(this, spot, end.getPiece(), end);
 		}
 		return null;
 	}
 
 	public static boolean legalPosition(Square spot, Square end, Chess chess, Player c) {
-		if (end.occupied() || spot == null)
+		if (end.isOccupied() || spot == null)
 			return false;
 
-		if (spot.X() == end.X()) {
+		if (spot.getX() == end.getX()) {
 			if (c == Player.WHITE) {
-				if (end.Y() - spot.Y() == 1)
+				if (end.getY() - spot.getY() == 1)
 					return true;
-				if (end.Y() == 4 && spot.Y() == 2)
-					if (!chess.spotAt(spot.X(), 3).occupied())
+				if (end.getY() == 4 && spot.getY() == 2)
+					if (!chess.spotAt(spot.getX(), 3).isOccupied())
 						return true;
 			} else {
 
-				if (end.Y() - spot.Y() == -1)
+				if (end.getY() - spot.getY() == -1)
 					return true;
-				if (end.Y() == 5 && spot.Y() == 7)
-					if (!chess.spotAt(spot.X(), 6).occupied())
+				if (end.getY() == 5 && spot.getY() == 7)
+					if (!chess.spotAt(spot.getX(), 6).isOccupied())
 						return true;
 			}
 		}
@@ -77,7 +78,7 @@ public class Pawn extends Piece {
 		}
 		if (!chess.canEnPassant(end))
 			return null;
-		move = new EnPassant(this, spot, chess.spotAt(end.X(), spot.Y()).getPiece(), end, chess.getRound());
+		move = new EnPassant(this, spot, chess.spotAt(end.getX(), spot.getY()).getPiece(), end, chess.getRound());
 		if (chess.giveAwayKing(move))
 			return null;
 		return move;
@@ -87,7 +88,7 @@ public class Pawn extends Piece {
 		if (legalPostionCapture(end)) {
 			if (canPromote(end))
 				return new Promotion(this, spot, end.getPiece(), end, chess.getRound());
-			return new Move(this, spot, end.getPiece(), end, chess.getRound());
+			return new RegularMove(this, spot, end.getPiece(), end);
 		}
 		return null;
 	}
@@ -95,12 +96,12 @@ public class Pawn extends Piece {
 	private boolean legalPostionCapture(Square end) {
 		if (spot == null)
 			return false;
-		if (Math.abs(end.X() - spot.X()) == 1) {
+		if (Math.abs(end.getX() - spot.getX()) == 1) {
 			if (super.color == Player.WHITE) {
-				if (end.Y() - spot.Y() == 1)
+				if (end.getY() - spot.getY() == 1)
 					return true;
 			} else {
-				if (end.Y() - spot.Y() == -1)
+				if (end.getY() - spot.getY() == -1)
 					return true;
 			}
 		}
@@ -110,10 +111,10 @@ public class Pawn extends Piece {
 	protected boolean canPromote(Square end) {
 		boolean promotion = false;
 		if (super.color == Player.WHITE) {
-			if (end.Y() == 8)
+			if (end.getY() == 8)
 				promotion = true;
 		} else {
-			if (end.Y() == 1)
+			if (end.getY() == 1)
 				promotion = true;
 		}
 		return promotion;

@@ -14,15 +14,16 @@ public class Queen extends Piece {
 	 * @param type
 	 * @param wb
 	 * @param position
+	 * @param chess
 	 */
-	public Queen(Player c, Square position) {
-		super(c, position);
+	public Queen(Player c, Square position, Chess chess) {
+		super(c, position, chess);
 	}
-
+	
 	@Override
 	public Move legalPosition(Square end) {
 		if (Bishop.legalPosition(spot, end, chess) || Rook.legalPosition(spot, end, chess))
-			return new Move(this, spot, end.getPiece(), end, chess.getRound());
+			return new RegularMove(this, spot, end.getPiece(), end);
 		return null;
 	}
 

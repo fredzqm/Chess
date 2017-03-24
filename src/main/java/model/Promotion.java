@@ -22,7 +22,7 @@ public class Promotion extends Move {
 	 */
 	public Promotion(Piece moved, Square start, Piece taken, Square end,
 			int round) {
-		super(moved, start, taken, end, round);
+		super(moved, start, taken, end);
 		this.promotedTo = null;
 	}
 
@@ -36,9 +36,9 @@ public class Promotion extends Move {
 	
 	public void undo(Chess chess) {
 		chess.takeOffBoard(promotedTo);
-		chess.putBackToBoard(moved, start);
-		if (taken != null) {
-			chess.putBackToBoard(taken, end);
+		chess.putBackToBoard(movedPiece, startPosition);
+		if (capturedPiece != null) {
+			chess.putBackToBoard(capturedPiece, lastPosition);
 		}
 	}
 
@@ -48,7 +48,7 @@ public class Promotion extends Move {
 
 	public String getDescript() {
 		String s = "";
-		if (super.color == Player.WHITE)
+		if (super.playerColor == Player.WHITE)
 			s += "White ";
 		else
 			s += "Black ";
@@ -59,12 +59,12 @@ public class Promotion extends Move {
 	}
 	
 	public void performMove(Chess chess) {
-		if (taken != null)
-			chess.takeOffBoard(taken);
-		moved.moveTo(end);
-		promotedTo = chess.promotion(super.color , end);
-		chess.takeOffBoard(taken);
-		chess.putBackToBoard(promotedTo, end);
+		if (capturedPiece != null)
+			chess.takeOffBoard(capturedPiece);
+		movedPiece.moveTo(lastPosition);
+		promotedTo = chess.promotion(super.playerColor , lastPosition);
+		chess.takeOffBoard(capturedPiece);
+		chess.putBackToBoard(promotedTo, lastPosition);
 	}
 	
 }

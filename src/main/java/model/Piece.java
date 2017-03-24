@@ -24,9 +24,10 @@ public abstract class Piece implements Comparable<Piece> {
 	 *            whether this piece is white or black
 	 * @param p
 	 *            the square this piece is at initially.
+	 * @param chess
 	 */
-	public Piece(Player c, Square p) {
-		this.chess = p.getChess();
+	public Piece(Player c, Square p, Chess chess) {
+		this.chess = chess;
 		this.color = c;
 		moveTo(p);
 	}
@@ -88,7 +89,7 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @return X position of this spot
 	 */
 	public int getX() {
-		return spot.X();
+		return spot.getX();
 	}
 
 	/**
@@ -96,7 +97,7 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @return Y position of this spot
 	 */
 	public int getY() {
-		return spot.Y();
+		return spot.getY();
 	}
 
 	/**

@@ -212,9 +212,9 @@ public class DualViewChessControl implements ChessViewerControl {
 			}
 			Square start = null;
 			if ((m.group(2) != null) && (m.group(3) != null)) {
-				start = chess.getSquare(m.group(2) + m.group(3));
+				start = chess.getBoard().getSquare(m.group(2) + m.group(3));
 			}
-			Square end = chess.getSquare(m.group(4));
+			Square end = chess.getBoard().getSquare(m.group(4));
 
 			if (start != null) {
 				Piece movedChessman = start.getPiece();
@@ -259,7 +259,7 @@ public class DualViewChessControl implements ChessViewerControl {
 	}
 
 	private SquareLabel squareToLabel(Square sqr, boolean whiteOrBlack) {
-		return chooesView(whiteOrBlack).labelAt(sqr.X(), sqr.Y());
+		return chooesView(whiteOrBlack).labelAt(sqr.getX(), sqr.getY());
 	}
 
 	private ArrayList<SquareLabel> squareToLabel(ArrayList<Square> squares, boolean whiteOrBlack) {
@@ -371,26 +371,26 @@ public class DualViewChessControl implements ChessViewerControl {
 				s = s.toUpperCase();
 				char a = s.charAt(0);
 				if (a == 'Q')
-					return new Queen(wb, end);
+					return new Queen(wb, end, chess);
 				else if (a == 'R')
-					return new Rook(wb, end);
+					return new Rook(wb, end, chess);
 				else if (a == 'B')
-					return new Bishop(wb, end);
+					return new Bishop(wb, end, chess);
 				else if (a == 'N')
-					return new Knight(wb, end);
+					return new Knight(wb, end, chess);
 			}
 		}
 	}
 
 	public void updateSquare(Square sq) {
-		if (sq.occupied()) {
-			whiteView.labelAt(sq.X(), sq.Y()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
+		if (sq.isOccupied()) {
+			whiteView.labelAt(sq.getX(), sq.getY()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
 					sq.getPiece().getWhiteOrBlack() == Player.WHITE);
-			blackView.labelAt(sq.X(), sq.Y()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
+			blackView.labelAt(sq.getX(), sq.getY()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
 					sq.getPiece().getWhiteOrBlack() == Player.WHITE);
 		} else {
-			whiteView.labelAt(sq.X(), sq.Y()).clearLabel();
-			blackView.labelAt(sq.X(), sq.Y()).clearLabel();
+			whiteView.labelAt(sq.getX(), sq.getY()).clearLabel();
+			blackView.labelAt(sq.getX(), sq.getY()).clearLabel();
 		}
 	}
 

@@ -13,7 +13,6 @@ import model.Piece.Player;
  *
  */
 public class Square {
-	private Chess chess;
 	private int x;
 	private int y;
 	private String name;
@@ -27,8 +26,7 @@ public class Square {
 	 *            rank of this square
 	 * @param chess
 	 */
-	public Square(int i, int j, Chess chess) {
-		this.chess = chess;
+	public Square(int i, int j) {
 		x = i + 1;
 		y = 8 - j;
 		char col = (char) (97 + i);
@@ -58,14 +56,6 @@ public class Square {
 	 */
 	public Piece getPiece() {
 		return occupied;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public Chess getChess() {
-		return chess;
 	}
 
 	/**

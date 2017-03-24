@@ -12,11 +12,12 @@ public class Pawn extends Piece {
 	/**
 	 * constructs a Pawn with initial square
 	 * 
-	 * @param wb
+	 * @param c
 	 * @param p
+	 * @param chess
 	 */
-	public Pawn(Player c, Square p) {
-		super(c, p);
+	public Pawn(Player c, Square p, Chess chess) {
+		super(c, p, chess);
 	}
 
 	@Override

@@ -36,6 +36,7 @@ public abstract class ViewController implements IChessViewerControl {
 			+ "enter complete or abbreviated algebraic chess notation to make a move;\n"
 			+ "enter 'rules for ....' to get help about the rules of chess.\n"
 			+ "    Castling, Pawn, King, Queen, Rook, Bishop, Knight, En Passant, Promotion.";
+
 	public static final HashMap<String, String> rules = new HashMap<String, String>() {
 		{
 			put("castling",
@@ -72,11 +73,7 @@ public abstract class ViewController implements IChessViewerControl {
 		chosen = null;
 	}
 
-	protected String side(boolean whoseTurn) {
-		return whoseTurn ? "White" : "Black";
-	}
-
-	public void restart() {
+	private void restart() {
 		chess = new Chess();
 		chosen = null;
 		ChessViewer white = chooesView(true);
@@ -92,7 +89,15 @@ public abstract class ViewController implements IChessViewerControl {
 		view.printOut("Start a new game!");
 	}
 
-	protected void updateSquare(ChessViewer view, Square sq) {
+	private void repaintAll(ChessViewer view) {
+		Collection<Square> board = chess.getAllSquares();
+		for (Square sq : board) {
+			updateSquare(view, sq);
+		}
+		view.repaint();
+	}
+
+	private void updateSquare(ChessViewer view, Square sq) {
 		if (sq.isOccupied()) {
 			view.labelAt(sq.getX(), sq.getY()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
 					sq.getPiece().getWhiteOrBlack() == Player.WHITE);
@@ -106,7 +111,7 @@ public abstract class ViewController implements IChessViewerControl {
 	 * will undo two moves.
 	 * 
 	 */
-	protected void undo(Chess chess, ChessViewer view) {
+	private void undo(Chess chess, ChessViewer view) {
 		if (!chess.undoLastMove())
 			view.printOut("It is already the start of Game");
 		else
@@ -120,7 +125,7 @@ public abstract class ViewController implements IChessViewerControl {
 	 * @param whiteOrBlack
 	 * @return
 	 */
-	protected void showRules(String command, ChessViewer view, Map<String, String> rules) {
+	private void showRules(String command, ChessViewer view, Map<String, String> rules) {
 		if (rules.containsKey(command))
 			view.printOut(rules.get(command));
 		view.printOut("You can get rules for castling, pawn, king, queen, rook, bishop, knight, En Passant, promotion");
@@ -133,7 +138,7 @@ public abstract class ViewController implements IChessViewerControl {
 	 * 
 	 * @return records
 	 */
-	protected void printRecords(ChessViewer view, Chess chess) {
+	private void printRecords(ChessViewer view, Chess chess) {
 		Record records = chess.getRecords();
 		if (records.isEmpty()) {
 			view.printOut("Game hasn't started yet.");
@@ -142,18 +147,18 @@ public abstract class ViewController implements IChessViewerControl {
 		view.printOut(records.printDoc());
 	}
 
-	protected SquareLabel squareToLabel(Square sqr, ChessViewer view) {
+	private SquareLabel squareToLabel(Square sqr, ChessViewer view) {
 		return view.labelAt(sqr.getX(), sqr.getY());
 	}
 
-	protected ArrayList<SquareLabel> getAllViewLabels(ArrayList<Square> squares, ChessViewer view) {
+	private ArrayList<SquareLabel> getAllViewLabels(ArrayList<Square> squares, ChessViewer view) {
 		ArrayList<SquareLabel> list = new ArrayList<SquareLabel>();
 		for (Square sqr : squares)
 			list.add(squareToLabel(sqr, view));
 		return list;
 	}
 
-	protected Square labelToSquare(SquareLabel sql, Chess chess) {
+	private Square labelToSquare(SquareLabel sql, Chess chess) {
 		return chess.spotAt(sql.X(), sql.Y());
 	}
 
@@ -171,7 +176,7 @@ public abstract class ViewController implements IChessViewerControl {
 		}
 	}
 
-	protected boolean canAskFordraw(boolean whoseTurn) {
+	private boolean canAskFordraw(boolean whoseTurn) {
 		if (whoseTurn)
 			return whiteCanDraw;
 		else
@@ -188,7 +193,7 @@ public abstract class ViewController implements IChessViewerControl {
 		}
 	}
 
-	public void updateChessBoard() {
+	protected void updateChessBoard() {
 		ChessViewer white = chooesView(true);
 		ChessViewer black = chooesView(false);
 		repaintAll(white);
@@ -196,49 +201,7 @@ public abstract class ViewController implements IChessViewerControl {
 			repaintAll(black);
 	}
 
-	private void repaintAll(ChessViewer view) {
-		Collection<Square> board = chess.getAllSquares();
-		for (Square sq : board) {
-			updateSquare(view, sq);
-		}
-		view.repaint();
-	}
-
-	public void handleCommand(String input, boolean whiteOrBlack) {
-		ChessViewer view  = chooesView(whiteOrBlack);
-		if (input.length() == 0)
-			return;
-		if (input.equals("print")) {
-			printRecords(view, chess);
-		} else if (input.equals("help")) {
-			view.printOut(HELP_MESSAGE);
-		} else if (input.startsWith("rules for ")) {
-			showRules(input.substring(10), view, rules);
-		} else if (input.equals("quit")) {
-			System.exit(0);
-		} else if (input.equals("restart")) {
-			restart();
-			updateChessBoard();
-		} else if (chess.hasEnd()) {
-			view.printOut(chess.lastMoveDiscript());
-		} else {
-			chosen = null;
-			view.deHighLightWholeBoard();
-			if (input.equals("resign")) {
-				resign(view, chess);
-			} else if (input.equals("draw")) {
-				askForDraw(whiteOrBlack);
-			} else if (input.equals("undo")) {
-				undo(chess, view);
-			} else if (!makeMove(view, input)) {
-				// makeMove return false, so this move is not allowed.
-				view.printOut(ERROR_MESSAGE);
-			}
-			updateChessBoard();
-		}
-	}
-
-	public void askForDraw(boolean whiteOrBlack) {
+	private void askForDraw(boolean whiteOrBlack) {
 		Draw canClaimDraw = chess.canClaimDraw();
 		if (canClaimDraw == null) {
 			ChessViewer request = chooesView(whiteOrBlack);
@@ -265,52 +228,6 @@ public abstract class ViewController implements IChessViewerControl {
 			chess.endGame(canClaimDraw);
 		}
 	}
-
-	public abstract ChessViewer chooesView(boolean whiteOrBlack);
-
-	public void click(SquareLabel label, boolean whiteOrBlack) {
-		ChessViewer clickedView = chooesView(whiteOrBlack);
-		if (chess.hasEnd()) {
-			clickedView.printOut("Game is already over! Type restart to start a new game");
-		} else {
-			if (clickedView != chooesView(chess.getWhoseTurn() == Player.WHITE)) {
-				clickedView.printOut("Please wait for your opponnet to finish");
-				return;
-			}
-			Square spot = labelToSquare(label, chess);
-			if (chosen != null) {
-				if (label.isHighLight() && !spot.equals(chosen.getSpot())) {
-					Move move;
-					if ((move = chess.performMove(chosen, spot)) == null) {
-						throw new ChessGameException(
-								"Illegal move of " + chosen.getName() + " did not correctly caught from UI!");
-					} else {
-						updateGuiToMove(move);
-					}
-				} else
-					clickedView.cleanTemp();
-				chosen = null;
-				clickedView.deHighLightWholeBoard();
-			} else {
-				if (spot.occupiedBy(chess.getWhoseTurn())) {
-					chosen = spot.getPiece();
-					ArrayList<Square> reachable = chosen.getReachableSquares();
-					reachable.add(spot);
-					ArrayList<SquareLabel> hightlight = getAllViewLabels(reachable, chooesView(whiteOrBlack));
-					clickedView.highLightAll(hightlight);
-
-					if (spot.getPiece().isType(Pawn.class))
-						clickedView.printTemp(spot.toString());
-					else
-						clickedView.printTemp(spot.getPiece().getType() + spot.toString());
-
-				}
-			}
-		}
-
-	}
-
-	protected abstract void updateGuiToMove(Move previousMove);
 
 	/**
 	 * This method will be called, if the user types a command to make a move.
@@ -354,6 +271,95 @@ public abstract class ViewController implements IChessViewerControl {
 			return true;
 		}
 		return false;
+	}
+
+	public void handleCommand(String input, boolean whiteOrBlack) {
+		ChessViewer view = chooesView(whiteOrBlack);
+		if (input.length() == 0)
+			return;
+		if (input.equals("print")) {
+			printRecords(view, chess);
+		} else if (input.equals("help")) {
+			view.printOut(HELP_MESSAGE);
+		} else if (input.startsWith("rules for ")) {
+			showRules(input.substring(10), view, rules);
+		} else if (input.equals("quit")) {
+			System.exit(0);
+		} else if (input.equals("restart")) {
+			restart();
+			updateChessBoard();
+		} else if (chess.hasEnd()) {
+			view.printOut(chess.lastMoveDiscript());
+		} else {
+			chosen = null;
+			view.deHighLightWholeBoard();
+			if (input.equals("resign")) {
+				resign(view, chess);
+			} else if (input.equals("draw")) {
+				askForDraw(whiteOrBlack);
+			} else if (input.equals("undo")) {
+				undo(chess, view);
+			} else if (!makeMove(view, input)) {
+				// makeMove return false, so this move is not allowed.
+				view.printOut(ERROR_MESSAGE);
+			}
+			updateChessBoard();
+		}
+	}
+
+	public void click(SquareLabel label, boolean whiteOrBlack) {
+		ChessViewer clickedView = chooesView(whiteOrBlack);
+		if (chess.hasEnd()) {
+			clickedView.printOut("Game is already over! Type restart to start a new game");
+		} else {
+			if (clickedView != chooesView(chess.getWhoseTurn() == Player.WHITE)) {
+				clickedView.printOut("Please wait for your opponnet to finish");
+				return;
+			}
+			Square spot = labelToSquare(label, chess);
+			if (chosen != null) {
+				if (label.isHighLight() && !spot.equals(chosen.getSpot())) {
+					Move move;
+					if ((move = chess.performMove(chosen, spot)) == null) {
+						throw new ChessGameException(
+								"Illegal move of " + chosen.getName() + " did not correctly caught from UI!");
+					} else {
+						updateGuiAfterMove(move);
+					}
+				} else
+					clickedView.cleanTemp();
+				chosen = null;
+				clickedView.deHighLightWholeBoard();
+			} else {
+				if (spot.occupiedBy(chess.getWhoseTurn())) {
+					chosen = spot.getPiece();
+					ArrayList<Square> reachable = chosen.getReachableSquares();
+					reachable.add(spot);
+					ArrayList<SquareLabel> hightlight = getAllViewLabels(reachable, chooesView(whiteOrBlack));
+					clickedView.highLightAll(hightlight);
+	
+					if (spot.getPiece().isType(Pawn.class))
+						clickedView.printTemp(spot.toString());
+					else
+						clickedView.printTemp(spot.getPiece().getType() + spot.toString());
+				}
+			}
+		}
+	
+	}
+
+	public abstract ChessViewer chooesView(boolean whiteOrBlack);
+
+	/**
+	 * print messages and update GUI when this move just get accomplished
+	 * 
+	 * @param move
+	 */
+	protected abstract void updateGuiAfterMove(Move move);
+
+	
+	protected static String side(boolean whoseTurn) {
+		return whoseTurn ? "White" : "Black";
 	}
 
 }

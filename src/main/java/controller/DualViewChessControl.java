@@ -1,18 +1,8 @@
 package controller;
 
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import model.ChessGameException;
 import model.Move;
-import model.Pawn;
-import model.Piece;
 import model.Piece.Player;
-import model.Square;
 import view.ChessViewer;
-import view.IChessViewerControl;
-import view.SquareLabel;
 
 /**
  * 
@@ -44,20 +34,18 @@ public class DualViewChessControl extends ViewController {
 	}
 
 
-	protected void updateGuiToMove(Move previousMove) {
+	protected void updateGuiAfterMove(Move previousMove) {
 		updateChessBoard();
-		
 		ChessViewer pre = chooesView(previousMove.getWhoseTurn() == Player.WHITE);
 		ChessViewer next = chooesView(previousMove.getWhoseTurn() == Player.BLACK);
 
-		whiteView.setStatusLabelText(chess.lastMoveDiscript());
-		blackView.setStatusLabelText(chess.lastMoveDiscript());
+		pre.setStatusLabelText(chess.lastMoveDiscript());
+		next.setStatusLabelText(chess.lastMoveDiscript());
 		pre.cleanTemp();
-		whiteView.printOut(chess.lastMoveOutPrint());
-		blackView.printOut(chess.lastMoveOutPrint());
+		pre.printOut(chess.lastMoveOutPrint());
+		next.printOut(chess.lastMoveOutPrint());
 		next.printOut("Please make your move.");
 		pre.printOut("Wait for the " + side(previousMove.getWhoseTurn() == Player.BLACK) + " to make a move");
-
 	}
 
 	public static void main(String[] args) {

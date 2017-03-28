@@ -3,7 +3,6 @@ package controller;
 import model.Move;
 import model.Piece.Player;
 import view.ChessViewer;
-import view.IChessViewerControl;
 
 /**
  * The chess controller opens a single chess view
@@ -31,7 +30,7 @@ public class SingleViewChessControl extends ViewController {
 		return view;
 	}
 
-	protected void updateGuiToMove(Move previousMove) {
+	protected void updateGuiAfterMove(Move previousMove) {
 		updateChessBoard();
 		
 		view.setStatusLabelText(chess.lastMoveDiscript());

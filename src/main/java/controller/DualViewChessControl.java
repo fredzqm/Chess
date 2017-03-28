@@ -7,13 +7,11 @@ import java.util.regex.Pattern;
 
 import model.ChessGameException;
 import model.Draw;
-import model.EndGame;
 import model.Move;
 import model.Pawn;
 import model.Piece;
 import model.Piece.Player;
 import model.Square;
-import model.Win;
 import view.ChessViewer;
 import view.IChessViewerControl;
 import view.SquareLabel;
@@ -143,40 +141,8 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 
 	@Override
 	public void handleCommand(String command, boolean whiteOrBlack) {
-		String c = command.toLowerCase();
-		if (c.length() == 0)
-			return;
-		if (c.equals("print")) {
-			ChessViewer viewer = chooesView(whiteOrBlack);
-			printRecords(viewer, chess);
-		} else if (c.equals("help")) {
-			chooesView(whiteOrBlack).printOut(HELP_MESSAGE);
-		} else if (c.startsWith("rules for ")) {
-			ChessViewer view = chooesView(whiteOrBlack);
-			showRules(c.substring(10), view, rules);
-		} else if (c.equals("quit")) {
-			System.exit(0);
-		} else if (c.equals("restart")) {
-			restart();
-		} else {
-			chosen = null;
-			chooesView(whiteOrBlack).deHighLightWholeBoard();
-			if (c.equals("resign")) {
-				resign(chooesView(whiteOrBlack), chess);
-			} else if (c.equals("draw")) {
-				askForDraw(whiteOrBlack);
-			} else if (whiteOrBlack != (chess.getWhoseTurn() == Player.WHITE)) {
-				if (c.equals("undo"))
-					undo(chess, whiteView);
-				else
-					chooesView(whiteOrBlack).printOut("Please wait for " + side(!whiteOrBlack) + " to finish");
-			} else if (!makeMove(c)) {
-				// makeMove return false, so this move is not allowed.
-				chooesView(whiteOrBlack).printOut(ERROR_MESSAGE);
-			}
-		}
-
-		repaintBothViews();
+		ChessViewer viewer = chooesView(whiteOrBlack);
+		handleSingleCommand(viewer, command, whiteOrBlack);
 	}
 
 	public void repaintBothViews() {
@@ -226,24 +192,6 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 		}
 
 		repaintBothViews();
-	}
-
-	public void endGame(EndGame end) {
-		if (end == Win.BLACKCHECKMATE || end == Win.WHITECHECKMATE || end == Draw.STALEMENT) {
-			whiteView.cleanTemp();
-			blackView.cleanTemp();
-			whiteView.printOut(chess.lastMoveOutPrint());
-			blackView.printOut(chess.lastMoveOutPrint());
-		}
-
-		whiteView.setStatusLabelText(end.getDescript());
-		whiteView.printOut(end.getPrintOut());
-		blackView.setStatusLabelText(end.getDescript());
-		blackView.printOut(end.getPrintOut());
-		if (end.getResult() > 0)
-			whiteView.printOut("Congratuations! you win!");
-		else if (end.getResult() < 0)
-			blackView.printOut("Congratuations! you win!");
 	}
 
 	private void updateGuiToMove(Move previousMove) {

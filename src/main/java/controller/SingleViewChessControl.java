@@ -1,17 +1,14 @@
 package controller;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import model.ChessGameException;
 import model.Draw;
-import model.EndGame;
 import model.InvalidMoveException;
 import model.Move;
 import model.Pawn;
 import model.Piece.Player;
 import model.Square;
-import model.Win;
 import view.ChessViewer;
 import view.IChessViewerControl;
 import view.SquareLabel;
@@ -89,42 +86,6 @@ public class SingleViewChessControl extends ViewController implements IChessView
 	}
 
 	@Override
-	public void handleCommand(String command, boolean whiteOrBlack) {
-		String c = command;
-		if (c.length() == 0)
-			return;
-		if (c.equals("print")) {
-			printRecords(view, chess);
-		} else if (c.equals("help")) {
-			view.printOut(HELP_MESSAGE);
-		} else if (c.startsWith("rules for ")) {
-			showRules(c.substring(10), view, rules);
-		} else if (c.equals("quit")) {
-			System.exit(0);
-		} else if (c.equals("restart")) {
-			restart();
-		} else if (chess.hasEnd()) {
-			view.printOut(chess.lastMoveDiscript());
-		} else {
-			chosen = null;
-			view.deHighLightWholeBoard();
-			if (c.equals("resign")) {
-				resign(view, chess);
-			} else if (c.equals("draw")) {
-				askForDraw(whiteOrBlack);
-			} else if (c.equals("undo")) {
-				undo(chess, view);
-			} else if (!makeMove(c)) {
-				// makeMove return false, so this move is not allowed.
-				view.printOut(ERROR_MESSAGE);
-			}
-		}
-
-		repaintAll(view);
-	}
-
-
-	@Override
 	public void click(SquareLabel label, boolean whiteOrBlack) {
 		if (chess.hasEnd()) {
 			view.printOut("Game is already over! Type restart to start a new game");
@@ -163,16 +124,6 @@ public class SingleViewChessControl extends ViewController implements IChessView
 		repaintAll(view);
 	}
 
-	public void endGame(EndGame end) {
-		if (end == Win.BLACKCHECKMATE || end == Win.WHITECHECKMATE || end == Draw.STALEMENT) {
-			view.cleanTemp();
-			view.printOut(chess.lastMoveOutPrint());
-		}
-
-		view.setStatusLabelText(end.getDescript());
-		view.printOut(end.getPrintOut());
-	}
-
 	private void updateGuiToMove(Move previousMove) {
 		view.setStatusLabelText(chess.lastMoveDiscript());
 		view.cleanTemp();
@@ -206,8 +157,12 @@ public class SingleViewChessControl extends ViewController implements IChessView
 		}
 	}
 
+	@Override
+	public void handleCommand(String input, boolean isWhiteView) {
+		handleSingleCommand(view, input, isWhiteView);
+	}
+
 	public static void main(String[] args) {
 		new SingleViewChessControl();
 	}
-
 }

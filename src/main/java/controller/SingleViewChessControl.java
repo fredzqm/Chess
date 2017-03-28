@@ -30,16 +30,12 @@ public class SingleViewChessControl extends ViewController implements IChessView
 	public SingleViewChessControl() {
 		super();
 		view = new ChessViewer(this, "The Great Chess Game", true);
-		repaintAll(view);
+		updateChessBoard();
 	}
 
 	@Override
 	public ChessViewer chooesView(boolean whiteOrBlack) {
 		return view;
-	}
-
-	public void restart() {
-		restartView(view);
 	}
 
 	/**
@@ -123,8 +119,7 @@ public class SingleViewChessControl extends ViewController implements IChessView
 				}
 			}
 		}
-
-		repaintAll(view);
+		updateChessBoard();
 	}
 
 	private void updateGuiToMove(Move previousMove) {

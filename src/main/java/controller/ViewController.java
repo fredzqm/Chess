@@ -60,7 +60,6 @@ public abstract class ViewController {
 		}
 	};
 
-
 	public ViewController() {
 		this.whiteCanDraw = true;
 		this.blackCanDraw = true;
@@ -72,16 +71,20 @@ public abstract class ViewController {
 		return whoseTurn ? "White" : "Black";
 	}
 
-	protected void restartView(ChessViewer view) {
+	public void restart() {
 		chess = new Chess();
 		chosen = null;
+		ChessViewer white = chooesView(true);
+		ChessViewer black = chooesView(false);
+		restartView(white);
+		if (black != white)
+			restartView(black);
+	}
 
+	private void restartView(ChessViewer view) {
 		view.deHighLightWholeBoard();
 		view.setStatusLabelText("       Welcome to Another Wonderful Chess Game         ");
-		for (Square s : chess.getAllSquares())
-			updateSquare(view, s);
 		view.printOut("Start a new game!");
-		repaintAll(view);
 	}
 
 	protected void updateSquare(ChessViewer view, Square sq) {
@@ -180,15 +183,22 @@ public abstract class ViewController {
 		}
 	}
 
-	public void repaintAll(ChessViewer view) {
+	public void updateChessBoard() {
+		ChessViewer white = chooesView(true);
+		ChessViewer black = chooesView(false);
+		repaintAll(white);
+		if (black != white)
+			repaintAll(black);
+	}
+
+	private void repaintAll(ChessViewer view) {
 		Collection<Square> board = chess.getAllSquares();
 		for (Square sq : board) {
 			updateSquare(view, sq);
 		}
-
 		view.repaint();
 	}
-	
+
 	public void handleSingleCommand(ChessViewer view, String command, boolean whiteOrBlack) {
 		String c = command;
 		if (c.length() == 0)
@@ -219,10 +229,9 @@ public abstract class ViewController {
 				view.printOut(ERROR_MESSAGE);
 			}
 		}
-
-		repaintAll(view);
+		updateChessBoard();
 	}
-	
+
 	public void askForDraw(boolean whiteOrBlack) {
 		Draw canClaimDraw = chess.canClaimDraw();
 		if (canClaimDraw == null) {
@@ -250,9 +259,8 @@ public abstract class ViewController {
 			chess.endGame(canClaimDraw);
 		}
 	}
-	
+
 	public abstract ChessViewer chooesView(boolean whiteOrBlack);
 
 	public abstract boolean makeMove(String s);
-	public abstract void restart();
 }

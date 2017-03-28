@@ -1,7 +1,6 @@
 package controller;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,22 +36,11 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 		super();
 		whiteView = new ChessViewer(this, "The Great Chess Game white view", true);
 		blackView = new ChessViewer(this, "The Great Chess Game black view", false);
-
-		for (Square s : chess.getAllSquares()) {
-			updateSquare(whiteView, s);
-			updateSquare(blackView, s);
-		}
-		repaintBothViews();
+		updateChessBoard();
 	}
 
 	public ChessViewer chooesView(boolean whiteOrBlack) {
 		return whiteOrBlack ? whiteView : blackView;
-	}
-
-	public void restart() {
-		restartView(whiteView);
-		restartView(blackView);
-		repaintBothViews();
 	}
 
 	/**
@@ -143,11 +131,6 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 		handleSingleCommand(viewer, command, whiteOrBlack);
 	}
 
-	public void repaintBothViews() {
-		repaintAll(whiteView);
-		repaintAll(blackView);
-	}
-
 	@Override
 	public void click(SquareLabel label, boolean whiteOrBlack) {
 		ChessViewer clickedView = chooesView(whiteOrBlack);
@@ -188,17 +171,12 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 				}
 			}
 		}
-
-		repaintBothViews();
+		
 	}
 
 	private void updateGuiToMove(Move previousMove) {
-		Collection<Square> board = chess.getAllSquares();
-		for (Square sq : board) {
-			updateSquare(whiteView, sq);
-			updateSquare(blackView, sq);
-		}
-
+		updateChessBoard();
+		
 		ChessViewer pre = chooesView(previousMove.getWhoseTurn() == Player.WHITE);
 		ChessViewer next = chooesView(previousMove.getWhoseTurn() == Player.BLACK);
 

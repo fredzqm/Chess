@@ -9,12 +9,12 @@ import model.Chess;
 import model.Draw;
 import model.Piece;
 import model.Piece.Player;
-import view.ChessPieceType;
-import view.ChessViewer;
-import view.SquareLabel;
 import model.Record;
 import model.Square;
 import model.Win;
+import view.ChessPieceType;
+import view.ChessViewer;
+import view.SquareLabel;
 
 public abstract class ViewController {
 	protected Piece chosen;
@@ -223,8 +223,36 @@ public abstract class ViewController {
 		repaintAll(view);
 	}
 	
-	public abstract void askForDraw(boolean whiteOrBlack);
+	public void askForDraw(boolean whiteOrBlack) {
+		Draw canClaimDraw = chess.canClaimDraw();
+		if (canClaimDraw == null) {
+			ChessViewer request = chooesView(whiteOrBlack);
+			ChessViewer response = chooesView(!whiteOrBlack);
+			if (canAskFordraw(whiteOrBlack)) {
+				while (true) {
+					response.printOut(side(whiteOrBlack) + " ask for draw, do you agreed?");
+					String command = response.getResponse("Do you agree draw?");
+					if (command.isEmpty())
+						continue;
+					if (command.toLowerCase().startsWith("yes")) {
+						chess.endGame(Draw.AGREEMENT);
+						return;
+					} else if (command.toLowerCase().startsWith("no")) {
+						setRightToRequestDraw(whiteOrBlack);
+						request.printOut("Request declined");
+						return;
+					}
+				}
+			} else {
+				request.printOut("You cannot request for draw again now.");
+			}
+		} else {
+			chess.endGame(canClaimDraw);
+		}
+	}
+	
+	public abstract ChessViewer chooesView(boolean whiteOrBlack);
+
 	public abstract boolean makeMove(String s);
 	public abstract void restart();
-//	public abstract void click(SquareLabel squareLabel, boolean whiteOrBlack);
 }

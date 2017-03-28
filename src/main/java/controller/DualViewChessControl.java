@@ -6,7 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import model.ChessGameException;
-import model.Draw;
 import model.Move;
 import model.Pawn;
 import model.Piece;
@@ -46,14 +45,14 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 		repaintBothViews();
 	}
 
+	public ChessViewer chooesView(boolean whiteOrBlack) {
+		return whiteOrBlack ? whiteView : blackView;
+	}
+
 	public void restart() {
 		restartView(whiteView);
 		restartView(blackView);
 		repaintBothViews();
-	}
-
-	private ChessViewer chooesView(boolean whiteOrBlack) {
-		return whiteOrBlack ? whiteView : blackView;
 	}
 
 	/**
@@ -211,34 +210,6 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 		next.printOut("Please make your move.");
 		pre.printOut("Wait for the " + side(previousMove.getWhoseTurn() == Player.BLACK) + " to make a move");
 
-	}
-
-	public void askForDraw(boolean whiteOrBlack) {
-		Draw canClaimDraw = chess.canClaimDraw();
-		if (canClaimDraw == null) {
-			ChessViewer request = chooesView(whiteOrBlack);
-			ChessViewer response = chooesView(!whiteOrBlack);
-			if (canAskFordraw(whiteOrBlack)) {
-				while (true) {
-					response.printOut(side(whiteOrBlack) + " ask for draw, do you agreed?");
-					String command = response.getResponse("Do you agree draw?");
-					if (command.isEmpty())
-						continue;
-					if (command.toLowerCase().startsWith("yes")) {
-						chess.endGame(Draw.AGREEMENT);
-						return;
-					} else if (command.toLowerCase().startsWith("no")) {
-						setRightToRequestDraw(whiteOrBlack);
-						request.printOut("Request declined");
-						return;
-					}
-				}
-			} else {
-				request.printOut("You cannot request for draw again now.");
-			}
-		} else {
-			chess.endGame(canClaimDraw);
-		}
 	}
 
 	public static void main(String[] args) {

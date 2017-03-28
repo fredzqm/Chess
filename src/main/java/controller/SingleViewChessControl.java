@@ -3,7 +3,6 @@ package controller;
 import java.util.ArrayList;
 
 import model.ChessGameException;
-import model.Draw;
 import model.InvalidMoveException;
 import model.Move;
 import model.Pawn;
@@ -32,6 +31,11 @@ public class SingleViewChessControl extends ViewController implements IChessView
 		super();
 		view = new ChessViewer(this, "The Great Chess Game", true);
 		repaintAll(view);
+	}
+
+	@Override
+	public ChessViewer chooesView(boolean whiteOrBlack) {
+		return view;
 	}
 
 	public void restart() {
@@ -128,32 +132,6 @@ public class SingleViewChessControl extends ViewController implements IChessView
 		view.cleanTemp();
 		view.printOut(chess.lastMoveOutPrint());
 		view.printOut("Next move -- " + side(previousMove.getWhoseTurn() == Player.BLACK));
-	}
-
-	public void askForDraw(boolean whiteOrBlack) {
-		Draw canClaimDraw = chess.canClaimDraw();
-		if (canClaimDraw == null) {
-			if (canAskFordraw(whiteOrBlack)) {
-				while (true) {
-					view.printOut(side(whiteOrBlack) + " ask for draw, do you agreed?");
-					String command = view.getResponse("Do you agree draw?");
-					if (command.isEmpty())
-						continue;
-					if (command.toLowerCase().startsWith("yes")) {
-						chess.endGame(Draw.AGREEMENT);
-						return;
-					} else if (command.toLowerCase().startsWith("no")) {
-						setRightToRequestDraw(whiteOrBlack);
-						view.printOut("Request declined");
-						return;
-					}
-				}
-			} else {
-				view.printOut("You cannot request for draw again now.");
-			}
-		} else {
-			chess.endGame(canClaimDraw);
-		}
 	}
 
 	@Override

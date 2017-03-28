@@ -8,7 +8,7 @@ public class InvalidMoveException extends Exception {
 		pieceNotPresent,
 		incorrectPiece,
 		impossibleMove,
-		ambiguousMove
+		ambiguousMove, promotionTo
 	}
 
 	public Type type;

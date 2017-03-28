@@ -163,19 +163,6 @@ public class Chess {
 	}
 
 	/**
-	 * 
-	 * @param chosen
-	 * @return the list of Squares that this piece can reach
-	 */
-	public ArrayList<Square> reachable(Piece chosen) {
-		ArrayList<Square> list = new ArrayList<>();
-		for (Square i : getAllSquares())
-			if (chosen.canGo(i))
-				list.add(i);
-		return list;
-	}
-
-	/**
 	 * Find out whether a certain move will put your own king in check.
 	 * 
 	 * The concept is simple here, presumably make the first and check if the

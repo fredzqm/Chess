@@ -22,10 +22,10 @@ import view.IChessViewerControl;
 import view.SquareLabel;
 
 public abstract class ViewController implements IChessViewerControl {
-	protected Piece chosen;
-	private boolean whiteCanDraw;
-	private boolean blackCanDraw;
+	private Piece chosen;
 	protected Chess chess;
+	private DrawManager drawManager;
+	
 	public static final String ERROR_MESSAGE = "Please enter the move as (The type of chessman)(the start position)(its action)(the end position)\n"
 			+ "you can omit the \"P\" at the begining for a pawn." + "for casting, enter \"O-O\" or \"O-O-O\"\n"
 			+ "for examples, \"e2-e4\", \"Nb2-c3\" \n" + "If you need further help, type \"help\"";
@@ -67,9 +67,8 @@ public abstract class ViewController implements IChessViewerControl {
 	};
 
 	public ViewController() {
-		this.whiteCanDraw = true;
-		this.blackCanDraw = true;
 		chess = new Chess();
+		drawManager = new DrawManager();
 		chosen = null;
 	}
 
@@ -176,37 +175,12 @@ public abstract class ViewController implements IChessViewerControl {
 		}
 	}
 
-	private boolean canAskFordraw(boolean whoseTurn) {
-		if (whoseTurn)
-			return whiteCanDraw;
-		else
-			return blackCanDraw;
-	}
-
-	protected void setRightToRequestDraw(boolean whoseTurn) {
-		if (whoseTurn) {
-			whiteCanDraw = false;
-			blackCanDraw = true;
-		} else {
-			whiteCanDraw = true;
-			blackCanDraw = false;
-		}
-	}
-
-	protected void updateChessBoard() {
-		ChessViewer white = chooesView(true);
-		ChessViewer black = chooesView(false);
-		repaintAll(white);
-		if (black != white)
-			repaintAll(black);
-	}
-
 	private void askForDraw(boolean whiteOrBlack) {
 		Draw canClaimDraw = chess.canClaimDraw();
 		if (canClaimDraw == null) {
 			ChessViewer request = chooesView(whiteOrBlack);
 			ChessViewer response = chooesView(!whiteOrBlack);
-			if (canAskFordraw(whiteOrBlack)) {
+			if (drawManager.canAskFordraw(whiteOrBlack)) {
 				while (true) {
 					response.printOut(side(whiteOrBlack) + " ask for draw, do you agreed?");
 					String command = response.getResponse("Do you agree draw?");
@@ -216,7 +190,7 @@ public abstract class ViewController implements IChessViewerControl {
 						chess.endGame(Draw.AGREEMENT);
 						return;
 					} else if (command.toLowerCase().startsWith("no")) {
-						setRightToRequestDraw(whiteOrBlack);
+						drawManager.setRightToRequestDraw(whiteOrBlack);
 						request.printOut("Request declined");
 						return;
 					}
@@ -227,6 +201,14 @@ public abstract class ViewController implements IChessViewerControl {
 		} else {
 			chess.endGame(canClaimDraw);
 		}
+	}
+
+	protected void updateChessBoard() {
+		ChessViewer white = chooesView(true);
+		ChessViewer black = chooesView(false);
+		repaintAll(white);
+		if (black != white)
+			repaintAll(black);
 	}
 
 	/**
@@ -337,7 +319,7 @@ public abstract class ViewController implements IChessViewerControl {
 					reachable.add(spot);
 					ArrayList<SquareLabel> hightlight = getAllViewLabels(reachable, chooesView(whiteOrBlack));
 					clickedView.highLightAll(hightlight);
-	
+
 					if (spot.getPiece().isType(Pawn.class))
 						clickedView.printTemp(spot.toString());
 					else
@@ -345,7 +327,7 @@ public abstract class ViewController implements IChessViewerControl {
 				}
 			}
 		}
-	
+
 	}
 
 	public abstract ChessViewer chooesView(boolean whiteOrBlack);
@@ -357,7 +339,6 @@ public abstract class ViewController implements IChessViewerControl {
 	 */
 	protected abstract void updateGuiAfterMove(Move move);
 
-	
 	protected static String side(boolean whoseTurn) {
 		return whoseTurn ? "White" : "Black";
 	}

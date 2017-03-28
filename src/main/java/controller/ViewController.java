@@ -7,6 +7,8 @@ import java.util.Map;
 
 import model.Chess;
 import model.Draw;
+import model.InvalidMoveException;
+import model.Move;
 import model.Piece;
 import model.Piece.Player;
 import model.Record;
@@ -224,7 +226,7 @@ public abstract class ViewController {
 				askForDraw(whiteOrBlack);
 			} else if (c.equals("undo")) {
 				undo(chess, view);
-			} else if (!makeMove(c)) {
+			} else if (!makeMove(view, c)) {
 				// makeMove return false, so this move is not allowed.
 				view.printOut(ERROR_MESSAGE);
 			}
@@ -262,5 +264,48 @@ public abstract class ViewController {
 
 	public abstract ChessViewer chooesView(boolean whiteOrBlack);
 
-	public abstract boolean makeMove(String s);
+	/**
+	 * This method will be called, if the user types a command to make a move.
+	 * 
+	 * Interpret the command, and find out if it is legal to do make this move.
+	 * If it is, make this move.
+	 * 
+	 * @param moveCommand
+	 *            the input command
+	 * @return
+	 */
+	public boolean makeMove(ChessViewer view, String moveCommand) {
+		Move move = null;
+		try {
+			move = chess.getMove(moveCommand);
+		} catch (InvalidMoveException e) {
+			switch (e.type) {
+			case invalidFormat:
+				view.printOut("The command is not in a valid format.");
+				break;
+			case ambiguousMove:
+				view.printOut("Fail to guess move: There is ambiguity, multiple possible moves.");
+				break;
+			case castleNotAllowed:
+				view.printOut("You cannot do castling, please check the rules for castling.");
+				break;
+			case impossibleMove:
+				view.printOut("This is not a possible move.");
+				break;
+			case incorrectPiece:
+				view.printOut("The chessman in the start Position is not correct! "
+						+ "\n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
+				break;
+			case pieceNotPresent:
+				view.printOut("There is no piece at the start position.");
+				break;
+			}
+		}
+		if (move != null) {
+			chess.makeMove(move);
+			return true;
+		}
+		return false;
+	}
+
 }

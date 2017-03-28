@@ -49,7 +49,7 @@ public class SquareLabel extends JLabel {
 	 * @param chess
 	 * @param symbolProvider2
 	 */
-	public SquareLabel(int i, int j, ChessViewerControl chess, boolean whiteOrBlack, ISpriteProvider symbolProvider) {
+	public SquareLabel(int i, int j, IChessViewerControl chess, boolean whiteOrBlack, ISpriteProvider symbolProvider) {
 		this();
 		if (whiteOrBlack) {
 			x = i;

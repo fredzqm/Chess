@@ -146,7 +146,7 @@ public class SingleViewChessControl extends ViewController implements IChessView
 			} else {
 				if (spot.occupiedBy(chess.getWhoseTurn())) {
 					chosen = spot.getPiece();
-					ArrayList<Square> reachable = chess.reachable(chosen);
+					ArrayList<Square> reachable = chosen.getReachableSquares();
 					reachable.add(spot);
 					ArrayList<SquareLabel> hightlight = getAllViewLabels(reachable, view);
 					view.highLightAll(hightlight);

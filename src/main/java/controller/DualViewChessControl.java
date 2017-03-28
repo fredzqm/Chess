@@ -211,7 +211,7 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 			} else {
 				if (spot.occupiedBy(chess.getWhoseTurn())) {
 					chosen = spot.getPiece();
-					ArrayList<Square> reachable = chess.reachable(chosen);
+					ArrayList<Square> reachable = chosen.getReachableSquares();
 					reachable.add(spot);
 					ArrayList<SquareLabel> hightlight = getAllViewLabels(reachable, chooesView(whiteOrBlack));
 					clickedView.highLightAll(hightlight);

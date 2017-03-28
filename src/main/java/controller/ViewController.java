@@ -1,7 +1,6 @@
 package controller;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +36,7 @@ public abstract class ViewController implements IChessViewerControl {
 			+ "enter 'rules for ....' to get help about the rules of chess.\n"
 			+ "    Castling, Pawn, King, Queen, Rook, Bishop, Knight, En Passant, Promotion.";
 
-	public static final HashMap<String, String> rules = new HashMap<String, String>() {
+	public static final Map<String, String> rules = new HashMap<String, String>() {
 		{
 			put("castling",
 					"Only under those circumstances, you can castling\n"
@@ -89,8 +88,7 @@ public abstract class ViewController implements IChessViewerControl {
 	}
 
 	private void repaintAll(ChessViewer view) {
-		Collection<Square> board = chess.getAllSquares();
-		for (Square sq : board) {
+		for (Square sq : chess.getBoard()) {
 			updateSquare(view, sq);
 		}
 		view.repaint();

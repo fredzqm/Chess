@@ -161,7 +161,7 @@ public abstract class Piece implements Comparable<Piece> {
 	 */
 	public ArrayList<Square> getReachableSquares() {
 		ArrayList<Square> list = new ArrayList<>();
-		for (Square i : this.chess.getAllSquares())
+		for (Square i : this.chess.getBoard())
 			if (this.canGo(i))
 				list.add(i);
 		return list;

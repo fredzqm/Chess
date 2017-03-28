@@ -126,9 +126,6 @@ public class Chess {
 		return board.spotAt(x, y);
 	}
 
-	public Collection<Square> getAllSquares() {
-		return list;
-	}
 
 	public Record getRecords() {
 		return records;
@@ -237,7 +234,7 @@ public class Chess {
 		else
 			inCheck = black;
 		for (Piece i : inCheck) {
-			for (Square p : getAllSquares()) {
+			for (Square p : board) {
 				if (i.canGo(p)) {
 					return false;
 				}

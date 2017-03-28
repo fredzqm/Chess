@@ -141,7 +141,7 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @return the legal move of this piece toward the end Square, {@Code null}
 	 *         if this move is illegal
 	 */
-	protected Move getMove(Square end) {
+	public Move getMove(Square end) {
 		// cannot move to own piece
 		if (end.occupiedBy(this.color))
 			return null;
@@ -178,7 +178,7 @@ public abstract class Piece implements Comparable<Piece> {
 	 *            the spot to attack
 	 * @return true if this piece can attack this spot
 	 */
-	protected Move canAttack(Square end) {
+	public Move canAttack(Square end) {
 		if (spot == null)
 			return null;
 		return legalPosition(end);

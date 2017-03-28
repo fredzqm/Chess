@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 import model.Chess;
 import model.InvalidMoveException;
+import model.Move;
 import model.Piece;
 import model.Piece.Player;
 import model.Square;

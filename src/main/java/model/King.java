@@ -31,7 +31,7 @@ public class King extends Piece {
 	}
 
 	@Override
-	protected Move getMove(Square end) {
+	public Move getMove(Square end) {
 		if (end.occupiedBy(super.color)) 
 			return null;
 

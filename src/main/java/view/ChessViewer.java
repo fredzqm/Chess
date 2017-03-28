@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 
 @SuppressWarnings("serial")
 public class ChessViewer extends JFrame {
+	
 	private static final Font FONT_STATUS_LABEL = new Font("Serif", Font.PLAIN, 40);
 	private static final int CONSOLE_FONT_SIZE = 20;
 	private static final Font FONT_CONSOLE = new Font("Serif", Font.PLAIN, CONSOLE_FONT_SIZE);

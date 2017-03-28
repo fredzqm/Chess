@@ -3,7 +3,6 @@ package view;
 import java.util.HashMap;
 
 import model.EndGame;
-import model.Square;
 
 public interface IChessViewerControl {
 	/**
@@ -76,8 +75,6 @@ public interface IChessViewerControl {
 	public boolean makeMove(String s);
 	
 	public void endGame(EndGame end);
-	
-	public void updateSquare(Square sq);
-	
-	public void repaintAll();
+		
+	public void askForDraw(boolean whiteOrBlack);
 }

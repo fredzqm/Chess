@@ -5,22 +5,15 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import model.Bishop;
-import model.Chess;
 import model.ChessGameException;
 import model.Draw;
 import model.EndGame;
-import model.Knight;
 import model.Move;
 import model.Pawn;
 import model.Piece;
 import model.Piece.Player;
-import model.Queen;
-import model.Record;
-import model.Rook;
 import model.Square;
 import model.Win;
-import view.ChessPieceType;
 import view.ChessViewer;
 import view.IChessViewerControl;
 import view.SquareLabel;
@@ -37,9 +30,6 @@ import view.ViewController;
 public class DualViewChessControl extends ViewController implements IChessViewerControl {
 	private ChessViewer whiteView;
 	private ChessViewer blackView;
-	private Chess chess;
-	private Piece chosen;
-	private Request drawRequest;
 
 	/**
 	 * start my little chess game!!!!
@@ -48,31 +38,21 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 	 *            ignored
 	 */
 	public DualViewChessControl() {
-		chess = new Chess();
-		chosen = null;
-		drawRequest = new Request();
-
+		super();
 		whiteView = new ChessViewer(this, "The Great Chess Game white view", true);
 		blackView = new ChessViewer(this, "The Great Chess Game black view", false);
 
-		for (Square s : chess.getAllSquares())
-			updateSquare(s);
-		repaintAll();
+		for (Square s : chess.getAllSquares()) {
+			updateSquare(whiteView, s);
+			updateSquare(blackView, s);
+		}
+		repaintBothViews();
 	}
 
 	public void restart() {
-		chess = new Chess();
-		chosen = null;
-		drawRequest = new Request();
-
-		whiteView.deHighLightWholeBoard();
-		blackView.deHighLightWholeBoard();
-		whiteView.setStatusLabelText("       Welcome to Another Wonderful Chess Game         ");
-		blackView.setStatusLabelText("       Welcome to Another Wonderful Chess Game         ");
-		for (Square s : chess.getAllSquares())
-			updateSquare(s);
-		whiteView.printOut("Start a new game!");
-		blackView.printOut("Start a new game!");
+		restartView(whiteView);
+		restartView(blackView);
+		repaintBothViews();
 	}
 
 	private ChessViewer chooesView(boolean whiteOrBlack) {
@@ -176,18 +156,15 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 			showRules(c.substring(10), view, rules);
 		} else if (c.equals("quit")) {
 			System.exit(0);
-		} else if (chess.hasEnd()) {
-			if (c.equals("restart"))
-				restart();
-			else
-				chooesView(whiteOrBlack).printOut(chess.lastMoveDiscript());
+		} else if (c.equals("restart")) {
+			restart();
 		} else {
 			chosen = null;
 			chooesView(whiteOrBlack).deHighLightWholeBoard();
 			if (c.equals("resign")) {
 				resign(chooesView(whiteOrBlack), chess);
 			} else if (c.equals("draw")) {
-				drawRequest.askForDraw(whiteOrBlack);
+				askForDraw(whiteOrBlack);
 			} else if (whiteOrBlack != (chess.getWhoseTurn() == Player.WHITE)) {
 				if (c.equals("undo"))
 					undo(chess, whiteView);
@@ -199,12 +176,12 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 			}
 		}
 
-		repaintAll();
+		repaintBothViews();
 	}
 
-	public void repaintAll() {
-		whiteView.repaint();
-		blackView.repaint();
+	public void repaintBothViews() {
+		repaintAll(whiteView);
+		repaintAll(blackView);
 	}
 
 	@Override
@@ -248,19 +225,7 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 			}
 		}
 
-		repaintAll();
-	}
-
-	public void updateSquare(Square sq) {
-		if (sq.isOccupied()) {
-			whiteView.labelAt(sq.getX(), sq.getY()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
-					sq.getPiece().getWhiteOrBlack() == Player.WHITE);
-			blackView.labelAt(sq.getX(), sq.getY()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
-					sq.getPiece().getWhiteOrBlack() == Player.WHITE);
-		} else {
-			whiteView.labelAt(sq.getX(), sq.getY()).clearLabel();
-			blackView.labelAt(sq.getX(), sq.getY()).clearLabel();
-		}
+		repaintBothViews();
 	}
 
 	public void endGame(EndGame end) {
@@ -284,7 +249,8 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 	private void updateGuiToMove(Move previousMove) {
 		Collection<Square> board = chess.getAllSquares();
 		for (Square sq : board) {
-			updateSquare(sq);
+			updateSquare(whiteView, sq);
+			updateSquare(blackView, sq);
 		}
 
 		ChessViewer pre = chooesView(previousMove.getWhoseTurn() == Player.WHITE);
@@ -300,89 +266,32 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 
 	}
 
-	/**
-	 * According to the chess law, no player can request for draw consecutively.
-	 * if he has just made a request for draw, he cannot make another request
-	 * for draw, untill his opponent makes a request for draw, and is declined.
-	 * 
-	 * The class is made to decide whether a player can request for draw.
-	 */
-	protected class Request {
-		private boolean white;
-		private boolean black;
-
-		protected Request() {
-			white = true;
-			black = true;
-		}
-
-		private void setRightToRequestDraw(boolean whoseTurn) {
-			if (whoseTurn) {
-				white = false;
-				black = true;
-			} else {
-				white = true;
-				black = false;
-			}
-		}
-
-		private boolean canAskFordraw(boolean whoseTurn) {
-			if (whoseTurn)
-				return white;
-			else
-				return black;
-		}
-
-		/**
-		 * invoked when one player is asking for a draw.
-		 * 
-		 * Find out if the game satisfied automatic draw condition due to
-		 * FIFTY_MOVE or REPETITION {@link Draw. End
-		 * 
-		 * @param whiteOrBlack
-		 *            the game and claim draw if those conditions are met.
-		 *            Otherwise, send a request for draw, and wait for the reply
-		 *            of opponent.
-		 * 
-		 * @return
-		 */
-		public void askForDraw(boolean whiteOrBlack) {
-			Draw canClaimDraw = chess.canClaimDraw();
-			if (canClaimDraw == null) {
-				ChessViewer request = chooesView(whiteOrBlack);
-				ChessViewer response = chooesView(!whiteOrBlack);
-				if (canAskFordraw(whiteOrBlack)) {
-					while (true) {
-						response.printOut(side(whiteOrBlack) + " ask for draw, do you agreed?");
-						String command = response.getResponse("Do you agree draw?");
-						if (command.isEmpty())
-							continue;
-						if (command.toLowerCase().startsWith("yes")) {
-							chess.endGame(Draw.AGREEMENT);
-							return;
-						} else if (command.toLowerCase().startsWith("no")) {
-							setRightToRequestDraw(whiteOrBlack);
-							request.printOut("Request declined");
-							return;
-						}
+	public void askForDraw(boolean whiteOrBlack) {
+		Draw canClaimDraw = chess.canClaimDraw();
+		if (canClaimDraw == null) {
+			ChessViewer request = chooesView(whiteOrBlack);
+			ChessViewer response = chooesView(!whiteOrBlack);
+			if (canAskFordraw(whiteOrBlack)) {
+				while (true) {
+					response.printOut(side(whiteOrBlack) + " ask for draw, do you agreed?");
+					String command = response.getResponse("Do you agree draw?");
+					if (command.isEmpty())
+						continue;
+					if (command.toLowerCase().startsWith("yes")) {
+						chess.endGame(Draw.AGREEMENT);
+						return;
+					} else if (command.toLowerCase().startsWith("no")) {
+						setRightToRequestDraw(whiteOrBlack);
+						request.printOut("Request declined");
+						return;
 					}
-				} else {
-					request.printOut("You cannot request for draw again now.");
 				}
 			} else {
-				chess.endGame(canClaimDraw);
+				request.printOut("You cannot request for draw again now.");
 			}
+		} else {
+			chess.endGame(canClaimDraw);
 		}
-
-		/**
-		 * Invoked if a player resigns. It will ends the game. However, if the
-		 * game satisfied automatic draw condition, the game will be draw
-		 * instead.
-		 * 
-		 * @param whiteOrBlack
-		 * 
-		 * @return
-		 */
 	}
 
 	public static void main(String[] args) {

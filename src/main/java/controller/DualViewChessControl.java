@@ -15,7 +15,6 @@ import model.Square;
 import view.ChessViewer;
 import view.IChessViewerControl;
 import view.SquareLabel;
-import view.ViewController;
 
 /**
  * 

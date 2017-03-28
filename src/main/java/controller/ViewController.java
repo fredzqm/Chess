@@ -1,4 +1,4 @@
-package view;
+package controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,6 +9,9 @@ import model.Chess;
 import model.Draw;
 import model.Piece;
 import model.Piece.Player;
+import view.ChessPieceType;
+import view.ChessViewer;
+import view.SquareLabel;
 import model.Record;
 import model.Square;
 import model.Win;
@@ -223,5 +226,5 @@ public abstract class ViewController {
 	public abstract void askForDraw(boolean whiteOrBlack);
 	public abstract boolean makeMove(String s);
 	public abstract void restart();
-	public abstract void click(SquareLabel squareLabel, boolean whiteOrBlack);
+//	public abstract void click(SquareLabel squareLabel, boolean whiteOrBlack);
 }

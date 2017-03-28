@@ -12,7 +12,6 @@ import model.Square;
 import view.ChessViewer;
 import view.IChessViewerControl;
 import view.SquareLabel;
-import view.ViewController;
 
 /**
  * The chess controller opens a single chess view

@@ -22,7 +22,7 @@ import view.SquareLabel;
  * @author zhang
  *
  */
-public class DualViewChessControl extends ViewController implements IChessViewerControl {
+public class DualViewChessControl extends ViewController {
 	private ChessViewer whiteView;
 	private ChessViewer blackView;
 
@@ -49,50 +49,7 @@ public class DualViewChessControl extends ViewController implements IChessViewer
 		handleSingleCommand(viewer, command, whiteOrBlack);
 	}
 
-	@Override
-	public void click(SquareLabel label, boolean whiteOrBlack) {
-		ChessViewer clickedView = chooesView(whiteOrBlack);
-		if (chess.hasEnd()) {
-			clickedView.printOut("Game is already over! Type restart to start a new game");
-		} else {
-			if (whiteOrBlack != (chess.getWhoseTurn() == Player.WHITE)) {
-				clickedView.printOut("Please wait for your opponnet to finish");
-				return;
-			}
-			Square spot = labelToSquare(label, chess);
-			if (chosen != null) {
-				if (label.isHighLight() && !spot.equals(chosen.getSpot())) {
-					Move move;
-					if ((move = chess.performMove(chosen, spot)) == null) {
-						throw new ChessGameException(
-								"Illegal move of " + chosen.getName() + " did not correctly caught from UI!");
-					} else {
-						updateGuiToMove(move);
-					}
-				} else
-					clickedView.cleanTemp();
-				chosen = null;
-				clickedView.deHighLightWholeBoard();
-			} else {
-				if (spot.occupiedBy(chess.getWhoseTurn())) {
-					chosen = spot.getPiece();
-					ArrayList<Square> reachable = chosen.getReachableSquares();
-					reachable.add(spot);
-					ArrayList<SquareLabel> hightlight = getAllViewLabels(reachable, chooesView(whiteOrBlack));
-					clickedView.highLightAll(hightlight);
-
-					if (spot.getPiece().isType(Pawn.class))
-						clickedView.printTemp(spot.toString());
-					else
-						clickedView.printTemp(spot.getPiece().getType() + spot.toString());
-
-				}
-			}
-		}
-		
-	}
-
-	private void updateGuiToMove(Move previousMove) {
+	protected void updateGuiToMove(Move previousMove) {
 		updateChessBoard();
 		
 		ChessViewer pre = chooesView(previousMove.getWhoseTurn() == Player.WHITE);

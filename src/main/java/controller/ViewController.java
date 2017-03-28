@@ -6,9 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import model.Chess;
+import model.ChessGameException;
 import model.Draw;
 import model.InvalidMoveException;
 import model.Move;
+import model.Pawn;
 import model.Piece;
 import model.Piece.Player;
 import model.Record;
@@ -16,9 +18,10 @@ import model.Square;
 import model.Win;
 import view.ChessPieceType;
 import view.ChessViewer;
+import view.IChessViewerControl;
 import view.SquareLabel;
 
-public abstract class ViewController {
+public abstract class ViewController implements IChessViewerControl{
 	protected Piece chosen;
 	private boolean whiteCanDraw;
 	private boolean blackCanDraw;
@@ -264,6 +267,49 @@ public abstract class ViewController {
 
 	public abstract ChessViewer chooesView(boolean whiteOrBlack);
 
+	public void click(SquareLabel label, boolean whiteOrBlack) {
+		ChessViewer clickedView = chooesView(whiteOrBlack);
+		if (chess.hasEnd()) {
+			clickedView.printOut("Game is already over! Type restart to start a new game");
+		} else {
+			if (clickedView != chooesView(chess.getWhoseTurn() == Player.WHITE)) {
+				clickedView.printOut("Please wait for your opponnet to finish");
+				return;
+			}
+			Square spot = labelToSquare(label, chess);
+			if (chosen != null) {
+				if (label.isHighLight() && !spot.equals(chosen.getSpot())) {
+					Move move;
+					if ((move = chess.performMove(chosen, spot)) == null) {
+						throw new ChessGameException(
+								"Illegal move of " + chosen.getName() + " did not correctly caught from UI!");
+					} else {
+						updateGuiToMove(move);
+					}
+				} else
+					clickedView.cleanTemp();
+				chosen = null;
+				clickedView.deHighLightWholeBoard();
+			} else {
+				if (spot.occupiedBy(chess.getWhoseTurn())) {
+					chosen = spot.getPiece();
+					ArrayList<Square> reachable = chosen.getReachableSquares();
+					reachable.add(spot);
+					ArrayList<SquareLabel> hightlight = getAllViewLabels(reachable, chooesView(whiteOrBlack));
+					clickedView.highLightAll(hightlight);
+
+					if (spot.getPiece().isType(Pawn.class))
+						clickedView.printTemp(spot.toString());
+					else
+						clickedView.printTemp(spot.getPiece().getType() + spot.toString());
+
+				}
+			}
+		}
+		
+	}
+	protected abstract void updateGuiToMove(Move previousMove);
+	
 	/**
 	 * This method will be called, if the user types a command to make a move.
 	 * 

@@ -221,7 +221,7 @@ public abstract class ViewController implements IChessViewerControl {
 	public boolean makeMove(ChessViewer view, String moveCommand) {
 		Move move = null;
 		try {
-			move = chess.getMove(moveCommand);
+			move = chess.interpreteMoveCommand(moveCommand);
 			chess.makeMove(move);
 			updateGuiAfterMove(move);
 			return true;

@@ -38,7 +38,7 @@ public class TestUtility {
 	 */
 	public static void performRecordMoves(Chess chess, List<String> recordMoves) throws InvalidMoveException {
 		for (String moveStr : recordMoves) {
-			Move move = chess.getMove(moveStr);
+			Move move = chess.interpreteMoveCommand(moveStr);
 			chess.makeMove(move);
 		}
 	}

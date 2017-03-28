@@ -39,9 +39,9 @@ public class King extends Piece {
 		if (legalMove == null) {
 			if (getX() == 5 && getY() == end.getY()) {
 				if (end.getX() == 3) {
-					return chess.canCastling(this, true);
+					return chess.canLongCastling(this);
 				} else if (end.getX() == 7) {
-					return chess.canCastling(this, false);
+					return chess.canShortCastling(this);
 				}
 			}
 			return null;

@@ -85,7 +85,7 @@ public class Board implements Iterable<Square> {
 	}
 
 	private class BoardIterator implements Iterator<Square> {
-		private int i;
+		private int i = -1;
 
 		@Override
 		public boolean hasNext() {

@@ -21,7 +21,7 @@ import view.ChessViewer;
 import view.IChessViewerControl;
 import view.SquareLabel;
 
-public abstract class ViewController implements IChessViewerControl{
+public abstract class ViewController implements IChessViewerControl {
 	protected Piece chosen;
 	private boolean whiteCanDraw;
 	private boolean blackCanDraw;
@@ -204,37 +204,38 @@ public abstract class ViewController implements IChessViewerControl{
 		view.repaint();
 	}
 
-	public void handleSingleCommand(ChessViewer view, String command, boolean whiteOrBlack) {
-		String c = command;
-		if (c.length() == 0)
+	public void handleCommand(String input, boolean whiteOrBlack) {
+		ChessViewer view  = chooesView(whiteOrBlack);
+		if (input.length() == 0)
 			return;
-		if (c.equals("print")) {
+		if (input.equals("print")) {
 			printRecords(view, chess);
-		} else if (c.equals("help")) {
+		} else if (input.equals("help")) {
 			view.printOut(HELP_MESSAGE);
-		} else if (c.startsWith("rules for ")) {
-			showRules(c.substring(10), view, rules);
-		} else if (c.equals("quit")) {
+		} else if (input.startsWith("rules for ")) {
+			showRules(input.substring(10), view, rules);
+		} else if (input.equals("quit")) {
 			System.exit(0);
-		} else if (c.equals("restart")) {
+		} else if (input.equals("restart")) {
 			restart();
+			updateChessBoard();
 		} else if (chess.hasEnd()) {
 			view.printOut(chess.lastMoveDiscript());
 		} else {
 			chosen = null;
 			view.deHighLightWholeBoard();
-			if (c.equals("resign")) {
+			if (input.equals("resign")) {
 				resign(view, chess);
-			} else if (c.equals("draw")) {
+			} else if (input.equals("draw")) {
 				askForDraw(whiteOrBlack);
-			} else if (c.equals("undo")) {
+			} else if (input.equals("undo")) {
 				undo(chess, view);
-			} else if (!makeMove(view, c)) {
+			} else if (!makeMove(view, input)) {
 				// makeMove return false, so this move is not allowed.
 				view.printOut(ERROR_MESSAGE);
 			}
+			updateChessBoard();
 		}
-		updateChessBoard();
 	}
 
 	public void askForDraw(boolean whiteOrBlack) {
@@ -306,10 +307,11 @@ public abstract class ViewController implements IChessViewerControl{
 				}
 			}
 		}
-		
+
 	}
+
 	protected abstract void updateGuiToMove(Move previousMove);
-	
+
 	/**
 	 * This method will be called, if the user types a command to make a move.
 	 * 

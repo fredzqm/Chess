@@ -40,11 +40,6 @@ public class SingleViewChessControl extends ViewController {
 		view.printOut("Next move -- " + side(previousMove.getWhoseTurn() == Player.BLACK));
 	}
 
-	@Override
-	public void handleCommand(String input, boolean isWhiteView) {
-		handleSingleCommand(view, input, isWhiteView);
-	}
-
 	public static void main(String[] args) {
 		new SingleViewChessControl();
 	}

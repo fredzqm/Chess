@@ -43,11 +43,6 @@ public class DualViewChessControl extends ViewController {
 		return whiteOrBlack ? whiteView : blackView;
 	}
 
-	@Override
-	public void handleCommand(String command, boolean whiteOrBlack) {
-		ChessViewer viewer = chooesView(whiteOrBlack);
-		handleSingleCommand(viewer, command, whiteOrBlack);
-	}
 
 	protected void updateGuiToMove(Move previousMove) {
 		updateChessBoard();

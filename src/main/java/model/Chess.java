@@ -524,7 +524,7 @@ public class Chess {
 			}
 		}
 
-		Pattern p = Pattern.compile("([PRNBQK])?([a-h])?([1-8])?([-x])?([a-h][1-8])(\\([RNBQ]\\))?(.*)");
+		Pattern p = Pattern.compile("([PRNBQK])?([a-h])?([1-8])?([-x])?([a-h][1-8])(=[RNBQ])?(.*)");
 		Matcher m = p.matcher(moveCommand);
 		if (m.matches()) {
 			Class<? extends Piece> type = m.group(1) == null ? Pawn.class : Piece.getType(m.group(1).charAt(0));

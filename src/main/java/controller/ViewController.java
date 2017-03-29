@@ -10,6 +10,7 @@ import model.InvalidMoveException;
 import model.Move;
 import model.Pawn;
 import model.Piece;
+import model.Promotion;
 import model.Piece.Player;
 import model.Record;
 import model.Square;
@@ -303,6 +304,11 @@ public abstract class ViewController implements IChessViewerControl {
 			if (move == null) {
 				clickedView.cleanTemp();
 			} else {
+				if (move instanceof Promotion) {
+					Promotion promotion = (Promotion) move;
+					String promoteTo = clickedView.getResponse("What do you want to promote to?");
+					promotion.setPromoteTo(Piece.getType(promoteTo.charAt(0)));
+				}
 				chess.makeMove(move);
 				updateGuiAfterMove(move);
 			}

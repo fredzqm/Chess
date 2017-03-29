@@ -546,14 +546,14 @@ public class Chess {
 				if (possible.size() == 0) {
 					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.impossibleMove);
 				} else if (possible.size() == 1) {
-					return possible.get(0).getMove(end);
+					move = possible.get(0).getMove(end);
 				} else {
 					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.ambiguousMove);
 				}
 			}
 			if (move instanceof Promotion) {
 				Promotion promotion = (Promotion) move;
-				if (m.group(6) != null)
+				if (m.group(6) == null)
 					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.promotionTo);
 				Class<? extends Piece> promotToClass = Piece.getType(m.group(6).charAt(1));
 				promotion.setPromoteTo(promotToClass);

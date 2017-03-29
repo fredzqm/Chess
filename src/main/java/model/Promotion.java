@@ -55,19 +55,25 @@ public class Promotion extends Move {
 	}
 
 	public void undo(Chess chess) {
-		checkPromotedTo();
-		chess.takeOffBoard(promotedTo);
-		chess.putBackToBoard(movedPiece, startPosition);
+		if (promotedTo == null) {
+			movedPiece.moveTo(startPosition);
+		} else {
+			chess.takeOffBoard(promotedTo);
+			chess.putBackToBoard(movedPiece, startPosition);
+		}
 		if (capturedPiece != null)
 			chess.putBackToBoard(capturedPiece, lastPosition);
 	}
 
 	public void performMove(Chess chess) {
-		checkPromotedTo();
 		if (capturedPiece != null)
 			chess.takeOffBoard(capturedPiece);
-		chess.takeOffBoard(movedPiece);
-		chess.putBackToBoard(promotedTo, lastPosition);
+		if (promotedTo == null) {
+			movedPiece.moveTo(lastPosition);
+		} else {
+			chess.takeOffBoard(movedPiece);
+			chess.putBackToBoard(promotedTo, lastPosition);
+		}
 	}
 
 	public void setPromoteTo(Class<? extends Piece> promotToClass) {

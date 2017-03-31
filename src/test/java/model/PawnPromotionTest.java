@@ -9,7 +9,7 @@ import utility.TestUtility;
 public class PawnPromotionTest {
 
 	@Test
-	public void testQuenePromotion() throws FileNotFoundException, InvalidMoveException {
+	public void testQueenPromotion() throws FileNotFoundException, InvalidMoveException {
 		Chess chess = new Chess();
 
 		TestUtility.performRecordMoves(chess, "sampleGames/Pawn_promotion_1.txt");

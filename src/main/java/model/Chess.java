@@ -501,7 +501,7 @@ public class Chess {
 			move.note = MoveNote.CHECK;
 		} else {
 			if (checkMate(getWhoseTurn() == Player.WHITE)) {
-				endGame(Draw.STALEMENT);
+				endGame(Draw.STALEMATE);
 				return;
 			}
 		}

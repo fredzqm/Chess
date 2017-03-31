@@ -247,6 +247,9 @@ public abstract class ViewController implements IChessViewerControl {
 			case pieceNotPresent:
 				view.printOut("There is no piece at the start position.");
 				break;
+			case promotionTo:
+				view.printOut("You should specify what piece you want to promote to");
+				break;
 			default:
 				throw new RuntimeException(e);
 			}

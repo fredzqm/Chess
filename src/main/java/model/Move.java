@@ -118,14 +118,10 @@ public abstract class Move {
 		return capturedPiece != null || movedPiece.isType(Pawn.class);
 	}
 
-	public void performMove(Chess chess) {
-		if (capturedPiece != null)
-			chess.takeOffBoard(capturedPiece);
-		movedPiece.moveTo(lastPosition);
-	}
+	public abstract String getDescript();
 
-	abstract public String getDescript();
+	public abstract void performMove(Chess chess);
 
-	abstract public void undo(Chess chess);
+	public abstract void undo(Chess chess);
 
 }

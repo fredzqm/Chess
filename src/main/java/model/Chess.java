@@ -87,7 +87,7 @@ public class Chess {
 	// Accessors
 
 	public Player getWhoseTurn() {
-		if(time % 2 == 0) {
+		if (time % 2 == 0) {
 			return Player.WHITE;
 		} else {
 			return Player.BLACK;
@@ -124,10 +124,6 @@ public class Chess {
 	 */
 	public Square spotAt(int x, int y) {
 		return board.spotAt(x, y);
-	}
-
-	public Collection<Square> getAllSquares() {
-		return list;
 	}
 
 	public Record getRecords() {
@@ -237,7 +233,7 @@ public class Chess {
 		else
 			inCheck = black;
 		for (Piece i : inCheck) {
-			for (Square p : getAllSquares()) {
+			for (Square p : board) {
 				if (i.canGo(p)) {
 					return false;
 				}
@@ -317,18 +313,18 @@ public class Chess {
 	 * @return the castling move if it is legal to make the castling of this
 	 *         side right now, null otherwise
 	 */
-	public Move canCastling(King k, boolean longOrShort) {
-		if (longOrShort) {
-			if (canNotLongCastling(k.getY(), k.getWhiteOrBlack() == Player.BLACK))
-				return null;
-			return new Castling(k, k.getSpot(), spotAt(3, k.getY()), (Rook) (spotAt(1, k.getY()).getPiece()),
-					spotAt(1, k.getY()), getRound());
-		} else {
-			if (canNotShortCastling(k.getY(), k.getWhiteOrBlack() == Player.BLACK))
-				return null;
-			return new Castling(k, k.getSpot(), spotAt(7, k.getY()), (Rook) (spotAt(8, k.getY()).getPiece()),
-					spotAt(8, k.getY()), getRound());
-		}
+	public Move canShortCastling(King k) {
+		if (canNotShortCastling(k.getY(), k.getWhiteOrBlack() == Player.BLACK))
+			return null;
+		return new Castling(k, k.getSpot(), spotAt(7, k.getY()), (Rook) (spotAt(8, k.getY()).getPiece()),
+				spotAt(8, k.getY()), getRound());
+	}
+
+	public Move canLongCastling(King k) {
+		if (canNotLongCastling(k.getY(), k.getWhiteOrBlack() == Player.BLACK))
+			return null;
+		return new Castling(k, k.getSpot(), spotAt(3, k.getY()), (Rook) (spotAt(1, k.getY()).getPiece()),
+				spotAt(1, k.getY()), getRound());
 	}
 
 	private boolean canNotLongCastling(int y, boolean attack) {
@@ -450,27 +446,6 @@ public class Chess {
 		return move;
 	}
 
-	/**
-	 * This method will be called if the user request to make a castling.
-	 * 
-	 * @param longOrShort
-	 * @return
-	 */
-	public boolean castling(boolean longOrShort) {
-		King king;
-		if (getWhoseTurn() == Player.WHITE)
-			king = (King) white.get(0);
-		else
-			king = (King) black.get(0);
-
-		Move move = canCastling(king, longOrShort);
-		if (move != null) {
-			makeMove(move);
-			return true;
-		}
-		return false;
-	}
-
 	// ---------------------------------------------------------------------------------------------------------------------------
 	// methods that send message to control
 
@@ -507,10 +482,6 @@ public class Chess {
 		}
 	}
 
-	protected Piece promotion(Player c, Square end) {
-		return new Queen(c, end, this);
-	}
-
 	/**
 	 * record end game information and send message to control
 	 * 
@@ -524,72 +495,73 @@ public class Chess {
 	/**
 	 * Create a move object for the standard chess record.
 	 * 
-	 * @param s
+	 * @param moveCommand
 	 *            String for the chess record
 	 * 
 	 * @return Move object representing the desired move
 	 * 
 	 */
-	public Move getMove(String s) throws InvalidMoveException {
+	public Move interpreteMoveCommand(String moveCommand) throws InvalidMoveException {
 		Move move = null;
-
-		if (s.startsWith("O")) {
+		if (moveCommand.startsWith("O")) {
 			King king;
 			if (getWhoseTurn() == Player.WHITE) {
 				king = (King) white.get(0);
 			} else {
 				king = (King) black.get(0);
 			}
-
-			if (s.equals("O-O")) {
-				move = canCastling(king, false);
-			} else if (s.equals("O-O-O")) {
-				move = canCastling(king, true);
+			if (moveCommand.equals("O-O")) {
+				move = canShortCastling(king);
+			} else if (moveCommand.equals("O-O-O")) {
+				move = canLongCastling(king);
 			} else {
-				throw new InvalidMoveException(s, InvalidMoveException.Type.invalidFormat);
+				throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.invalidFormat);
 			}
-
 			if (move != null) {
 				return move;
 			} else {
-				throw new InvalidMoveException(s, InvalidMoveException.Type.castleNotAllowed);
+				throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.castleNotAllowed);
 			}
 		}
 
-		Pattern p = Pattern.compile("([PRNBQK])?([a-h])?([1-8])?.*?([a-h][1-8]).*");
-		Matcher m = p.matcher(s);
+		Pattern p = Pattern.compile("([PRNBQK])?([a-h])?([1-8])?([-x])?([a-h][1-8])(=[RNBQ])?(.*)");
+		Matcher m = p.matcher(moveCommand);
 		if (m.matches()) {
 			Class<? extends Piece> type = m.group(1) == null ? Pawn.class : Piece.getType(m.group(1).charAt(0));
-
 			Square start = null;
 			if ((m.group(2) != null) && (m.group(3) != null)) {
 				start = board.getSquare(m.group(2) + m.group(3));
 			}
-			Square end = board.getSquare(m.group(4));
-
+			Square end = board.getSquare(m.group(5));
 			if (start != null) {
-				Piece movedChessman = start.getPiece();
-				if (movedChessman == null) {
-					throw new InvalidMoveException(s, InvalidMoveException.Type.pieceNotPresent);
-				} else if (!(movedChessman.isType(type))) {
-					throw new InvalidMoveException(s, InvalidMoveException.Type.incorrectPiece);
+				Piece movedPiece = start.getPiece();
+				if (movedPiece == null) {
+					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.pieceNotPresent);
+				} else if (!(movedPiece.isType(type))) {
+					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.incorrectPiece);
 				}
-				move = movedChessman.getMove(end);
+				move = movedPiece.getMove(end);
 			} else {
 				ArrayList<Piece> possible = possibleMovers(type, end);
 				if (possible.size() == 0) {
-					throw new InvalidMoveException(s, InvalidMoveException.Type.impossibleMove);
+					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.impossibleMove);
 				} else if (possible.size() == 1) {
 					move = possible.get(0).getMove(end);
 				} else {
-					throw new InvalidMoveException(s, InvalidMoveException.Type.ambiguousMove);
+					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.ambiguousMove);
 				}
 			}
+			if (move instanceof Promotion) {
+				Promotion promotion = (Promotion) move;
+				if (m.group(6) == null)
+					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.promotionTo);
+				Class<? extends Piece> promotToClass = Piece.getType(m.group(6).charAt(1));
+				promotion.setPromoteTo(promotToClass);
+			}
+			return move;
 		} else {
-			throw new InvalidMoveException(s, InvalidMoveException.Type.invalidFormat);
+			throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.invalidFormat);
 		}
-
-		return move;
 	}
 
 }

@@ -1,0 +1,5 @@
+1. e2-e4   f7-f5
+2. e4xf5   g7-g6
+3. f5xg6   Ng8-h6
+4. g6-g7   Rh8-g8
+5. xf8=Q

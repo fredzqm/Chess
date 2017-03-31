@@ -46,9 +46,10 @@ public class RegularMove extends Move{
 			chess.putBackToBoard(capturedPiece, lastPosition);
 	}
 
-
-	public Player getWhoseTurn() {
-		return this.playerColor;
+	public void performMove(Chess chess) {
+		if (capturedPiece != null)
+			chess.takeOffBoard(capturedPiece);
+		movedPiece.moveTo(lastPosition);
 	}
 
 }

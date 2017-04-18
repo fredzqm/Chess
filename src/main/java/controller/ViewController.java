@@ -18,7 +18,6 @@ import model.Win;
 import view.ChessPieceType;
 import view.ChessViewer;
 import view.IChessViewerControl;
-import view.SquareLabel;
 
 public abstract class ViewController implements IChessViewerControl {
 	private Piece chosen;
@@ -147,17 +146,6 @@ public abstract class ViewController implements IChessViewerControl {
 			return;
 		}
 		view.printOut(records.printDoc());
-	}
-
-	private SquareLabel squareToLabel(Square sqr, ChessViewer view) {
-		return view.labelAt(sqr.getX(), sqr.getY());
-	}
-
-	private ArrayList<SquareLabel> getAllViewLabels(ArrayList<Square> squares, ChessViewer view) {
-		ArrayList<SquareLabel> list = new ArrayList<SquareLabel>();
-		for (Square sqr : squares)
-			list.add(squareToLabel(sqr, view));
-		return list;
 	}
 
 	public void resign(ChessViewer view, Chess chess) {
@@ -323,7 +311,9 @@ public abstract class ViewController implements IChessViewerControl {
 				chosen = spot.getPiece();
 				ArrayList<Square> reachable = chosen.getReachableSquares();
 				reachable.add(spot);
-				clickedView.highLightAll(getAllViewLabels(reachable, clickedView));
+				for (Square sqr : reachable) {
+					clickedView.highLight(sqr.getX(), sqr.getY());
+				}
 
 				if (spot.getPiece().isType(Pawn.class))
 					clickedView.printTemp(spot.toString());

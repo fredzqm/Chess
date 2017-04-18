@@ -6,9 +6,6 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,7 +27,6 @@ public class ChessViewer extends JFrame {
 
 	private JLabel statusLabel;
 	private SquareLabel[][] labels;
-	private Collection<SquareLabel> highlighted;
 	
 	private JTextArea myConsole;
 	private String existence;
@@ -44,7 +40,6 @@ public class ChessViewer extends JFrame {
 	public ChessViewer(IChessViewerControl controller, String title, boolean whiteOrBlack) {
 		this.viewControl = controller;
 		this.isWhiteView = whiteOrBlack;
-		this.highlighted = Collections.emptyList();
 		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -116,12 +111,12 @@ public class ChessViewer extends JFrame {
 
 	/**
 	 * 
-	 * @param x
-	 * @param y
+	 * @param file
+	 * @param rank
 	 * @return {link {@link SquareLabel} at (x , y) coordinate
 	 */
-	public SquareLabel labelAt(int x, int y) {
-		return isWhiteView ? labels[x][8 - y] : labels[9 - x][y - 1];
+	public SquareLabel labelAt(int file, int rank) {
+		return isWhiteView ? labels[file][8 - rank] : labels[9 - file][rank - 1];
 	}
 
 	/**
@@ -164,19 +159,19 @@ public class ChessViewer extends JFrame {
 		statusLabel.setText(str);
 	}
 
-	public void highLightAll(Collection<SquareLabel> hightlight) {
-		highlighted = hightlight;
-		for (SquareLabel sqrl : highlighted)
-			sqrl.highLight();
+	public void highLight(int file, int rank) {
+		labelAt(file, rank).highLight();
 	}
 
 	/**
 	 * dehighlight the whole board
 	 */
 	public void deHighLightWholeBoard() {
-		for (SquareLabel sqrl : highlighted)
-			sqrl.deHighLight();
-		highlighted = new ArrayList<>();
+		for (SquareLabel[] row : this.labels) {
+			for (SquareLabel label : row) {
+				label.deHighLight();
+			}
+		}
 	}
 
 	public String getResponse(String message) {

@@ -12,7 +12,7 @@ import model.Piece.Player;
  * @author zhang
  *
  */
-public class Record {
+public class Record implements Iterable<Move> {
 	private ArrayList<Move> list;
 	private EndGame endgame;
 
@@ -61,6 +61,7 @@ public class Record {
 		return list.get(time);
 	}
 
+	@Override
 	public Iterator<Move> iterator() {
 		return list.iterator();
 	}

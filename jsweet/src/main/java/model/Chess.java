@@ -3,6 +3,8 @@ package model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import model.Piece.Player;
 
@@ -519,5 +521,75 @@ public class Chess {
 		records.endGame(endgame);
 	}
 
+	/**
+	 * Create a move object for the standard chess record.
+	 * 
+	 * @param s
+	 *            String for the chess record
+	 * 
+	 * @return Move object representing the desired move
+	 * 
+	 */
+	public Move getMove(String s) throws InvalidMoveException {
+		Move move = null;
+
+		if (s.startsWith("O")) {
+			King king;
+			if (getWhoseTurn() == Player.WHITE) {
+				king = (King) white.get(0);
+			} else {
+				king = (King) black.get(0);
+			}
+
+			if (s.equals("O-O")) {
+				move = canCastling(king, false);
+			} else if (s.equals("O-O-O")) {
+				move = canCastling(king, true);
+			} else {
+				throw new InvalidMoveException(s, InvalidMoveException.Type.invalidFormat);
+			}
+
+			if (move != null) {
+				return move;
+			} else {
+				throw new InvalidMoveException(s, InvalidMoveException.Type.castleNotAllowed);
+			}
+		}
+
+		Pattern p = Pattern.compile("([PRNBQK])?([a-h])?([1-8])?.*?([a-h][1-8]).*");
+		Matcher m = p.matcher(s);
+		if (m.matches()) {
+			Class<? extends Piece> type = m.group(1) == null ? Pawn.class : Piece.getType(m.group(1).charAt(0));
+
+			Square start = null;
+			if ((m.group(2) != null) && (m.group(3) != null)) {
+				start = board.getSquare(m.group(2) + m.group(3));
+			}
+			Square end = board.getSquare(m.group(4));
+
+			if (start != null) {
+				Piece movedChessman = start.getPiece();
+				if (movedChessman == null) {
+					throw new InvalidMoveException(s, InvalidMoveException.Type.pieceNotPresent);
+				} else if (!(movedChessman.isType(type))) {
+					throw new InvalidMoveException(s, InvalidMoveException.Type.incorrectPiece);
+				}
+				move = movedChessman.getMove(end);
+			} else {
+				ArrayList<Piece> possible = possibleMovers(type, end);
+				if (possible.size() == 0) {
+					throw new InvalidMoveException(s, InvalidMoveException.Type.impossibleMove);
+				} else if (possible.size() == 1) {
+					move = possible.get(0).getMove(end);
+				} else {
+					throw new InvalidMoveException(s, InvalidMoveException.Type.ambiguousMove);
+				}
+			}
+		} else {
+			throw new InvalidMoveException(s, InvalidMoveException.Type.invalidFormat);
+		}
+
+		return move;
+	}
 
 }

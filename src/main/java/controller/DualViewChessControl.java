@@ -3,6 +3,7 @@ package controller;
 import model.Move;
 import model.Piece.Player;
 import view.ChessViewer;
+import view.IChessViewer;
 
 /**
  * 
@@ -13,8 +14,8 @@ import view.ChessViewer;
  *
  */
 public class DualViewChessControl extends ViewController {
-	private ChessViewer whiteView;
-	private ChessViewer blackView;
+	private IChessViewer whiteView;
+	private IChessViewer blackView;
 
 	/**
 	 * start my little chess game!!!!
@@ -29,15 +30,15 @@ public class DualViewChessControl extends ViewController {
 		updateChessBoard();
 	}
 
-	public ChessViewer chooesView(boolean whiteOrBlack) {
+	public IChessViewer chooesView(boolean whiteOrBlack) {
 		return whiteOrBlack ? whiteView : blackView;
 	}
 
 
 	protected void updateGuiAfterMove(Move previousMove) {
 		updateChessBoard();
-		ChessViewer pre = chooesView(previousMove.getWhoseTurn() == Player.WHITE);
-		ChessViewer next = chooesView(previousMove.getWhoseTurn() == Player.BLACK);
+		IChessViewer pre = chooesView(previousMove.getWhoseTurn() == Player.WHITE);
+		IChessViewer next = chooesView(previousMove.getWhoseTurn() == Player.BLACK);
 
 		pre.setStatusLabelText(chess.lastMoveDiscript());
 		next.setStatusLabelText(chess.lastMoveDiscript());

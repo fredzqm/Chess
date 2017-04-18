@@ -3,6 +3,7 @@ package controller;
 import model.Move;
 import model.Piece.Player;
 import view.ChessViewer;
+import view.IChessViewer;
 
 /**
  * The chess controller opens a single chess view
@@ -11,7 +12,7 @@ import view.ChessViewer;
  *
  */
 public class SingleViewChessControl extends ViewController {
-	private ChessViewer view;
+	private IChessViewer view;
 
 	/**
 	 * start my little chess game!!!!
@@ -26,7 +27,7 @@ public class SingleViewChessControl extends ViewController {
 	}
 
 	@Override
-	public ChessViewer chooesView(boolean whiteOrBlack) {
+	public IChessViewer chooesView(boolean whiteOrBlack) {
 		return view;
 	}
 

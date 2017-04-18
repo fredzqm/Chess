@@ -53,7 +53,7 @@ public class Pawn extends Piece {
 		return false;
 	}
 
-	protected Move getMove(Square end) {
+	public Move getMove(Square end) {
 		Move move = legalPosition(end);
 		if (move != null) {
 			if (chess.giveAwayKing(move))
@@ -84,7 +84,7 @@ public class Pawn extends Piece {
 		return move;
 	}
 
-	protected Move canAttack(Square end) {
+	public Move canAttack(Square end) {
 		if (legalPostionCapture(end)) {
 			if (canPromote(end))
 				return new Promotion(this, spot, end.getPiece(), end, chess.getRound());

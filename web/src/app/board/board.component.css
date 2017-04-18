@@ -1,13 +1,14 @@
-table tr td {
-  width: 20px;
-  height: 20px;
+table#chess div div {
+  width: 40px;
+  height: 40px;
   border: solid #000 1px;
+  float:left; 
 }
 
-table tr:nth-child(odd) td:nth-child(even) {
+table#chess div:nth-child(odd) div:nth-child(even) {
   background: #000;
 }
 
-table tr:nth-child(even) td:nth-child(odd) {
+table#chess div:nth-child(even) div:nth-child(odd) {
   background: #000;
 }

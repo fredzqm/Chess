@@ -1,7 +1,6 @@
 <table id='chess'>
 	<div *ngFor = "let row of pieces">
-		<div *ngFor = "let square of row">
-			<app-square [piece]= 'square'></app-square>
-		</div>
+		<app-square *ngFor = "let square of row"
+			[piece]="square"></app-square>
 	</div>
 </table>

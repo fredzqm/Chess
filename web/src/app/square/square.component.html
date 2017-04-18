@@ -1,5 +1,4 @@
-<div>
-	<span *ngIf='piece' [style.background-image]="'url(' + photo + ')'">
-		{{piece.type}}
-	</span>
+<div *ngIf='piece' 
+	[ngStyle]="style">
+	{{piece.type}}
 </div>

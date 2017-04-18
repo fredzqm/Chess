@@ -13,10 +13,12 @@ public interface IChessViewerControl {
 	/**
 	 * Invoked when chess board is clicked
 	 * 
-	 * @param squareLabel
-	 *            the label that got clicked
-	 * @param isWhiteView
+	 * @param file
+	 *            the file of this square clicked
+	 * @param rank
+	 *            the rank of this square clicked
+	 * @param whiteOrBlack
+	 *            the orientation of the view
 	 */
-	void click(SquareLabel squareLabel, boolean isWhiteView);
-
+	void click(int file, int rank, boolean whiteOrBlack);
 }

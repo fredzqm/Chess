@@ -116,14 +116,14 @@ public class Chess {
 
 	/**
 	 * 
-	 * @param x
+	 * @param file
 	 *            the file of the square
-	 * @param y
+	 * @param rank
 	 *            the rank of the square
 	 * @return the position of the square
 	 */
-	public Square spotAt(int x, int y) {
-		return board.spotAt(x, y);
+	public Square spotAt(int file, int rank) {
+		return board.spotAt(file, rank);
 	}
 
 	public Record getRecords() {

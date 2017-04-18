@@ -37,6 +37,11 @@ public abstract class ViewController implements IChessViewerControl {
 			+ "    Castling, Pawn, King, Queen, Rook, Bishop, Knight, En Passant, Promotion.";
 
 	public static final Map<String, String> rules = new HashMap<String, String>() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		{
 			put("castling",
 					"Only under those circumstances, you can castling\n"
@@ -153,10 +158,6 @@ public abstract class ViewController implements IChessViewerControl {
 		for (Square sqr : squares)
 			list.add(squareToLabel(sqr, view));
 		return list;
-	}
-
-	private Square labelToSquare(SquareLabel sql, Chess chess) {
-		return chess.spotAt(sql.X(), sql.Y());
 	}
 
 	public void resign(ChessViewer view, Chess chess) {
@@ -291,7 +292,7 @@ public abstract class ViewController implements IChessViewerControl {
 		}
 	}
 
-	public void click(SquareLabel label, boolean whiteOrBlack) {
+	public void click(int file, int rank, boolean whiteOrBlack) {
 		ChessViewer clickedView = chooesView(whiteOrBlack);
 		if (chess.hasEnd()) {
 			clickedView.printOut("Game is already over! Type restart to start a new game");
@@ -301,7 +302,7 @@ public abstract class ViewController implements IChessViewerControl {
 			clickedView.printOut("Please wait for your opponnet to finish");
 			return;
 		}
-		Square spot = labelToSquare(label, chess);
+		Square spot = chess.spotAt(file, rank);
 		if (chosen != null) {
 			Move move = chosen.getMove(spot);
 			if (move == null) {

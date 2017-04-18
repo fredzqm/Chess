@@ -71,7 +71,7 @@ public class SquareLabel extends JLabel {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				chess.click(SquareLabel.this, isWhite);
+				chess.click(x, y, isWhite);
 			}
 		});
 	}
@@ -81,14 +81,6 @@ public class SquareLabel extends JLabel {
 
 	public String toString() {
 		return "(" + x + "," + y + ")";
-	}
-
-	public int X() {
-		return x;
-	}
-
-	public int Y() {
-		return y;
 	}
 
 	public boolean isHighLight() {

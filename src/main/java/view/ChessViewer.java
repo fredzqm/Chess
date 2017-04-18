@@ -15,7 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 @SuppressWarnings("serial")
-public class ChessViewer extends JFrame {
+public class ChessViewer extends JFrame implements IChessViewer {
 	
 	private static final Font FONT_STATUS_LABEL = new Font("Serif", Font.PLAIN, 40);
 	private static final int CONSOLE_FONT_SIZE = 20;
@@ -119,11 +119,7 @@ public class ChessViewer extends JFrame {
 		return isWhiteView ? labels[file][8 - rank] : labels[9 - file][rank - 1];
 	}
 
-	/**
-	 * print the message in the console.
-	 * 
-	 * @param message
-	 */
+	@Override
 	public void printOut(String message) {
 		existence = myConsole.getText();
 		if (message != null) {
@@ -132,40 +128,27 @@ public class ChessViewer extends JFrame {
 		}
 	}
 
-	/**
-	 * print out the temporal string in the console, without updating the
-	 * record. The temp string printed can be clear with
-	 * {@link ChessViewer#cleanTemp()}
-	 * 
-	 * @param temp
-	 */
+	@Override
 	public void printTemp(String temp) {
 		myConsole.setText(existence + temp);
 	}
 
-	/**
-	 * erase the temporal string in the console printed by
-	 * {@link ChessViewer#printTemp(String)}
-	 */
+	@Override
 	public void cleanTemp() {
 		myConsole.setText(existence);
 	}
 
-	/**
-	 * 
-	 * @param str
-	 */
+	@Override
 	public void setStatusLabelText(String str) {
 		statusLabel.setText(str);
 	}
 
+	@Override
 	public void highLight(int file, int rank) {
 		labelAt(file, rank).highLight();
 	}
 
-	/**
-	 * dehighlight the whole board
-	 */
+	@Override
 	public void deHighLightWholeBoard() {
 		for (SquareLabel[] row : this.labels) {
 			for (SquareLabel label : row) {
@@ -174,6 +157,7 @@ public class ChessViewer extends JFrame {
 		}
 	}
 
+	@Override
 	public String getResponse(String message) {
 		return JOptionPane.showInputDialog(message);
 	}
@@ -195,5 +179,16 @@ public class ChessViewer extends JFrame {
 		}
 
 	}
+
+	@Override
+	public void upDatePiece(int file, int rank, ChessPieceType pieceType, boolean whiteOrBlack) {
+		labelAt(file, rank).upDatePiece(pieceType, whiteOrBlack);
+	}
+
+	@Override
+	public void clearLabel(int file, int rank) {
+		labelAt(file, rank).clearLabel();
+	}
+
 
 }

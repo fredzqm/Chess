@@ -36,8 +36,9 @@ namespace model {
             if(this.capturedPiece != null) chess.putBackToBoard(this.capturedPiece, this.lastPosition);
         }
 
-        public getWhoseTurn() : Player {
-            return this.playerColor;
+        public performMove(chess : Chess) {
+            if(this.capturedPiece != null) chess.takeOffBoard(this.capturedPiece);
+            this.movedPiece.moveTo(this.lastPosition);
         }
     }
     RegularMove["__class"] = "model.RegularMove";

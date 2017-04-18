@@ -3,8 +3,9 @@ package model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Iterator;
+//import java.util.regex.Matcher;
+//import java.util.regex.Pattern;
 
 import model.Piece.Player;
 
@@ -233,7 +234,9 @@ public class Chess {
 		else
 			inCheck = black;
 		for (Piece i : inCheck) {
-			for (Square p : board) {
+			Iterator<Square> itr = board.iterator();
+			while (itr.hasNext()) {
+				Square p = itr.next();
 				if (i.canGo(p)) {
 					return false;
 				}
@@ -523,45 +526,45 @@ public class Chess {
 				throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.castleNotAllowed);
 			}
 		}
-
-		Pattern p = Pattern.compile("([PRNBQK])?([a-h])?([1-8])?([-x])?([a-h][1-8])(=[RNBQ])?(.*)");
-		Matcher m = p.matcher(moveCommand);
-		if (m.matches()) {
-			Class<? extends Piece> type = m.group(1) == null ? Pawn.class : Piece.getType(m.group(1).charAt(0));
-			Square start = null;
-			if ((m.group(2) != null) && (m.group(3) != null)) {
-				start = board.getSquare(m.group(2) + m.group(3));
-			}
-			Square end = board.getSquare(m.group(5));
-			if (start != null) {
-				Piece movedPiece = start.getPiece();
-				if (movedPiece == null) {
-					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.pieceNotPresent);
-				} else if (!(movedPiece.isType(type))) {
-					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.incorrectPiece);
-				}
-				move = movedPiece.getMove(end);
-			} else {
-				ArrayList<Piece> possible = possibleMovers(type, end);
-				if (possible.size() == 0) {
-					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.impossibleMove);
-				} else if (possible.size() == 1) {
-					move = possible.get(0).getMove(end);
-				} else {
-					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.ambiguousMove);
-				}
-			}
-			if (move instanceof Promotion) {
-				Promotion promotion = (Promotion) move;
-				if (m.group(6) == null)
-					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.promotionTo);
-				Class<? extends Piece> promotToClass = Piece.getType(m.group(6).charAt(1));
-				promotion.setPromoteTo(promotToClass);
-			}
-			return move;
-		} else {
-			throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.invalidFormat);
-		}
+		return move;
+//		Pattern p = Pattern.compile("([PRNBQK])?([a-h])?([1-8])?([-x])?([a-h][1-8])(=[RNBQ])?(.*)");
+//		Matcher m = p.matcher(moveCommand);
+//		if (m.matches()) {
+//			Class<? extends Piece> type = m.group(1) == null ? Pawn.class : Piece.getType(m.group(1).charAt(0));
+//			Square start = null;
+//			if ((m.group(2) != null) && (m.group(3) != null)) {
+//				start = board.getSquare(m.group(2) + m.group(3));
+//			}
+//			Square end = board.getSquare(m.group(5));
+//			if (start != null) {
+//				Piece movedPiece = start.getPiece();
+//				if (movedPiece == null) {
+//					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.pieceNotPresent);
+//				} else if (!(movedPiece.isType(type))) {
+//					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.incorrectPiece);
+//				}
+//				move = movedPiece.getMove(end);
+//			} else {
+//				ArrayList<Piece> possible = possibleMovers(type, end);
+//				if (possible.size() == 0) {
+//					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.impossibleMove);
+//				} else if (possible.size() == 1) {
+//					move = possible.get(0).getMove(end);
+//				} else {
+//					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.ambiguousMove);
+//				}
+//			}
+//			if (move instanceof Promotion) {
+//				Promotion promotion = (Promotion) move;
+//				if (m.group(6) == null)
+//					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.promotionTo);
+//				Class<? extends Piece> promotToClass = Piece.getType(m.group(6).charAt(1));
+//				promotion.setPromoteTo(promotToClass);
+//			}
+//			return move;
+//		} else {
+//			throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.invalidFormat);
+//		}
 	}
 
 }

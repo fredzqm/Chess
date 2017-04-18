@@ -114,12 +114,9 @@ namespace model {
             return this.capturedPiece != null || this.movedPiece.isType(Pawn);
         }
 
-        public performMove(chess : Chess) {
-            if(this.capturedPiece != null) chess.takeOffBoard(this.capturedPiece);
-            this.movedPiece.moveTo(this.lastPosition);
-        }
-
         public abstract getDescript() : string;
+
+        public abstract performMove(chess : Chess);
 
         public abstract undo(chess : Chess);
     }

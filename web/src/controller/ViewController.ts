@@ -2,15 +2,13 @@
 namespace controller {
     import ArrayList = java.util.ArrayList;
 
-    import Collection = java.util.Collection;
-
     import HashMap = java.util.HashMap;
+
+    import Iterator = java.util.Iterator;
 
     import Map = java.util.Map;
 
     import Chess = model.Chess;
-
-    import ChessGameException = model.ChessGameException;
 
     import Draw = model.Draw;
 
@@ -24,6 +22,8 @@ namespace controller {
 
     import Player = model.Piece.Player;
 
+    import Promotion = model.Promotion;
+
     import Record = model.Record;
 
     import Square = model.Square;
@@ -32,11 +32,9 @@ namespace controller {
 
     import ChessPieceType = view.ChessPieceType;
 
-    import ChessViewer = view.ChessViewer;
+    import IChessViewer = view.IChessViewer;
 
     import IChessViewerControl = view.IChessViewerControl;
-
-    import SquareLabel = view.SquareLabel;
 
     export abstract class ViewController implements IChessViewerControl {
         private chosen : Piece;
@@ -49,7 +47,7 @@ namespace controller {
 
         public static HELP_MESSAGE : string = "Enter commands:\nenter \'undo\' to undo the previous round;\nenter \'restart\' to start a new game over;\n\'enter \'print\' to print all the records;\nenter \'resign\' to give up;\nenter \'draw\' to request for draw;\nenter complete or abbreviated algebraic chess notation to make a move;\nenter \'rules for ....\' to get help about the rules of chess.\n    Castling, Pawn, King, Queen, Rook, Bishop, Knight, En Passant, Promotion.";
 
-        public static rules : HashMap<string, string>; public static rules_$LI$() : HashMap<string, string> { if(ViewController.rules == null) ViewController.rules = new ViewController.ViewController$0(); return ViewController.rules; };
+        public static rules : Map<string, string>; public static rules_$LI$() : Map<string, string> { if(ViewController.rules == null) ViewController.rules = new ViewController.ViewController$0(); return ViewController.rules; };
 
         public constructor() {
             this.chess = new Chess();
@@ -60,35 +58,29 @@ namespace controller {
         private restart() {
             this.chess = new Chess();
             this.chosen = null;
-            let white : ChessViewer = this.chooesView(true);
-            let black : ChessViewer = this.chooesView(false);
+            let white : IChessViewer = this.chooesView(true);
+            let black : IChessViewer = this.chooesView(false);
             this.restartView(white);
             if(black !== white) this.restartView(black);
         }
 
-        private restartView(view : ChessViewer) {
+        private restartView(view : IChessViewer) {
             view.deHighLightWholeBoard();
             view.setStatusLabelText("       Welcome to Another Wonderful Chess Game         ");
             view.printOut("Start a new game!");
         }
 
-        private repaintAll(view : ChessViewer) {
-            let board : Collection<Square> = this.chess.getAllSquares();
-            for(let index121=board.iterator();index121.hasNext();) {
-                let sq = index121.next();
-                {
-                    this.updateSquare(view, sq);
+        private repaintAll(view : IChessViewer) {
+            let itr : Iterator<Square> = this.chess.getBoard().iterator();
+            while((itr.hasNext())){
+                let sq : Square = itr.next();
+                if(sq.isOccupied()) {
+                    view.upDatePiece(sq.getX(), sq.getY(), ChessPieceType.from(sq.getPiece().getType()), sq.getPiece().getWhiteOrBlack() === Player.WHITE);
+                } else {
+                    view.clearLabel(sq.getX(), sq.getY());
                 }
-            }
+            };
             view.repaint();
-        }
-
-        private updateSquare(view : ChessViewer, sq : Square) {
-            if(sq.isOccupied()) {
-                view.labelAt(sq.getX(), sq.getY()).upDatePiece(ChessPieceType_$WRAPPER.from(sq.getPiece().getType()), sq.getPiece().getWhiteOrBlack() === Player.WHITE);
-            } else {
-                view.labelAt(sq.getX(), sq.getY()).clearLabel();
-            }
         }
 
         /**
@@ -96,7 +88,7 @@ namespace controller {
          * will undo two moves.
          * 
          */
-        private undo(chess : Chess, view : ChessViewer) {
+        private undo(chess : Chess, view : IChessViewer) {
             if(!chess.undoLastMove()) view.printOut("It is already the start of Game"); else view.printOut("Undo the Previous Move!");
         }
 
@@ -107,7 +99,7 @@ namespace controller {
          * @param whiteOrBlack
          * @return
          */
-        private showRules(command : string, view : ChessViewer, rules : Map<string, string>) {
+        private showRules(command : string, view : IChessViewer, rules : Map<string, string>) {
             if(rules.containsKey(command)) view.printOut(rules.get(command));
             view.printOut("You can get rules for castling, pawn, king, queen, rook, bishop, knight, En Passant, promotion");
         }
@@ -119,7 +111,7 @@ namespace controller {
          * 
          * @return records
          */
-        private printRecords(view : ChessViewer, chess : Chess) {
+        private printRecords(view : IChessViewer, chess : Chess) {
             let records : Record = chess.getRecords();
             if(records.isEmpty()) {
                 view.printOut("Game hasn\'t started yet.");
@@ -128,24 +120,7 @@ namespace controller {
             view.printOut(records.printDoc());
         }
 
-        private squareToLabel(sqr : Square, view : ChessViewer) : SquareLabel {
-            return view.labelAt(sqr.getX(), sqr.getY());
-        }
-
-        private getAllViewLabels(squares : ArrayList<Square>, view : ChessViewer) : ArrayList<SquareLabel> {
-            let list : ArrayList<SquareLabel> = <any>(new ArrayList<SquareLabel>());
-            for(let index122=squares.iterator();index122.hasNext();) {
-                let sqr = index122.next();
-                list.add(this.squareToLabel(sqr, view))
-            }
-            return list;
-        }
-
-        private labelToSquare(sql : SquareLabel, chess : Chess) : Square {
-            return chess.spotAt(sql.X(), sql.Y());
-        }
-
-        public resign(view : ChessViewer, chess : Chess) {
+        public resign(view : IChessViewer, chess : Chess) {
             let canClaimDraw : Draw = chess.canClaimDraw();
             if(canClaimDraw != null) {
                 view.printOut("Actually, you can go with a draw!");
@@ -162,8 +137,8 @@ namespace controller {
         private askForDraw(whiteOrBlack : boolean) {
             let canClaimDraw : Draw = this.chess.canClaimDraw();
             if(canClaimDraw == null) {
-                let request : ChessViewer = this.chooesView(whiteOrBlack);
-                let response : ChessViewer = this.chooesView(!whiteOrBlack);
+                let request : IChessViewer = this.chooesView(whiteOrBlack);
+                let response : IChessViewer = this.chooesView(!whiteOrBlack);
                 if(this.drawManager.canAskFordraw(whiteOrBlack)) {
                     while((true)){
                         response.printOut(ViewController.side(whiteOrBlack) + " ask for draw, do you agreed?");
@@ -187,8 +162,8 @@ namespace controller {
         }
 
         updateChessBoard() {
-            let white : ChessViewer = this.chooesView(true);
-            let black : ChessViewer = this.chooesView(false);
+            let white : IChessViewer = this.chooesView(true);
+            let black : IChessViewer = this.chooesView(false);
             this.repaintAll(white);
             if(black !== white) this.repaintAll(black);
         }
@@ -203,10 +178,13 @@ namespace controller {
          * the input command
          * @return
          */
-        public makeMove(view : ChessViewer, moveCommand : string) : boolean {
+        public makeMove(view : IChessViewer, moveCommand : string) : boolean {
             let move : Move = null;
             try {
-                move = this.chess.getMove(moveCommand);
+                move = this.chess.interpreteMoveCommand(moveCommand);
+                this.chess.makeMove(move);
+                this.updateGuiAfterMove(move);
+                return true;
             } catch(e) {
                 switch((e.type)) {
                 case model.InvalidMoveException.Type.invalidFormat:
@@ -227,17 +205,18 @@ namespace controller {
                 case model.InvalidMoveException.Type.pieceNotPresent:
                     view.printOut("There is no piece at the start position.");
                     break;
+                case model.InvalidMoveException.Type.promotionTo:
+                    view.printOut("You should specify what piece you want to promote to");
+                    break;
+                default:
+                    throw new Error(e);
                 }
+                return false;
             };
-            if(move != null) {
-                this.chess.makeMove(move);
-                return true;
-            }
-            return false;
         }
 
         public handleCommand(input : string, whiteOrBlack : boolean) {
-            let view : ChessViewer = this.chooesView(whiteOrBlack);
+            let view : IChessViewer = this.chooesView(whiteOrBlack);
             if(input.length === 0) return;
             if((input === "print")) {
                 this.printRecords(view, this.chess);
@@ -246,7 +225,6 @@ namespace controller {
             } else if(/* startsWith */((str, searchString, position = 0) => str.substr(position, searchString.length) === searchString)(input, "rules for ")) {
                 this.showRules(input.substring(10), view, ViewController.rules_$LI$());
             } else if((input === "quit")) {
-                java.lang.System.exit(0);
             } else if((input === "restart")) {
                 this.restart();
                 this.updateChessBoard();
@@ -268,41 +246,49 @@ namespace controller {
             }
         }
 
-        public click(label : SquareLabel, whiteOrBlack : boolean) {
-            let clickedView : ChessViewer = this.chooesView(whiteOrBlack);
+        public click(file : number, rank : number, whiteOrBlack : boolean) {
+            let clickedView : IChessViewer = this.chooesView(whiteOrBlack);
             if(this.chess.hasEnd()) {
                 clickedView.printOut("Game is already over! Type restart to start a new game");
-            } else {
-                if(clickedView !== this.chooesView(this.chess.getWhoseTurn() === Player.WHITE)) {
-                    clickedView.printOut("Please wait for your opponnet to finish");
-                    return;
-                }
-                let spot : Square = this.labelToSquare(label, this.chess);
-                if(this.chosen != null) {
-                    if(label.isHighLight() && !spot.equals(this.chosen.getSpot())) {
-                        let move : Move;
-                        if((move = this.chess.performMove(this.chosen, spot)) == null) {
-                            throw new ChessGameException("Illegal move of " + this.chosen.getName() + " did not correctly caught from UI!");
-                        } else {
-                            this.updateGuiAfterMove(move);
-                        }
-                    } else clickedView.cleanTemp();
-                    this.chosen = null;
-                    clickedView.deHighLightWholeBoard();
+                return;
+            }
+            if(clickedView !== this.chooesView(this.chess.getWhoseTurn() === Player.WHITE)) {
+                clickedView.printOut("Please wait for your opponnet to finish");
+                return;
+            }
+            let spot : Square = this.chess.spotAt(file, rank);
+            if(this.chosen != null) {
+                let move : Move = this.chosen.getMove(spot);
+                if(move == null) {
+                    clickedView.cleanTemp();
                 } else {
-                    if(spot.occupiedBy(this.chess.getWhoseTurn())) {
-                        this.chosen = spot.getPiece();
-                        let reachable : ArrayList<Square> = this.chosen.getReachableSquares();
-                        reachable.add(spot);
-                        let hightlight : ArrayList<SquareLabel> = this.getAllViewLabels(reachable, this.chooesView(whiteOrBlack));
-                        clickedView.highLightAll(hightlight);
-                        if(spot.getPiece().isType(Pawn)) clickedView.printTemp(spot.toString()); else clickedView.printTemp(spot.getPiece().getType() + spot.toString());
+                    if(move != null && move instanceof model.Promotion) {
+                        let promotion : Promotion = <Promotion>move;
+                        let promoteTo : string = clickedView.getResponse("What do you want to promote to?");
+                        promotion.setPromoteTo(Piece.getType(promoteTo.charAt(0)));
                     }
+                    this.chess.makeMove(move);
+                    this.updateGuiAfterMove(move);
+                }
+                this.chosen = null;
+                clickedView.deHighLightWholeBoard();
+            } else {
+                if(spot.occupiedBy(this.chess.getWhoseTurn())) {
+                    this.chosen = spot.getPiece();
+                    let reachable : ArrayList<Square> = this.chosen.getReachableSquares();
+                    reachable.add(spot);
+                    for(let index121=reachable.iterator();index121.hasNext();) {
+                        let sqr = index121.next();
+                        {
+                            clickedView.highLight(sqr.getX(), sqr.getY());
+                        }
+                    }
+                    if(spot.getPiece().isType(Pawn)) clickedView.printTemp(spot.toString()); else clickedView.printTemp(spot.getPiece().getType() + spot.toString());
                 }
             }
         }
 
-        public abstract chooesView(whiteOrBlack : boolean) : ChessViewer;
+        public abstract chooesView(whiteOrBlack : boolean) : IChessViewer;
 
         /**
          * print messages and update GUI when this move just get accomplished
@@ -323,6 +309,11 @@ namespace controller {
     export namespace ViewController {
 
         export class ViewController$0 extends HashMap<string, string> {
+            /**
+             * 
+             */
+            static serialVersionUID : number = 1;
+
             constructor() {
                 super();
                 (() => {

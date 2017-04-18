@@ -26,26 +26,17 @@ namespace model {
         }
 
         public getDoc() : string {
+            this.checkPromotedTo();
             return super.getDoc() + "(" + this.promotedTo.getType() + ")";
         }
 
         public getPrintOut() : string {
+            this.checkPromotedTo();
             return this.getDoc() + " Successfully promote to " + this.promotedTo.getName() + "!";
         }
 
-        public undo(chess : Chess) {
-            chess.takeOffBoard(this.promotedTo);
-            chess.putBackToBoard(this.movedPiece, this.startPosition);
-            if(this.capturedPiece != null) {
-                chess.putBackToBoard(this.capturedPiece, this.lastPosition);
-            }
-        }
-
-        public notQuiet() : boolean {
-            return true;
-        }
-
         public getDescript() : string {
+            this.checkPromotedTo();
             let s : string = "";
             if(this.playerColor === Player.WHITE) s += "White "; else s += "Black ";
             s += "Pawn promotes to ";
@@ -53,12 +44,43 @@ namespace model {
             return s;
         }
 
+        public notQuiet() : boolean {
+            return true;
+        }
+
+        public undo(chess : Chess) {
+            if(this.promotedTo == null) {
+                this.movedPiece.moveTo(this.startPosition);
+            } else {
+                chess.takeOffBoard(this.promotedTo);
+                chess.putBackToBoard(this.movedPiece, this.startPosition);
+            }
+            if(this.capturedPiece != null) chess.putBackToBoard(this.capturedPiece, this.lastPosition);
+        }
+
         public performMove(chess : Chess) {
             if(this.capturedPiece != null) chess.takeOffBoard(this.capturedPiece);
-            this.movedPiece.moveTo(this.lastPosition);
-            this.promotedTo = chess.promotion(this.playerColor, this.lastPosition);
-            chess.takeOffBoard(this.capturedPiece);
-            chess.putBackToBoard(this.promotedTo, this.lastPosition);
+            if(this.promotedTo == null) {
+                this.movedPiece.moveTo(this.lastPosition);
+            } else {
+                chess.takeOffBoard(this.movedPiece);
+                chess.putBackToBoard(this.promotedTo, this.lastPosition);
+            }
+        }
+
+        public setPromoteTo(promotToClass : any) {
+            this.promotedTo = this.getPromotedPiece(promotToClass);
+        }
+
+        private getPromotedPiece(promotToClass : any) : Piece {
+            if(promotToClass.equals(Queen)) return new Queen(this.playerColor, this.lastPosition, this.movedPiece.chess); else if(promotToClass.equals(Knight)) return new Knight(this.playerColor, this.lastPosition, this.movedPiece.chess);
+            if(promotToClass.equals(Rook)) return new Rook(this.playerColor, this.lastPosition, this.movedPiece.chess);
+            if(promotToClass.equals(Bishop)) return new Bishop(this.playerColor, this.lastPosition, this.movedPiece.chess);
+            throw new Error("Invalid type of piece to promote to");
+        }
+
+        private checkPromotedTo() {
+            if(this.promotedTo == null) throw new Error("promtedTo is not specified");
         }
     }
     Promotion["__class"] = "model.Promotion";

@@ -6,6 +6,8 @@ namespace model {
 
     import Collections = java.util.Collections;
 
+    import Iterator = java.util.Iterator;
+
     import Player = model.Piece.Player;
 
     /**
@@ -103,18 +105,14 @@ namespace model {
 
         /**
          * 
-         * @param x
+         * @param file
          * the file of the square
-         * @param y
+         * @param rank
          * the rank of the square
          * @return the position of the square
          */
-        public spotAt(x : number, y : number) : Square {
-            return this.board.spotAt(x, y);
-        }
-
-        public getAllSquares() : Collection<Square> {
-            return this.list;
+        public spotAt(file : number, rank : number) : Square {
+            return this.board.spotAt(file, rank);
         }
 
         public getRecords() : Record {
@@ -137,8 +135,8 @@ namespace model {
             let possible : ArrayList<Piece> = <any>(new ArrayList<Piece>());
             let set : ArrayList<Piece>;
             if(this.getWhoseTurn() === Player.WHITE) set = this.white; else set = this.black;
-            for(let index121=set.iterator();index121.hasNext();) {
-                let i = index121.next();
+            for(let index122=set.iterator();index122.hasNext();) {
+                let i = index122.next();
                 {
                     if(i.isType(type) && i.canGo(end)) possible.add(i);
                 }
@@ -188,8 +186,8 @@ namespace model {
         public isAttacked(whiteOrBlack : boolean, square : Square) : boolean {
             let attacker : ArrayList<Piece>;
             if(whiteOrBlack) attacker = this.white; else attacker = this.black;
-            for(let index122=attacker.iterator();index122.hasNext();) {
-                let i = index122.next();
+            for(let index123=attacker.iterator();index123.hasNext();) {
+                let i = index123.next();
                 {
                     if(i.canAttack(square) != null) return true;
                 }
@@ -212,17 +210,16 @@ namespace model {
         private checkMate(checked : boolean) : boolean {
             let inCheck : ArrayList<Piece>;
             if(checked) inCheck = this.white; else inCheck = this.black;
-            for(let index123=inCheck.iterator();index123.hasNext();) {
-                let i = index123.next();
+            for(let index124=inCheck.iterator();index124.hasNext();) {
+                let i = index124.next();
                 {
-                    for(let index124=this.getAllSquares().iterator();index124.hasNext();) {
-                        let p = index124.next();
-                        {
-                            if(i.canGo(p)) {
-                                return false;
-                            }
+                    let itr : Iterator<Square> = this.board.iterator();
+                    while((itr.hasNext())){
+                        let p : Square = itr.next();
+                        if(i.canGo(p)) {
+                            return false;
                         }
-                    }
+                    };
                 }
             }
             return true;
@@ -295,14 +292,14 @@ namespace model {
          * @return the castling move if it is legal to make the castling of this
          * side right now, null otherwise
          */
-        public canCastling(k : King, longOrShort : boolean) : Move {
-            if(longOrShort) {
-                if(this.canNotLongCastling(k.getY(), k.getWhiteOrBlack() === Player.BLACK)) return null;
-                return new Castling(k, k.getSpot(), this.spotAt(3, k.getY()), <Rook>(this.spotAt(1, k.getY()).getPiece()), this.spotAt(1, k.getY()), this.getRound());
-            } else {
-                if(this.canNotShortCastling(k.getY(), k.getWhiteOrBlack() === Player.BLACK)) return null;
-                return new Castling(k, k.getSpot(), this.spotAt(7, k.getY()), <Rook>(this.spotAt(8, k.getY()).getPiece()), this.spotAt(8, k.getY()), this.getRound());
-            }
+        public canShortCastling(k : King) : Move {
+            if(this.canNotShortCastling(k.getY(), k.getWhiteOrBlack() === Player.BLACK)) return null;
+            return new Castling(k, k.getSpot(), this.spotAt(7, k.getY()), <Rook>(this.spotAt(8, k.getY()).getPiece()), this.spotAt(8, k.getY()), this.getRound());
+        }
+
+        public canLongCastling(k : King) : Move {
+            if(this.canNotLongCastling(k.getY(), k.getWhiteOrBlack() === Player.BLACK)) return null;
+            return new Castling(k, k.getSpot(), this.spotAt(3, k.getY()), <Rook>(this.spotAt(1, k.getY()).getPiece()), this.spotAt(1, k.getY()), this.getRound());
         }
 
         private canNotLongCastling(y : number, attack : boolean) : boolean {
@@ -403,23 +400,6 @@ namespace model {
         }
 
         /**
-         * This method will be called if the user request to make a castling.
-         * 
-         * @param longOrShort
-         * @return
-         */
-        public castling(longOrShort : boolean) : boolean {
-            let king : King;
-            if(this.getWhoseTurn() === Player.WHITE) king = <King>this.white.get(0); else king = <King>this.black.get(0);
-            let move : Move = this.canCastling(king, longOrShort);
-            if(move != null) {
-                this.makeMove(move);
-                return true;
-            }
-            return false;
-        }
-
-        /**
          * All moves from the user input will go throw this method
          * 
          * @param move
@@ -443,10 +423,6 @@ namespace model {
             }
         }
 
-        promotion(c : Player, end : Square) : Piece {
-            return new Queen(c, end, this);
-        }
-
         /**
          * record end game information and send message to control
          * 
@@ -455,6 +431,40 @@ namespace model {
          */
         public endGame(endgame : EndGame) {
             this.records.endGame(endgame);
+        }
+
+        /**
+         * Create a move object for the standard chess record.
+         * 
+         * @param moveCommand
+         * String for the chess record
+         * 
+         * @return Move object representing the desired move
+         * 
+         */
+        public interpreteMoveCommand(moveCommand : string) : Move {
+            let move : Move = null;
+            if(/* startsWith */((str, searchString, position = 0) => str.substr(position, searchString.length) === searchString)(moveCommand, "O")) {
+                let king : King;
+                if(this.getWhoseTurn() === Player.WHITE) {
+                    king = <King>this.white.get(0);
+                } else {
+                    king = <King>this.black.get(0);
+                }
+                if((moveCommand === "O-O")) {
+                    move = this.canShortCastling(king);
+                } else if((moveCommand === "O-O-O")) {
+                    move = this.canLongCastling(king);
+                } else {
+                    throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.invalidFormat);
+                }
+                if(move != null) {
+                    return move;
+                } else {
+                    throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.castleNotAllowed);
+                }
+            }
+            return move;
         }
     }
     Chess["__class"] = "model.Chess";

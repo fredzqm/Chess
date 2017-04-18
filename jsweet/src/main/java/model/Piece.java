@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * The super class for all different kinds of pieces.
@@ -161,9 +162,12 @@ public abstract class Piece implements Comparable<Piece> {
 	 */
 	public ArrayList<Square> getReachableSquares() {
 		ArrayList<Square> list = new ArrayList<>();
-		for (Square i : this.chess.getBoard())
+		Iterator<Square> itr = chess.getBoard().iterator();
+		while (itr.hasNext()) {
+			Square i = itr.next();
 			if (this.canGo(i))
 				list.add(i);
+		}
 		return list;
 	}
 

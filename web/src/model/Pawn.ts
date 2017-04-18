@@ -41,7 +41,7 @@ namespace model {
             return false;
         }
 
-        getMove(end : Square) : Move {
+        public getMove(end : Square) : Move {
             let move : Move = this.legalPosition(end);
             if(move != null) {
                 if(this.chess.giveAwayKing(move)) return null;
@@ -65,7 +65,7 @@ namespace model {
             return move;
         }
 
-        canAttack(end : Square) : Move {
+        public canAttack(end : Square) : Move {
             if(this.legalPostionCapture(end)) {
                 if(this.canPromote(end)) return new Promotion(this, this.spot, end.getPiece(), end, this.chess.getRound());
                 return new RegularMove(this, this.spot, end.getPiece(), end);

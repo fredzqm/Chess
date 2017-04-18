@@ -25,15 +25,15 @@ namespace model {
             }
         }
 
-        getMove(end : Square) : Move {
+        public getMove(end : Square) : Move {
             if(end.occupiedBy(this.color)) return null;
             let legalMove : Move = this.legalPosition(end);
             if(legalMove == null) {
                 if(this.getX() === 5 && this.getY() === end.getY()) {
                     if(end.getX() === 3) {
-                        return this.chess.canCastling(this, true);
+                        return this.chess.canLongCastling(this);
                     } else if(end.getX() === 7) {
-                        return this.chess.canCastling(this, false);
+                        return this.chess.canShortCastling(this);
                     }
                 }
                 return null;

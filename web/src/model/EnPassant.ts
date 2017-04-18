@@ -40,6 +40,11 @@ namespace model {
                 chess.putBackToBoard(this.capturedPiece, this.pawnPos);
             }
         }
+
+        public performMove(chess : Chess) {
+            if(this.capturedPiece != null) chess.takeOffBoard(this.capturedPiece);
+            this.movedPiece.moveTo(this.lastPosition);
+        }
     }
     EnPassant["__class"] = "model.EnPassant";
 

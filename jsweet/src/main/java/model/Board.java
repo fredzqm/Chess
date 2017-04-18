@@ -10,7 +10,7 @@ import model.Piece.Player;
  * @author zhang
  *
  */
-public class Board implements Iterable<Square> {
+public class Board  {
 	private Square[][] spots;
 
 	/**
@@ -79,7 +79,6 @@ public class Board implements Iterable<Square> {
 		return sb.toString();
 	}
 
-	@Override
 	public Iterator<Square> iterator() {
 		return new BoardIterator();
 	}

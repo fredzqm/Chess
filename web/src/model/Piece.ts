@@ -2,6 +2,8 @@
 namespace model {
     import ArrayList = java.util.ArrayList;
 
+    import Iterator = java.util.Iterator;
+
     /**
      * The super class for all different kinds of pieces.
      * 
@@ -137,7 +139,7 @@ namespace model {
          * @return the legal move of this piece toward the end Square, {@Code null}
          * if this move is illegal
          */
-        getMove(end : Square) : Move {
+        public getMove(end : Square) : Move {
             if(end.occupiedBy(this.color)) return null;
             let legalMove : Move = this.legalPosition(end);
             if(legalMove == null) return null;
@@ -152,10 +154,11 @@ namespace model {
          */
         public getReachableSquares() : ArrayList<Square> {
             let list : ArrayList<Square> = <any>(new ArrayList<any>());
-            for(let index125=this.chess.getAllSquares().iterator();index125.hasNext();) {
-                let i = index125.next();
+            let itr : Iterator<Square> = this.chess.getBoard().iterator();
+            while((itr.hasNext())){
+                let i : Square = itr.next();
                 if(this.canGo(i)) list.add(i);
-            }
+            };
             return list;
         }
 
@@ -170,7 +173,7 @@ namespace model {
          * the spot to attack
          * @return true if this piece can attack this spot
          */
-        canAttack(end : Square) : Move {
+        public canAttack(end : Square) : Move {
             if(this.spot == null) return null;
             return this.legalPosition(end);
         }

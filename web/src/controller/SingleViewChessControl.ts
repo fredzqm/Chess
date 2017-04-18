@@ -4,7 +4,7 @@ namespace controller {
 
     import Player = model.Piece.Player;
 
-    import ChessViewer = view.ChessViewer;
+    import IChessViewer = view.IChessViewer;
 
     /**
      * The chess controller opens a single chess view
@@ -12,7 +12,7 @@ namespace controller {
      * @author zhang
      */
     export class SingleViewChessControl extends ViewController {
-        private view : ChessViewer;
+        private view : IChessViewer;
 
         /**
          * start my little chess game!!!!
@@ -22,11 +22,10 @@ namespace controller {
          */
         public constructor() {
             super();
-            this.view = new ChessViewer(this, "The Great Chess Game", true);
             this.updateChessBoard();
         }
 
-        public chooesView(whiteOrBlack : boolean) : ChessViewer {
+        public chooesView(whiteOrBlack : boolean) : IChessViewer {
             return this.view;
         }
 

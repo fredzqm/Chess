@@ -1,5 +1,7 @@
 /* Generated from Java with JSweet 1.2.0 - http://www.jsweet.org */
 namespace model {
+    import Iterator = java.util.Iterator;
+
     import Player = model.Piece.Player;
 
     /**
@@ -72,8 +74,39 @@ namespace model {
             }
             return sb.toString();
         }
+
+        public iterator() : Iterator<Square> {
+            return new Board.BoardIterator(this);
+        }
     }
     Board["__class"] = "model.Board";
+
+
+    export namespace Board {
+
+        export class BoardIterator implements Iterator<Square> {
+            public __parent: any;
+            i : number;
+
+            public hasNext() : boolean {
+                return this.i !== 63;
+            }
+
+            public next() : Square {
+                this.i++;
+                return this.__parent.spots[this.i % 8][(this.i / 8|0)];
+            }
+
+            constructor(__parent: any) {
+                this.__parent = __parent;
+                this.i = -1;
+            }
+        }
+        BoardIterator["__class"] = "model.Board.BoardIterator";
+        BoardIterator["__interfaces"] = ["java.util.Iterator"];
+
+
+    }
 
 }
 

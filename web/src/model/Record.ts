@@ -12,7 +12,7 @@ namespace model {
      * 
      * @author zhang
      */
-    export class Record {
+    export class Record implements java.lang.Iterable<Move> {
         private list : ArrayList<Move>;
 
         private endgame : EndGame;
@@ -116,8 +116,8 @@ namespace model {
         public printDoc() : string {
             let sb : java.lang.StringBuilder = new java.lang.StringBuilder();
             let round : number = 1;
-            for(let index126=this.list.iterator();index126.hasNext();) {
-                let r = index126.next();
+            for(let index125=this.list.iterator();index125.hasNext();) {
+                let r = index125.next();
                 {
                     if(r.playerColor === Player.WHITE) {
                         sb.append(round + ". " + r.getDoc());
@@ -149,6 +149,8 @@ namespace model {
         }
     }
     Record["__class"] = "model.Record";
+    Record["__interfaces"] = ["java.lang.Iterable"];
+
 
 }
 

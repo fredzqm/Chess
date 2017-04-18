@@ -21,7 +21,7 @@ namespace model {
     export namespace InvalidMoveException {
 
         export enum Type {
-            invalidFormat, castleNotAllowed, pieceNotPresent, incorrectPiece, impossibleMove, ambiguousMove
+            invalidFormat, castleNotAllowed, pieceNotPresent, incorrectPiece, impossibleMove, ambiguousMove, promotionTo
         }
     }
 

@@ -4,7 +4,7 @@ namespace controller {
 
     import Player = model.Piece.Player;
 
-    import ChessViewer = view.ChessViewer;
+    import IChessViewer = view.IChessViewer;
 
     /**
      * 
@@ -14,9 +14,9 @@ namespace controller {
      * @author zhang
      */
     export class DualViewChessControl extends ViewController {
-        private whiteView : ChessViewer;
+        private whiteView : IChessViewer;
 
-        private blackView : ChessViewer;
+        private blackView : IChessViewer;
 
         /**
          * start my little chess game!!!!
@@ -26,19 +26,17 @@ namespace controller {
          */
         public constructor() {
             super();
-            this.whiteView = new ChessViewer(this, "The Great Chess Game white view", true);
-            this.blackView = new ChessViewer(this, "The Great Chess Game black view", false);
             this.updateChessBoard();
         }
 
-        public chooesView(whiteOrBlack : boolean) : ChessViewer {
+        public chooesView(whiteOrBlack : boolean) : IChessViewer {
             return whiteOrBlack?this.whiteView:this.blackView;
         }
 
         updateGuiAfterMove(previousMove : Move) {
             this.updateChessBoard();
-            let pre : ChessViewer = this.chooesView(previousMove.getWhoseTurn() === Player.WHITE);
-            let next : ChessViewer = this.chooesView(previousMove.getWhoseTurn() === Player.BLACK);
+            let pre : IChessViewer = this.chooesView(previousMove.getWhoseTurn() === Player.WHITE);
+            let next : IChessViewer = this.chooesView(previousMove.getWhoseTurn() === Player.BLACK);
             pre.setStatusLabelText(this.chess.lastMoveDiscript());
             next.setStatusLabelText(this.chess.lastMoveDiscript());
             pre.cleanTemp();

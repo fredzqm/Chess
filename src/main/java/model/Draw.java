@@ -7,11 +7,11 @@ package model;
  * @author FredZhang
  *
  */
-public enum Draw implements EndGame{
-	STALEMENT("Stalement", "Draw due to Stalement."), 
-	FIFTY_MOVE("Quite" , "Fifty-move rule."), 
-	REPETITION("Repetition", "threefold repetition."),
-	AGREEMENT("Agreement to draw", "Draw by Agreement.");
+public class Draw implements EndGame{
+	public static Draw STALEMATE = new Draw("Stalement", "Draw due to Stalement."); 
+	public static Draw FIFTY_MOVE = new Draw("Quite" , "Fifty-move rule.");
+	public static Draw REPETITION = new Draw("Repetition", "threefold repetition.");
+	public static Draw AGREEMENT = new Draw("Agreement to draw", "Draw by Agreement.");
 
 	private final String descript;
 	private final String printOut;
@@ -38,9 +38,10 @@ public enum Draw implements EndGame{
 
 	@Override
 	public String getDoc() {
-		switch(this){
-		case AGREEMENT: return "1/2-1/2 (agreement)";
-		default: return "1/2-1/2";
+		if(this == AGREEMENT) {
+			return "1/2-1/2 (agreement)";
+		} else {
+			return "1/2-1/2";
 		}
 	}
 

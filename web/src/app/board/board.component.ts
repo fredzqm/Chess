@@ -21,14 +21,14 @@ export class BoardComponent implements OnInit {
 
   getInitialPiece(i : number, j : number) : PieceSquare {
       if (j === 2)
-          return new PieceSquare(PieceType.PAWN, true);
-      if (j === 7)
           return new PieceSquare(PieceType.PAWN, false);
+      if (j === 7)
+          return new PieceSquare(PieceType.PAWN, true);
       let isWhite : boolean = null;
       if (j === 1)
-          isWhite = true;
-      if (j === 8)
           isWhite = false;
+      if (j === 8)
+          isWhite = true;
       if (isWhite === null)
           return null;
       if (i === 1 || i === 8)

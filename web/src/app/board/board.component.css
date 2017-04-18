@@ -7,7 +7,7 @@ table#chess div app-square {
 
 table#chess div:nth-child(odd) app-square:nth-child(even),
 table#chess div:nth-child(even) app-square:nth-child(odd) {
-  background: #000;
+  background: #255;
 }
 
 table#chess div:nth-child(odd) app-square:nth-child(odd),

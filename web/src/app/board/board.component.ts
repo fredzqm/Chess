@@ -17,7 +17,6 @@ export class BoardComponent implements OnInit {
               this.pieces[i][j] = this.getInitialPiece(j+1, i+1);
           }
       }
-      console.log(this.pieces);
   }
 
   getInitialPiece(i : number, j : number) : PieceSquare {

@@ -116,22 +116,23 @@ public class SquareLabel extends JLabel {
 			color = 0;
 		else
 			color = 67;
-		switch (type) {
-		case Pawn:
-			return symbolProvider.imageAt(333, color, SQUARE_WIDTH, SQUARE_WIDTH);
-		case Rook:
-			return symbolProvider.imageAt(268, color, SQUARE_WIDTH, SQUARE_WIDTH);
-		case Bishop:
-			return symbolProvider.imageAt(135, color, SQUARE_WIDTH, SQUARE_WIDTH);
-		case Knight:
-			return symbolProvider.imageAt(201, color, SQUARE_WIDTH, SQUARE_WIDTH);
-		case Queen:
-			return symbolProvider.imageAt(67, color, SQUARE_WIDTH, SQUARE_WIDTH);
-		case King:
-			return symbolProvider.imageAt(0, color, SQUARE_WIDTH, SQUARE_WIDTH);
-		default:
-			throw new RuntimeException("Invalid type of ChessPiece " + type);
-		}
+		return symbolProvider.imageAt(getXIndex(type), color, SQUARE_WIDTH, SQUARE_WIDTH);
+	}
+
+	private int getXIndex(ChessPieceType type) {
+		if (type == ChessPieceType.Pawn)
+			return 333;
+		if (type == ChessPieceType.Rook)
+			return 268;
+		if (type == ChessPieceType.Bishop)
+			return 135;
+		if (type == ChessPieceType.Knight)
+			return 201;
+		if (type == ChessPieceType.Queen)
+			return 67;
+		if (type == ChessPieceType.King)
+			return 0;
+		throw new RuntimeException("Invalid type of ChessPiece " + type);
 	}
 
 	public void clearLabel() {

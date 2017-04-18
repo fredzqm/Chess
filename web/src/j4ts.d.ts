@@ -725,7 +725,6 @@ declare namespace java.lang {
      */
     interface Iterable<T> {
         iterator(): java.util.Iterator<T>;
-        forEach(action: (p1: any) => void): any;
     }
 }
 declare namespace java.lang {
@@ -1339,8 +1338,6 @@ declare namespace java.util {
     interface Iterator<E> {
         hasNext(): boolean;
         next(): E;
-        forEachRemaining(consumer?: any): any;
-        remove(): any;
     }
 }
 declare namespace java.util {
@@ -2471,7 +2468,7 @@ declare namespace javaemul.internal {
         static now(): number;
     }
 }
-declare let Map: Object;
+// declare let Map: Object;
 declare namespace javaemul.internal {
     /**
      * Contains logics for calculating hash codes in JavaScript.

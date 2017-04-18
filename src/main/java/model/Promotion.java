@@ -1,7 +1,5 @@
 package model;
 
-import java.lang.reflect.InvocationTargetException;
-
 import model.Piece.Player;
 
 public class Promotion extends Move {
@@ -77,13 +75,19 @@ public class Promotion extends Move {
 	}
 
 	public void setPromoteTo(Class<? extends Piece> promotToClass) {
-		try {
-			promotedTo = promotToClass.getConstructor(Player.class, Square.class, Chess.class)
-					.newInstance(this.playerColor, this.lastPosition, this.movedPiece.chess);
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-			throw new RuntimeException(e);
-		}
+		promotedTo = getPromotedPiece(promotToClass);
+	}
+
+	private Piece getPromotedPiece(Class<? extends Piece> promotToClass) {
+		if (promotToClass.equals(Queen.class))
+			return new Queen(this.playerColor, this.lastPosition, this.movedPiece.chess);
+		else if (promotToClass.equals(Knight.class))
+			return new Knight(this.playerColor, this.lastPosition, this.movedPiece.chess);
+		if (promotToClass.equals(Rook.class))
+				return new Rook(this.playerColor, this.lastPosition, this.movedPiece.chess);
+		if (promotToClass.equals(Bishop.class))
+			return new Bishop(this.playerColor, this.lastPosition, this.movedPiece.chess);
+		throw new RuntimeException("Invalid type of piece to promote to");
 	}
 
 	private void checkPromotedTo() {

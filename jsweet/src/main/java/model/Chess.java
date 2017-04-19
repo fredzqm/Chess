@@ -524,8 +524,7 @@ public class Chess {
 			}
 		}
 
-		IMovePatternMatcher m;
-		//m = new MovePatternMatcher(moveCommand);
+		IMovePatternMatcher m = new MovePatternMatcher(moveCommand);
 		if (m.matches()) {
 			Class<? extends Piece> type = m.getGroup(1) == null ? Pawn.class : Piece.getType(m.getGroup(1).charAt(0));
 			Square start = null;

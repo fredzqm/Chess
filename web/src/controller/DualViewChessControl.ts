@@ -1,60 +1,50 @@
-/* Generated from Java with JSweet 1.2.0 - http://www.jsweet.org */
-namespace controller {
-    import Move = model.Move;
+/* Generated from Java with JSweet 2.0.0-SNAPSHOT - http://www.jsweet.org */
+import { Move } from '../model/Move'; 
+import { IChessViewer } from '../view/IChessViewer'; 
+import { ViewController } from './ViewController'; 
+/**
+ * start my little chess game!!!!
+ * 
+ * @param args
+ * ignored
+ * @param {view.IChessViewer} whiteView
+ * @param {view.IChessViewer} blackView
+ * @class
+ */
+export class DualViewChessControl extends ViewController {
+    /*private*/ whiteView : IChessViewer;
 
-    import Player = model.Piece.Player;
+    /*private*/ blackView : IChessViewer;
 
-    import IChessViewer = view.IChessViewer;
-
-    /**
-     * 
-     * A chess controller that control two ChessView, each views the board
-     * separately
-     * 
-     * @author zhang
-     */
-    export class DualViewChessControl extends ViewController {
-        private whiteView : IChessViewer;
-
-        private blackView : IChessViewer;
-
-        /**
-         * start my little chess game!!!!
-         * 
-         * @param args
-         * ignored
-         */
-        public constructor() {
-            super();
-            this.updateChessBoard();
-        }
-
-        public chooesView(whiteOrBlack : boolean) : IChessViewer {
-            return whiteOrBlack?this.whiteView:this.blackView;
-        }
-
-        updateGuiAfterMove(previousMove : Move) {
-            this.updateChessBoard();
-            let pre : IChessViewer = this.chooesView(previousMove.getWhoseTurn() === Player.WHITE);
-            let next : IChessViewer = this.chooesView(previousMove.getWhoseTurn() === Player.BLACK);
-            pre.setStatusLabelText(this.chess.lastMoveDiscript());
-            next.setStatusLabelText(this.chess.lastMoveDiscript());
-            pre.cleanTemp();
-            pre.printOut(this.chess.lastMoveOutPrint());
-            next.printOut(this.chess.lastMoveOutPrint());
-            next.printOut("Please make your move.");
-            pre.printOut("Wait for the " + ViewController.side(previousMove.getWhoseTurn() === Player.BLACK) + " to make a move");
-        }
-
-        public static main(args : string[]) {
-            new DualViewChessControl();
-        }
+    public constructor(whiteView : IChessViewer, blackView : IChessViewer) {
+        super();
+        this.whiteView = null;
+        this.blackView = null;
+        this.whiteView = whiteView;
+        this.blackView = blackView;
+        this.updateChessBoard();
     }
-    DualViewChessControl["__class"] = "controller.DualViewChessControl";
-    DualViewChessControl["__interfaces"] = ["view.IChessViewerControl"];
 
+    public chooesView(whiteOrBlack : boolean) : IChessViewer {
+        return whiteOrBlack?this.whiteView:this.blackView;
+    }
 
+    updateGuiAfterMove(previousMove : Move) {
+        this.updateChessBoard();
+        let pre : IChessViewer = this.chooesView(previousMove.getWhoseTurn());
+        let next : IChessViewer = this.chooesView(!previousMove.getWhoseTurn());
+        pre.setStatusLabelText(this.chess.lastMoveDiscript());
+        next.setStatusLabelText(this.chess.lastMoveDiscript());
+        pre.cleanTemp();
+        pre.printOut(this.chess.lastMoveOutPrint());
+        next.printOut(this.chess.lastMoveOutPrint());
+        next.printOut("Please make your move.");
+        pre.printOut("Wait for the " + ViewController.side(!previousMove.getWhoseTurn()) + " to make a move");
+    }
 }
+DualViewChessControl["__class"] = "controller.DualViewChessControl";
+DualViewChessControl["__interfaces"] = ["view.IChessViewerControl"];
 
 
-controller.DualViewChessControl.main(null);
+
+

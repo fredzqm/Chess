@@ -1,46 +1,40 @@
-/* Generated from Java with JSweet 1.2.0 - http://www.jsweet.org */
-namespace controller {
-    import Move = model.Move;
+/* Generated from Java with JSweet 2.0.0-SNAPSHOT - http://www.jsweet.org */
+import { Move } from '../model/Move'; 
+import { IChessViewer } from '../view/IChessViewer'; 
+import { ViewController } from './ViewController'; 
+/**
+ * start my little chess game!!!!
+ * 
+ * @param args
+ * ignored
+ * @param {view.IChessViewer} chessView
+ * @class
+ */
+export class SingleViewChessControl extends ViewController {
+    /*private*/ view : IChessViewer;
 
-    import Player = model.Piece.Player;
-
-    import IChessViewer = view.IChessViewer;
-
-    /**
-     * The chess controller opens a single chess view
-     * 
-     * @author zhang
-     */
-    export class SingleViewChessControl extends ViewController {
-        private view : IChessViewer;
-
-        /**
-         * start my little chess game!!!!
-         * 
-         * @param args
-         * ignored
-         */
-        public constructor(view: view.IChessViewer) {
-            super();
-            this.view = view;
-            this.updateChessBoard();
-        }
-
-        public chooesView(whiteOrBlack : boolean) : IChessViewer {
-            return this.view;
-        }
-
-        updateGuiAfterMove(previousMove : Move) {
-            this.updateChessBoard();
-            this.view.setStatusLabelText(this.chess.lastMoveDiscript());
-            this.view.cleanTemp();
-            this.view.printOut(this.chess.lastMoveOutPrint());
-            this.view.printOut("Next move -- " + ViewController.side(previousMove.getWhoseTurn() === Player.BLACK));
-        }
-
+    public constructor(chessView : IChessViewer) {
+        super();
+        this.view = null;
+        this.view = chessView;
+        this.updateChessBoard();
     }
-    SingleViewChessControl["__class"] = "controller.SingleViewChessControl";
-    SingleViewChessControl["__interfaces"] = ["view.IChessViewerControl"];
 
+    public chooesView(whiteOrBlack : boolean) : IChessViewer {
+        return this.view;
+    }
 
+    updateGuiAfterMove(previousMove : Move) {
+        this.updateChessBoard();
+        this.view.setStatusLabelText(this.chess.lastMoveDiscript());
+        this.view.cleanTemp();
+        this.view.printOut(this.chess.lastMoveOutPrint());
+        this.view.printOut("Next move -- " + ViewController.side(!previousMove.getWhoseTurn()));
+    }
 }
+SingleViewChessControl["__class"] = "controller.SingleViewChessControl";
+SingleViewChessControl["__interfaces"] = ["view.IChessViewerControl"];
+
+
+
+

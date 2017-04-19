@@ -22,10 +22,10 @@ public class DualViewChessControl extends ViewController {
 	 * @param args
 	 *            ignored
 	 */
-	public DualViewChessControl() {
+	public DualViewChessControl(IChessViewer whiteView, IChessViewer blackView) {
 		super();
-//		whiteView = new ChessViewer(this, "The Great Chess Game white view", true);
-//		blackView = new ChessViewer(this, "The Great Chess Game black view", false);
+		this.whiteView = whiteView;
+		this.blackView = blackView;
 		updateChessBoard();
 	}
 
@@ -46,10 +46,6 @@ public class DualViewChessControl extends ViewController {
 		next.printOut(chess.lastMoveOutPrint());
 		next.printOut("Please make your move.");
 		pre.printOut("Wait for the " + side(previousMove.getWhoseTurn() == Player.BLACK) + " to make a move");
-	}
-
-	public static void main(String[] args) {
-		new DualViewChessControl();
 	}
 
 }

@@ -19,9 +19,9 @@ public class SingleViewChessControl extends ViewController {
 	 * @param args
 	 *            ignored
 	 */
-	public SingleViewChessControl() {
+	public SingleViewChessControl(IChessViewer chessView) {
 		super();
-//		view = new ChessViewer(this, "The Great Chess Game", true);
+		this.view = chessView;
 		updateChessBoard();
 	}
 
@@ -39,7 +39,4 @@ public class SingleViewChessControl extends ViewController {
 		view.printOut("Next move -- " + side(previousMove.getWhoseTurn() == Player.BLACK));
 	}
 
-	public static void main(String[] args) {
-		new SingleViewChessControl();
-	}
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, HostListener, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { PieceSquare, PieceType } from '../PieceSquare';
 
 @Component({
@@ -8,10 +8,13 @@ import { PieceSquare, PieceType } from '../PieceSquare';
 })
 export class SquareComponent implements OnInit, OnChanges {
   @Input() piece : PieceSquare;
+  @Input() file : number;
+  @Input() rank : number;
+  @Output() clickSquare : EventEmitter<any> = new EventEmitter<any>();
+
   style = {};
 
   constructor() {
-  	
   }
 
   ngOnInit() { }
@@ -27,6 +30,14 @@ export class SquareComponent implements OnInit, OnChanges {
 	  		this.style = {};
 	  	}
   	}
+  }
+
+  @HostListener('click', ['$event']) 
+  onClick(event) {
+    this.clickSquare.emit({
+      file: this.file,
+      rank: this.rank
+    });
   }
 
 }

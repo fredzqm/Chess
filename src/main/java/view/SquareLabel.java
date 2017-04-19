@@ -106,11 +106,11 @@ public class SquareLabel extends JLabel {
 	/**
 	 * upDate the color and text of this JLabel.
 	 */
-	public void upDatePiece(ChessPieceType chessPieceType, boolean wb) {
-		image = getSymbol(chessPieceType, wb);
+	public void upDatePiece(char type, boolean wb) {
+		image = getSymbol(type, wb);
 	}
 
-	public BufferedImage getSymbol(ChessPieceType type, boolean whiteOrBlack) {
+	public BufferedImage getSymbol(char type, boolean whiteOrBlack) {
 		int color;
 		if (whiteOrBlack)
 			color = 0;
@@ -119,20 +119,23 @@ public class SquareLabel extends JLabel {
 		return symbolProvider.imageAt(getXIndex(type), color, SQUARE_WIDTH, SQUARE_WIDTH);
 	}
 
-	private int getXIndex(ChessPieceType type) {
-		if (type == ChessPieceType.Pawn)
+	private int getXIndex(char type) {
+		switch (type) {
+		case 'P':
 			return 333;
-		if (type == ChessPieceType.Rook)
+		case 'R':
 			return 268;
-		if (type == ChessPieceType.Bishop)
+		case 'B':
 			return 135;
-		if (type == ChessPieceType.Knight)
+		case 'N':
 			return 201;
-		if (type == ChessPieceType.Queen)
+		case 'Q':
 			return 67;
-		if (type == ChessPieceType.King)
+		case 'K':
 			return 0;
-		throw new RuntimeException("Invalid type of ChessPiece " + type);
+		default:
+			throw new RuntimeException("Invalid type of ChessPiece " + type);
+		}
 	}
 
 	public void clearLabel() {

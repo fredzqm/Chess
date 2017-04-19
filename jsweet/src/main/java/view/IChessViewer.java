@@ -70,7 +70,7 @@ public interface IChessViewer {
 	 * @param pieceType
 	 * @param whiteOrBlack
 	 */
-	void upDatePiece(int file, int rank, ChessPieceType pieceType, boolean whiteOrBlack);
+	void upDatePiece(int file, int rank, char pieceType, boolean whiteOrBlack);
 
 	/**
 	 * clear piece at certain square

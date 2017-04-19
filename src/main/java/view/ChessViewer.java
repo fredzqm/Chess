@@ -181,7 +181,7 @@ public class ChessViewer extends JFrame implements IChessViewer {
 	}
 
 	@Override
-	public void upDatePiece(int file, int rank, ChessPieceType pieceType, boolean whiteOrBlack) {
+	public void upDatePiece(int file, int rank, char pieceType, boolean whiteOrBlack) {
 		labelAt(file, rank).upDatePiece(pieceType, whiteOrBlack);
 	}
 

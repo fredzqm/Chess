@@ -14,7 +14,6 @@ import model.Promotion;
 import model.Record;
 import model.Square;
 import model.Win;
-import view.ChessPieceType;
 import view.IChessViewer;
 import view.IChessViewerControl;
 
@@ -93,7 +92,7 @@ public abstract class ViewController implements IChessViewerControl {
 	private void repaintAll(IChessViewer view) {
 		for (Square sq : chess.getBoard()) {
 			if (sq.isOccupied()) {
-				view.upDatePiece(sq.getX(), sq.getY(), ChessPieceType.from(sq.getPiece().getType()),
+				view.upDatePiece(sq.getX(), sq.getY(), sq.getPiece().getType(),
 						sq.getPiece().getWhiteOrBlack());
 			} else {
 				view.clearLabel(sq.getX(), sq.getY());
@@ -252,6 +251,7 @@ public abstract class ViewController implements IChessViewerControl {
 		} else if (input.startsWith("rules for ")) {
 			showRules(input.substring(10), view, rules);
 		} else if (input.equals("quit")) {
+//			System.exit(0);
 		} else if (input.equals("restart")) {
 			restart();
 			updateChessBoard();

@@ -11,6 +11,11 @@ export class BoardComponent implements OnInit {
 
   @Output() click : EventEmitter<any> = new EventEmitter<any>();
 
+  onSquareClick(event) {
+    event.whiteOrBlack = true;
+    this.click.emit(event);
+  }
+
   constructor() {
       this.pieces = [];
       for (let i = 0; i < 8; i++) {

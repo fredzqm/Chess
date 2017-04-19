@@ -1,6 +1,8 @@
 <table id='chess'>
 	<div *ngFor = "let row of pieces">
 		<app-square *ngFor = "let square of row"
-			[piece]="square"></app-square>
+			(clickSquare) = "onSquareClick($event)"
+			[piece]="square">
+		</app-square>
 	</div>
 </table>

@@ -20,8 +20,9 @@ namespace controller {
          * @param args
          * ignored
          */
-        public constructor() {
+        public constructor(view: view.IChessViewer) {
             super();
+            this.view = view;
             this.updateChessBoard();
         }
 
@@ -37,15 +38,9 @@ namespace controller {
             this.view.printOut("Next move -- " + ViewController.side(previousMove.getWhoseTurn() === Player.BLACK));
         }
 
-        public static main(args : string[]) {
-            new SingleViewChessControl();
-        }
     }
     SingleViewChessControl["__class"] = "controller.SingleViewChessControl";
     SingleViewChessControl["__interfaces"] = ["view.IChessViewerControl"];
 
 
 }
-
-
-controller.SingleViewChessControl.main(null);

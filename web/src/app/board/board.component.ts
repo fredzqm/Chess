@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { PieceSquare, PieceType } from '../PieceSquare';
 
 @Component({
@@ -8,6 +8,8 @@ import { PieceSquare, PieceType } from '../PieceSquare';
 })
 export class BoardComponent implements OnInit {
   pieces : PieceSquare[][];
+
+  @Output() click : EventEmitter<any> = new EventEmitter<any>();
 
   constructor() {
       this.pieces = [];

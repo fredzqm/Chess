@@ -95,10 +95,6 @@ export namespace Board {
             return this.__parent.spots[this.i % 8][(this.i / 8|0)];
         }
 
-        public forEachRemaining(consumer : (p1: any) => void) {
-            Iterator.super.forEachRemaining(consumer);
-        }
-
         constructor(__parent: any) {
             this.__parent = __parent;
             this.i = -1;

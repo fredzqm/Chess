@@ -1,16 +1,18 @@
 import { Component, OnInit, ViewChild, Output } from '@angular/core';
 import { BoardComponent } from '../board/board.component';
 import { ConsoleComponent } from '../console/console.component';
+import { IChessViewer } from '../../view/IChessViewer';
+import { SingleViewChessControl } from '../../controller/SingleViewChessControl';
 
 @Component({
   selector: 'app-chess',
   templateUrl: './chess.component.html',
   styleUrls: ['./chess.component.css']
 })
-export class ChessComponent implements OnInit, view.IChessViewer {
+export class ChessComponent implements OnInit, IChessViewer {
   title = 'app works!';
   status: string;
-  controller : controller.SingleViewChessControl;
+  controller : SingleViewChessControl;
 
   @ViewChild("board") board : BoardComponent;
   @ViewChild("console") console : ConsoleComponent;
@@ -18,7 +20,7 @@ export class ChessComponent implements OnInit, view.IChessViewer {
   constructor() {}
 
   ngOnInit() {
-    this.controller = new controller.SingleViewChessControl(this);
+    this.controller = new SingleViewChessControl(this);
   }
 
   click(event : any) {
@@ -105,7 +107,7 @@ export class ChessComponent implements OnInit, view.IChessViewer {
    * @param pieceType
    * @param whiteOrBlack
    */
-  upDatePiece(file : number, rank : number, pieceType : view.ChessPieceType, whiteOrBlack : boolean) {
+  upDatePiece(file : number, rank : number, pieceType : string, whiteOrBlack : boolean) {
     
   }
 

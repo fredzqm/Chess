@@ -213,26 +213,26 @@ public abstract class ViewController implements IChessViewerControl {
 			return true;
 		} catch (InvalidMoveException e) {
 			switch (e.type) {
-			case invalidFormat:
+			case InvalidMoveException.invalidFormat:
 				view.printOut("The command is not in a valid format.");
 				break;
-			case ambiguousMove:
+			case InvalidMoveException.ambiguousMove:
 				view.printOut("Fail to guess move: There is ambiguity, multiple possible moves.");
 				break;
-			case castleNotAllowed:
+			case InvalidMoveException.castleNotAllowed:
 				view.printOut("You cannot do castling, please check the rules for castling.");
 				break;
-			case impossibleMove:
+			case InvalidMoveException.impossibleMove:
 				view.printOut("This is not a possible move.");
 				break;
-			case incorrectPiece:
+			case InvalidMoveException.incorrectPiece:
 				view.printOut("The chessman in the start Position is not correct! "
 						+ "\n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
 				break;
-			case pieceNotPresent:
+			case InvalidMoveException.pieceNotPresent:
 				view.printOut("There is no piece at the start position.");
 				break;
-			case promotionTo:
+			case InvalidMoveException.promotionTo:
 				view.printOut("You should specify what piece you want to promote to");
 				break;
 			default:

@@ -519,12 +519,12 @@ public class Chess {
 			} else if (moveCommand.equals("O-O-O")) {
 				move = canLongCastling(king);
 			} else {
-				throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.invalidFormat);
+				throw new InvalidMoveException(moveCommand, InvalidMoveException.invalidFormat);
 			}
 			if (move != null) {
 				return move;
 			} else {
-				throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.castleNotAllowed);
+				throw new InvalidMoveException(moveCommand, InvalidMoveException.castleNotAllowed);
 			}
 		}
 
@@ -539,31 +539,31 @@ public class Chess {
 			if (start != null) {
 				Piece movedPiece = start.getPiece();
 				if (movedPiece == null) {
-					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.pieceNotPresent);
+					throw new InvalidMoveException(moveCommand, InvalidMoveException.pieceNotPresent);
 				} else if (!(movedPiece.isType(type))) {
-					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.incorrectPiece);
+					throw new InvalidMoveException(moveCommand, InvalidMoveException.incorrectPiece);
 				}
 				move = movedPiece.getMove(end);
 			} else {
 				ArrayList<Piece> possible = possibleMovers(type, end);
 				if (possible.size() == 0) {
-					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.impossibleMove);
+					throw new InvalidMoveException(moveCommand, InvalidMoveException.impossibleMove);
 				} else if (possible.size() == 1) {
 					move = possible.get(0).getMove(end);
 				} else {
-					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.ambiguousMove);
+					throw new InvalidMoveException(moveCommand, InvalidMoveException.ambiguousMove);
 				}
 			}
 			if (move instanceof Promotion) {
 				Promotion promotion = (Promotion) move;
 				if (m.getGroup(6) == null)
-					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.promotionTo);
+					throw new InvalidMoveException(moveCommand, InvalidMoveException.promotionTo);
 				Class<? extends Piece> promotToClass = Piece.getType(m.getGroup(6).charAt(1));
 				promotion.setPromoteTo(promotToClass);
 			}
 			return move;
 		} else {
-			throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.invalidFormat);
+			throw new InvalidMoveException(moveCommand, InvalidMoveException.invalidFormat);
 		}
 	}
 

@@ -7,16 +7,16 @@ package model;
  */
 public class Rook extends Piece {
 	private final int VALUE = 5;
-	
+
 	/**
 	 * constructs a Rook with initial square
 	 * 
 	 * @param type
-	 * @param c
+	 * @param isWhite
 	 * @param Position
 	 */
-	public Rook( Player c, Square Position, Chess chess) {
-		super(c, Position, chess);
+	public Rook(boolean isWhite, Square Position, Chess chess) {
+		super(isWhite, Position, chess);
 	}
 
 	@Override
@@ -47,12 +47,12 @@ public class Rook extends Piece {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public int getValue() {
 		return VALUE;
 	}
-	
+
 	@Override
 	public char getType() {
 		return 'R';

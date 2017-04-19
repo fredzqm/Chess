@@ -1,13 +1,11 @@
 package model;
 
-import model.Piece.Player;
-
-public class RegularMove extends Move{
+public class RegularMove extends Move {
 
 	public RegularMove(Piece movedPiece, Square startPosition, Piece capturedPiece, Square lastPosition) {
 		super(movedPiece, startPosition, capturedPiece, lastPosition);
 	}
-	
+
 	/**
 	 * 
 	 * @return the description of this move, which will appear in the top label
@@ -15,7 +13,7 @@ public class RegularMove extends Move{
 	 */
 	public String getDescript() {
 		String description = "";
-		if (this.playerColor == Player.WHITE)
+		if (this.isWhite)
 			description += "White";
 		else
 			description += "Black";
@@ -24,7 +22,7 @@ public class RegularMove extends Move{
 			description += " moves to " + lastPosition.toString();
 		else {
 			description += " catches ";
-			if (this.playerColor == Player.WHITE)
+			if (this.isWhite)
 				description += "black ";
 			else
 				description += "white ";
@@ -34,7 +32,7 @@ public class RegularMove extends Move{
 		description += note.getDescriptEnd();
 		return description;
 	}
-	
+
 	/**
 	 * undo the last move, and restore the board
 	 * 

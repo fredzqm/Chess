@@ -1,7 +1,5 @@
 package model;
 
-import model.Piece.Player;
-
 /**
  * this class records the castling move
  * @author zhangq2
@@ -63,7 +61,7 @@ public class Castling extends Move {
 	
 	public String getDescript() {
 		String s = "";
-		if (this.playerColor == Player.WHITE)
+		if (this.isWhite)
 			s += "White ";
 		else
 			s += "Black ";

@@ -3,8 +3,6 @@ package model;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import model.Piece.Player;
-
 /**
  * The magical class that keeps track of move history It tracks a list of played
  * in the chess, and can be used to query the history or undo steps
@@ -121,7 +119,7 @@ public class Record implements Iterable<Move> {
 		int round = 1;
 		
 		for (Move r : list) {
-			if (r.playerColor == Player.WHITE) {
+			if (r.isWhite) {
 				sb.append(round + ". " + r.getDoc());
 			} else {
 				round++;
@@ -133,7 +131,7 @@ public class Record implements Iterable<Move> {
 		} else {
 			Move last = getLastMove();
 			if (last != null)
-				if (last.playerColor == Player.WHITE)
+				if (last.isWhite)
 					sb.append("   ...");
 		}
 		return sb.toString();

@@ -15,8 +15,8 @@ public class Bishop extends Piece {
 	 * @param Position
 	 * @param chess
 	 */
-	public Bishop(Player c, Square Position, Chess chess) {
-		super(c, Position, chess);
+	public Bishop(boolean isWhite, Square Position, Chess chess) {
+		super(isWhite, Position, chess);
 	}
 
 	@Override

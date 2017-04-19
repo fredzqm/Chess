@@ -2,8 +2,6 @@ package model;
 
 import java.util.Iterator;
 
-import model.Piece.Player;
-
 /**
  * the class to represent the board of the chess
  * 
@@ -66,7 +64,7 @@ public class Board implements Iterable<Square> {
 				if (piece == null) {
 					sb.append("  ");
 				} else {
-					if (piece.getWhiteOrBlack() == Player.WHITE) {
+					if (piece.getWhiteOrBlack()) {
 						sb.append('*');
 					} else {
 						sb.append(' ');

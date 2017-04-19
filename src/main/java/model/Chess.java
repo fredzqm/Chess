@@ -3,8 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Iterator;
 
 import model.Piece.Player;
 
@@ -151,7 +150,8 @@ public class Chess {
 		else
 			set = black;
 
-		for (Piece i : set) {
+		for (int j = 0; j < set.size(); j++) {
+			Piece i = set.get(j);
 			if (i.isType(type) && i.canGo(end))
 				possible.add(i);
 		}
@@ -232,8 +232,11 @@ public class Chess {
 			inCheck = white;
 		else
 			inCheck = black;
-		for (Piece i : inCheck) {
-			for (Square p : board) {
+		for (int j = 0; j < inCheck.size(); j++) {
+			Piece i = inCheck.get(j);
+			Iterator<Square> iter = board.iterator();
+			while(iter.hasNext()) {
+				Square p = iter.next();
 				if (i.canGo(p)) {
 					return false;
 				}
@@ -524,8 +527,7 @@ public class Chess {
 			}
 		}
 
-		IMovePatternMatcher m;
-		m = new MovePatternMatcher(moveCommand);
+		IMovePatternMatcher m = new MovePatternMatcher(moveCommand);
 		if (m.matches()) {
 			Class<? extends Piece> type = m.getGroup(1) == null ? Pawn.class : Piece.getType(m.getGroup(1).charAt(0));
 			Square start = null;

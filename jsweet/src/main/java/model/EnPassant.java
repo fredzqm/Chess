@@ -1,6 +1,5 @@
 package model;
 
-import model.Piece.Player;
 
 public class EnPassant extends Move {
 	private Square pawnPos;
@@ -26,7 +25,7 @@ public class EnPassant extends Move {
 
 	public String getDescript() {
 		String s = "";
-		if (this.playerColor == Player.WHITE)
+		if (this.isWhite)
 			s += "White";
 		else
 			s += "Black";

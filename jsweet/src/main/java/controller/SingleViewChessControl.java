@@ -1,7 +1,6 @@
 package controller;
 
 import model.Move;
-import model.Piece.Player;
 import view.IChessViewer;
 
 /**
@@ -36,7 +35,7 @@ public class SingleViewChessControl extends ViewController {
 		view.setStatusLabelText(chess.lastMoveDiscript());
 		view.cleanTemp();
 		view.printOut(chess.lastMoveOutPrint());
-		view.printOut("Next move -- " + side(previousMove.getWhoseTurn() == Player.BLACK));
+		view.printOut("Next move -- " + side(!previousMove.getWhoseTurn()));
 	}
 
 }

@@ -16,8 +16,8 @@ public class Queen extends Piece {
 	 * @param position
 	 * @param chess
 	 */
-	public Queen(Player c, Square position, Chess chess) {
-		super(c, position, chess);
+	public Queen(boolean isWhite, Square position, Chess chess) {
+		super(isWhite, position, chess);
 	}
 	
 	@Override

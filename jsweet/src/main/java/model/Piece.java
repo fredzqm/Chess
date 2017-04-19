@@ -10,13 +10,8 @@ import java.util.ArrayList;
  */
 public abstract class Piece implements Comparable<Piece> {
 	protected Chess chess;
-	protected Player color;
+	protected boolean isWhite;
 	protected Square spot;
-	
-	public enum Player {
-		WHITE,
-		BLACK
-	}
 
 	/**
 	 * 
@@ -26,9 +21,9 @@ public abstract class Piece implements Comparable<Piece> {
 	 *            the square this piece is at initially.
 	 * @param chess
 	 */
-	public Piece(Player c, Square p, Chess chess) {
+	public Piece(boolean c, Square p, Chess chess) {
 		this.chess = chess;
-		this.color = c;
+		this.isWhite = c;
 		moveTo(p);
 	}
 
@@ -50,8 +45,8 @@ public abstract class Piece implements Comparable<Piece> {
 	 * 
 	 * @return Whether this piece is owned by white or black
 	 */
-	public Player getWhiteOrBlack() {
-		return this.color;
+	public boolean getWhiteOrBlack() {
+		return this.isWhite;
 	}
 
 	/**
@@ -114,7 +109,7 @@ public abstract class Piece implements Comparable<Piece> {
 		}
 		spot = p;
 	}
-	
+
 	/**
 	 * This method takes everything into account, including giving away king,
 	 * castling, En Passant.
@@ -143,7 +138,7 @@ public abstract class Piece implements Comparable<Piece> {
 	 */
 	public Move getMove(Square end) {
 		// cannot move to own piece
-		if (end.occupiedBy(this.color))
+		if (end.occupiedBy(this.isWhite))
 			return null;
 		Move legalMove = legalPosition(end);
 		if (legalMove == null)
@@ -153,7 +148,7 @@ public abstract class Piece implements Comparable<Piece> {
 			return null;
 		return legalMove;
 	}
-	
+
 	/**
 	 * 
 	 * @param chosen
@@ -183,7 +178,7 @@ public abstract class Piece implements Comparable<Piece> {
 			return null;
 		return legalPosition(end);
 	}
-	
+
 	/**
 	 * For most pieces in chess, there is a common way of moving. This checks if
 	 * certain move match such common.

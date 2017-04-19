@@ -16,7 +16,7 @@ public class Pawn extends Piece {
 	 * @param p
 	 * @param chess
 	 */
-	public Pawn(Player c, Square p, Chess chess) {
+	public Pawn(boolean c, Square p, Chess chess) {
 		super(c, p, chess);
 	}
 
@@ -30,12 +30,12 @@ public class Pawn extends Piece {
 		return null;
 	}
 
-	public static boolean legalPosition(Square spot, Square end, Chess chess, Player c) {
+	public static boolean legalPosition(Square spot, Square end, Chess chess, boolean isWhite) {
 		if (end.isOccupied() || spot == null)
 			return false;
 
 		if (spot.getX() == end.getX()) {
-			if (c == Player.WHITE) {
+			if (isWhite) {
 				if (end.getY() - spot.getY() == 1)
 					return true;
 				if (end.getY() == 4 && spot.getY() == 2)
@@ -64,14 +64,7 @@ public class Pawn extends Piece {
 		if (move == null)
 			return null;
 		
-		Player otherColor;
-		if(super.color == Player.WHITE) {
-			otherColor = Player.BLACK;
-		} else {
-			otherColor = Player.WHITE;
-		}
-		
-		if (end.occupiedBy(otherColor)) {
+		if (end.occupiedBy(! super.isWhite)) {
 			if (chess.giveAwayKing(move))
 				return null;
 			return move;
@@ -97,7 +90,7 @@ public class Pawn extends Piece {
 		if (spot == null)
 			return false;
 		if (Math.abs(end.getX() - spot.getX()) == 1) {
-			if (super.color == Player.WHITE) {
+			if (super.isWhite) {
 				if (end.getY() - spot.getY() == 1)
 					return true;
 			} else {
@@ -110,7 +103,7 @@ public class Pawn extends Piece {
 
 	protected boolean canPromote(Square end) {
 		boolean promotion = false;
-		if (super.color == Player.WHITE) {
+		if (super.isWhite) {
 			if (end.getY() == 8)
 				promotion = true;
 		} else {

@@ -1,7 +1,5 @@
 package model;
 
-import model.Piece.Player;
-
 public class Promotion extends Move {
 	private Piece promotedTo;
 
@@ -38,7 +36,7 @@ public class Promotion extends Move {
 	public String getDescript() {
 		checkPromotedTo();
 		String s = "";
-		if (super.playerColor == Player.WHITE)
+		if (super.isWhite)
 			s += "White ";
 		else
 			s += "Black ";
@@ -80,13 +78,13 @@ public class Promotion extends Move {
 
 	private Piece getPromotedPiece(Class<? extends Piece> promotToClass) {
 		if (promotToClass.equals(Queen.class))
-			return new Queen(this.playerColor, this.lastPosition, this.movedPiece.chess);
+			return new Queen(this.isWhite, this.lastPosition, this.movedPiece.chess);
 		else if (promotToClass.equals(Knight.class))
-			return new Knight(this.playerColor, this.lastPosition, this.movedPiece.chess);
+			return new Knight(this.isWhite, this.lastPosition, this.movedPiece.chess);
 		if (promotToClass.equals(Rook.class))
-				return new Rook(this.playerColor, this.lastPosition, this.movedPiece.chess);
+				return new Rook(this.isWhite, this.lastPosition, this.movedPiece.chess);
 		if (promotToClass.equals(Bishop.class))
-			return new Bishop(this.playerColor, this.lastPosition, this.movedPiece.chess);
+			return new Bishop(this.isWhite, this.lastPosition, this.movedPiece.chess);
 		throw new RuntimeException("Invalid type of piece to promote to");
 	}
 

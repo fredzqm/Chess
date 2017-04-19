@@ -15,7 +15,7 @@ public class King extends Piece {
 	 * @param Position
 	 * @param chess
 	 */
-	public King(Player c, Square Position, Chess chess) {
+	public King(boolean c, Square Position, Chess chess) {
 		super(c, Position, chess);
 	}
 
@@ -32,7 +32,7 @@ public class King extends Piece {
 
 	@Override
 	public Move getMove(Square end) {
-		if (end.occupiedBy(super.color)) 
+		if (end.occupiedBy(super.isWhite)) 
 			return null;
 
 		Move legalMove = legalPosition(end);

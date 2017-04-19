@@ -1,7 +1,5 @@
 package model;
 
-import model.Piece.Player;
-
 /**
  * this class is a record of all the moves in this game, so we can undo steps or
  * check for special rules.
@@ -10,7 +8,7 @@ import model.Piece.Player;
  *
  */
 public abstract class Move {
-	protected final Player playerColor;
+	protected final boolean isWhite;
 	protected final Piece movedPiece;
 	protected final Square startPosition;
 	protected final Piece capturedPiece;
@@ -32,7 +30,7 @@ public abstract class Move {
 	 *            which round this move happens
 	 */
 	public Move(Piece movedPiece, Square startPosition, Piece capturedPiece, Square lastPosition) {
-		this.playerColor = movedPiece.getWhiteOrBlack();
+		this.isWhite = movedPiece.getWhiteOrBlack();
 		this.movedPiece = movedPiece;
 		this.startPosition = startPosition;
 		this.capturedPiece = capturedPiece;
@@ -80,8 +78,8 @@ public abstract class Move {
 		return getPrintOut() + " " + getDescript();
 	}
 
-	public Player getWhoseTurn() {
-		return playerColor;
+	public boolean getWhoseTurn() {
+		return isWhite;
 	}
 
 	/**

@@ -12,12 +12,12 @@ public class Knight extends Piece {
 	 * constructs a Knight with initial square
 	 * 
 	 * @param type
-	 * @param c
+	 * @param isWhite
 	 * @param Position
 	 * @param chess
 	 */
-	public Knight(Player c, Square Position, Chess chess) {
-		super( c, Position, chess);
+	public Knight(boolean isWhite, Square Position, Chess chess) {
+		super(isWhite, Position, chess);
 	}
 
 	@Override

@@ -10,15 +10,15 @@ import model.InvalidMoveException;
 import model.Move;
 import model.Pawn;
 import model.Piece;
-import model.Piece.Player;
 import model.Promotion;
 import model.Record;
 import model.Square;
 import model.Win;
 import view.ChessPieceType;
 import view.IChessViewer;
+import view.IChessViewerControl;
 
-public abstract class ViewController  {
+public abstract class ViewController implements IChessViewerControl {
 	private Piece chosen;
 	protected Chess chess;
 	private DrawManager drawManager;
@@ -94,7 +94,7 @@ public abstract class ViewController  {
 		for (Square sq : chess.getBoard()) {
 			if (sq.isOccupied()) {
 				view.upDatePiece(sq.getX(), sq.getY(), ChessPieceType.from(sq.getPiece().getType()),
-						sq.getPiece().getWhiteOrBlack() == Player.WHITE);
+						sq.getPiece().getWhiteOrBlack());
 			} else {
 				view.clearLabel(sq.getX(), sq.getY());
 			}
@@ -150,7 +150,7 @@ public abstract class ViewController  {
 			chess.endGame(canClaimDraw);
 			return;
 		}
-		if (chess.getWhoseTurn() == Player.WHITE) {
+		if (chess.getWhoseTurn()) {
 			chess.endGame(Win.WHITERESIGN);
 		} else {
 			chess.endGame(Win.BLACKESIGN);
@@ -252,7 +252,6 @@ public abstract class ViewController  {
 		} else if (input.startsWith("rules for ")) {
 			showRules(input.substring(10), view, rules);
 		} else if (input.equals("quit")) {
-			// TODO:
 		} else if (input.equals("restart")) {
 			restart();
 			updateChessBoard();
@@ -281,7 +280,7 @@ public abstract class ViewController  {
 			clickedView.printOut("Game is already over! Type restart to start a new game");
 			return;
 		}
-		if (clickedView != chooesView(chess.getWhoseTurn() == Player.WHITE)) {
+		if (clickedView != chooesView(chess.getWhoseTurn())) {
 			clickedView.printOut("Please wait for your opponnet to finish");
 			return;
 		}

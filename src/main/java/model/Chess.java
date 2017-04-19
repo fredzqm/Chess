@@ -207,7 +207,8 @@ public class Chess {
 		else
 			attacker = black;
 
-		for (Piece i : attacker) {
+		for(int j = 0; j < attacker.size(); j++) {
+			Piece i = attacker.get(j);
 			if (i.canAttack(square) != null)
 				return true;
 		}

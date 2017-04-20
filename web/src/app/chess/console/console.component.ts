@@ -6,7 +6,6 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./console.component.css']
 })
 export class ConsoleComponent implements OnInit {
-  welcomeMessage: string
   consoleMessage: string
   existence: string
 
@@ -15,23 +14,24 @@ export class ConsoleComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.welcomeMessage = 'Welcome to little Chess Game. Type \"help\" for instructions.';
-    this.existence = '';
-    this.consoleMessage = '';
+    this.existence = 'Welcome to little Chess Game. Type \"help\" for instructions.';
+    this.consoleMessage = this.existence;
   }
 
   submit() {
-    var splitted = this.consoleMessage.split("\n")
-    var lastCommand = splitted[splitted.length - 1]
-    this.enteredCommand.emit(lastCommand);
+    if (this.existence.length < this.consoleMessage.length) {
+      let input = this.consoleMessage.substring(this.existence.length, this.consoleMessage.length - 1);
+      if (input.length > 0) {
+        this.enteredCommand.emit(input);
+      }
+    }
   }
 
-  printOut(input) {
-    this.existence = input;
+  printOut(input : string) {
     if (input != null) {
   		this.existence = this.existence + input + '\n';
+      this.consoleMessage = this.existence;
     }
-    this.consoleMessage = this.existence;
   }
 
   printTemp(temp) {

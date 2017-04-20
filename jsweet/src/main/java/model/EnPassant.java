@@ -1,6 +1,5 @@
 package model;
 
-
 public class EnPassant extends Move {
 	private Square pawnPos;
 
@@ -48,4 +47,14 @@ public class EnPassant extends Move {
 			chess.takeOffBoard(capturedPiece);
 		movedPiece.moveTo(lastPosition);
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof EnPassant) {
+			EnPassant x = (EnPassant) obj;
+			return pawnPos == x.pawnPos && super.equals(obj);
+		}
+		return false;
+	}
+
 }

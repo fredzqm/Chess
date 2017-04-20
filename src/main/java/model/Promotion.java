@@ -92,5 +92,14 @@ public class Promotion extends Move {
 		if (promotedTo == null)
 			throw new RuntimeException("promtedTo is not specified");
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Promotion) {
+			Promotion x = (Promotion) obj;
+			return x.promotedTo == x.promotedTo && super.equals(obj);
+		}
+		return false;
+	}
 
 }

@@ -68,8 +68,6 @@ public abstract class Move {
 	public boolean equals(Move x) {
 		if (notQuiet() || x.notQuiet())
 			return false;
-		if (x instanceof Castling)
-			return false;
 		return movedPiece.equals(x.movedPiece) && startPosition.equals(x.startPosition)
 				&& lastPosition.equals(x.lastPosition);
 	}

@@ -477,7 +477,7 @@ export class Chess {
         }
         let m : IMovePatternMatcher = new MovePatternMatcher(moveCommand);
         if(m.matches()) {
-            let type : any = m.getGroup(1) == null?Pawn:Piece.getType(m.getGroup(1).charAt(0));
+            let type : any = m.getGroup(1) == null?Pawn:Chess.getPieceType(m.getGroup(1).charAt(0));
             let start : Square = null;
             if((m.getGroup(2) != null) && (m.getGroup(3) != null)) {
                 start = this.board.getSquare(m.getGroup(2) + m.getGroup(3));
@@ -504,12 +504,43 @@ export class Chess {
             if(move != null && move instanceof <any>Promotion) {
                 let promotion : Promotion = <Promotion>move;
                 if(m.getGroup(6) == null) throw new InvalidMoveException(moveCommand, InvalidMoveException.promotionTo);
-                let promotToClass : any = Piece.getType(m.getGroup(6).charAt(1));
+                let promotToClass : any = Chess.getPieceType(m.getGroup(6).charAt(1));
                 promotion.setPromoteTo(promotToClass);
             }
             return move;
         } else {
             throw new InvalidMoveException(moveCommand, InvalidMoveException.invalidFormat);
+        }
+    }
+
+    /**
+     * This method convert the character to one type of {@link Piece} class. It
+     * used mostly for parsing commands like
+     * <p>
+     * e2-e4 <br />
+     * Nb1-c3
+     * </p>
+     * 
+     * @param {string} character
+     * the character representing the piece
+     * @return {Function<>} the corresponding class
+     */
+    public static getPieceType(character : string) : any {
+        switch((javaemul.internal.CharacterHelper.toUpperCase(character))) {
+        case 80 /* 'P' */:
+            return Pawn;
+        case 82 /* 'R' */:
+            return Rook;
+        case 78 /* 'N' */:
+            return Knight;
+        case 66 /* 'B' */:
+            return Bishop;
+        case 81 /* 'Q' */:
+            return Queen;
+        case 75 /* 'K' */:
+            return King;
+        default:
+            return Piece;
         }
     }
 }

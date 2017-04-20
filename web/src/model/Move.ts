@@ -3,8 +3,9 @@ import { Piece } from './Piece';
 import { Square } from './Square'; 
 import { MoveNote } from './MoveNote'; 
 import { Pawn } from './Pawn'; 
-import { Castling } from './Castling'; 
 import { Chess } from './Chess'; 
+import Objects = java.util.Objects;
+
 /**
  * constructs a record
  * 
@@ -68,18 +69,6 @@ export abstract class Move {
         return this.movedPiece.isType(Pawn) && (this.startPosition.getX() === p.getX() && this.lastPosition.getX() === p.getX() && (this.startPosition.getY() + this.lastPosition.getY()) === (p.getY() * 2));
     }
 
-    /**
-     * This methods is called to examine whether 'threefold repetition rule'.
-     * 
-     * @param {model.Move} x
-     * @return {boolean} if two moves are exactly the same and repeatable.
-     */
-    public equals(x : Move) : boolean {
-        if(this.notQuiet() || x.notQuiet()) return false;
-        if(x != null && x instanceof <any>Castling) return false;
-        return this.movedPiece.equals(x.movedPiece) && this.startPosition.equals(x.startPosition) && this.lastPosition.equals(x.lastPosition);
-    }
-
     public toString() : string {
         return this.getPrintOut() + " " + this.getDescript();
     }
@@ -123,6 +112,14 @@ export abstract class Move {
     public abstract performMove(chess : Chess);
 
     public abstract undo(chess : Chess);
+
+    public equals(obj : any) : boolean {
+        if(obj != null && obj instanceof <any>Move) {
+            let x : Move = <Move>obj;
+            return this.isWhite === x.isWhite && this.movedPiece.equals(x.movedPiece) && this.startPosition.equals(x.startPosition) && this.lastPosition.equals(x.lastPosition) && Objects.equals(this.capturedPiece, x.capturedPiece);
+        }
+        return false;
+    }
 }
 Move["__class"] = "model.Move";
 

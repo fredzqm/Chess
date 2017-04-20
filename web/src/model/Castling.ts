@@ -87,6 +87,14 @@ export class Castling extends Move {
         this.movedPiece.moveTo(kingEnd);
         rook.moveTo(rookEnd);
     }
+
+    public equals(obj : any) : boolean {
+        if(obj != null && obj instanceof <any>Castling) {
+            let x : Castling = <Castling>obj;
+            return this.longOrShort === x.longOrShort && this.rook.equals(x.rook) && this.rookStart.equals(x.rookStart) && super.equals(obj);
+        }
+        return false;
+    }
 }
 Castling["__class"] = "model.Castling";
 

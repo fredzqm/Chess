@@ -3,12 +3,6 @@ import { Chess } from './Chess';
 import { Square } from './Square'; 
 import { Move } from './Move'; 
 import { Board } from './Board'; 
-import { Pawn } from './Pawn'; 
-import { Rook } from './Rook'; 
-import { Knight } from './Knight'; 
-import { Bishop } from './Bishop'; 
-import { Queen } from './Queen'; 
-import { King } from './King'; 
 import ArrayList = java.util.ArrayList;
 
 /**
@@ -200,37 +194,6 @@ export abstract class Piece implements java.lang.Comparable<Piece> {
      * the piece at the end position
      */
     public abstract legalPosition(end : Square) : Move;
-
-    /**
-     * This method convert the character to one type of {@link Piece} class. It
-     * used mostly for parsing commands like
-     * <p>
-     * e2-e4 <br />
-     * Nb1-c3
-     * </p>
-     * 
-     * @param {string} character
-     * the character representing the piece
-     * @return {Function<>} the corresponding class
-     */
-    public static getType(character : string) : any {
-        switch((javaemul.internal.CharacterHelper.toUpperCase(character))) {
-        case 80 /* 'P' */:
-            return Pawn;
-        case 82 /* 'R' */:
-            return Rook;
-        case 78 /* 'N' */:
-            return Knight;
-        case 66 /* 'B' */:
-            return Bishop;
-        case 81 /* 'Q' */:
-            return Queen;
-        case 75 /* 'K' */:
-            return King;
-        default:
-            return Piece;
-        }
-    }
 
     public toString() : string {
         return this.getName() + " at " + this.getSpot();

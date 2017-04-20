@@ -194,37 +194,6 @@ public abstract class Piece implements Comparable<Piece> {
 	 */
 	public abstract Move legalPosition(Square end);
 
-	/**
-	 * This method convert the character to one type of {@link Piece} class. It
-	 * used mostly for parsing commands like
-	 * <p>
-	 * e2-e4 <br />
-	 * Nb1-c3
-	 * </p>
-	 * 
-	 * @param character
-	 *            the character representing the piece
-	 * @return the corresponding class
-	 */
-	public static Class<? extends Piece> getType(char character) {
-		switch (Character.toUpperCase(character)) {
-		case 'P':
-			return Pawn.class;
-		case 'R':
-			return Rook.class;
-		case 'N':
-			return Knight.class;
-		case 'B':
-			return Bishop.class;
-		case 'Q':
-			return Queen.class;
-		case 'K':
-			return King.class;
-		default:
-			return Piece.class;
-		}
-	}
-
 	public String toString() {
 		return getName() + " at " + getSpot();
 	}

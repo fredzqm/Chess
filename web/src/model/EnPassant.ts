@@ -50,6 +50,14 @@ export class EnPassant extends Move {
         if(this.capturedPiece != null) chess.takeOffBoard(this.capturedPiece);
         this.movedPiece.moveTo(this.lastPosition);
     }
+
+    public equals(obj : any) : boolean {
+        if(obj != null && obj instanceof <any>EnPassant) {
+            let x : EnPassant = <EnPassant>obj;
+            return this.pawnPos === x.pawnPos && super.equals(obj);
+        }
+        return false;
+    }
 }
 EnPassant["__class"] = "model.EnPassant";
 

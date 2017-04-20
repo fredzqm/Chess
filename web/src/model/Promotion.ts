@@ -90,6 +90,14 @@ export class Promotion extends Move {
     private checkPromotedTo() {
         if(this.promotedTo == null) throw new Error("promtedTo is not specified");
     }
+
+    public equals(obj : any) : boolean {
+        if(obj != null && obj instanceof <any>Promotion) {
+            let x : Promotion = <Promotion>obj;
+            return x.promotedTo === x.promotedTo && super.equals(obj);
+        }
+        return false;
+    }
 }
 Promotion["__class"] = "model.Promotion";
 

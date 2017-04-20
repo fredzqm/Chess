@@ -524,7 +524,7 @@ public class Chess {
 
 		IMovePatternMatcher m = new MovePatternMatcher(moveCommand);
 		if (m.matches()) {
-			Class<? extends Piece> type = m.getGroup(1) == null ? Pawn.class : Piece.getType(m.getGroup(1).charAt(0));
+			Class<? extends Piece> type = m.getGroup(1) == null ? Pawn.class : getPieceType(m.getGroup(1).charAt(0));
 			Square start = null;
 			if ((m.getGroup(2) != null) && (m.getGroup(3) != null)) {
 				start = board.getSquare(m.getGroup(2) + m.getGroup(3));
@@ -552,12 +552,43 @@ public class Chess {
 				Promotion promotion = (Promotion) move;
 				if (m.getGroup(6) == null)
 					throw new InvalidMoveException(moveCommand, InvalidMoveException.promotionTo);
-				Class<? extends Piece> promotToClass = Piece.getType(m.getGroup(6).charAt(1));
+				Class<? extends Piece> promotToClass = getPieceType(m.getGroup(6).charAt(1));
 				promotion.setPromoteTo(promotToClass);
 			}
 			return move;
 		} else {
 			throw new InvalidMoveException(moveCommand, InvalidMoveException.invalidFormat);
+		}
+	}
+	
+	/**
+	 * This method convert the character to one type of {@link Piece} class. It
+	 * used mostly for parsing commands like
+	 * <p>
+	 * e2-e4 <br />
+	 * Nb1-c3
+	 * </p>
+	 * 
+	 * @param character
+	 *            the character representing the piece
+	 * @return the corresponding class
+	 */
+	public static Class<? extends Piece> getPieceType(char character) {
+		switch (Character.toUpperCase(character)) {
+		case 'P':
+			return Pawn.class;
+		case 'R':
+			return Rook.class;
+		case 'N':
+			return Knight.class;
+		case 'B':
+			return Bishop.class;
+		case 'Q':
+			return Queen.class;
+		case 'K':
+			return King.class;
+		default:
+			return Piece.class;
 		}
 	}
 

@@ -262,7 +262,7 @@ export abstract class ViewController implements IChessViewerControl {
                 if(move != null && move instanceof <any>Promotion) {
                     let promotion : Promotion = <Promotion>move;
                     let promoteTo : string = clickedView.getResponse("What do you want to promote to?");
-                    promotion.setPromoteTo(Piece.getType(promoteTo.charAt(0)));
+                    promotion.setPromoteTo(Chess.getPieceType(promoteTo.charAt(0)));
                 }
                 this.chess.makeMove(move);
                 this.updateGuiAfterMove(move);

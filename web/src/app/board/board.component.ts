@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { PieceSquare } from './square/pieceSquare';
+import { SquareData } from './square/squareData';
 
 @Component({
   selector: 'app-board',
@@ -7,7 +7,7 @@ import { PieceSquare } from './square/pieceSquare';
   styleUrls: ['./board.component.css']
 })
 export class BoardComponent  {
-  pieces : PieceSquare[][];
+  pieces : SquareData[][];
 
   @Output() onSquareClicked : EventEmitter<any> = new EventEmitter<any>();
 
@@ -29,12 +29,12 @@ export class BoardComponent  {
     });
   }
 
-  setPieceAt(file : number, rank : number, piece : PieceSquare) {
+  setPieceAt(file : number, rank : number, piece : SquareData) {
     this.pieces[8-rank][file-1] = piece;
   }
 
   updateSquare(file : number, rank : number, pieceType : string, whiteOrBlack : boolean) {
-    this.setPieceAt(file, rank, pieceType? new PieceSquare(pieceType, whiteOrBlack) : null);
+    this.setPieceAt(file, rank, pieceType? new SquareData(pieceType, whiteOrBlack) : null);
   }
 
   clearSquare(file : number, rank : number) {

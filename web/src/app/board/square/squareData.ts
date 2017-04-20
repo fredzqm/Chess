@@ -1,4 +1,4 @@
-export class PieceSquare {
+export class SquareData {
 	
   constructor(
     public type : string, 

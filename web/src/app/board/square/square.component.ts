@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, HostListener, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import { PieceSquare } from './pieceSquare';
+import { SquareData } from './squareData';
 
 @Component({
   selector: 'app-square',
@@ -7,7 +7,7 @@ import { PieceSquare } from './pieceSquare';
   styleUrls: ['./square.component.css']
 })
 export class SquareComponent implements OnInit, OnChanges {
-  @Input() piece : PieceSquare;
+  @Input() piece : SquareData;
   @Input() i : number;
   @Input() j : number;
   @Output() clickSquare : EventEmitter<any> = new EventEmitter<any>();

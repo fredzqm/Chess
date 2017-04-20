@@ -28,6 +28,10 @@ export class ChessComponent implements OnInit, IChessViewer {
     this.controller.click(event.file, event.rank, event.whiteOrBlack);
   }
 
+  handleCommand(event: any) {
+    console.log(event.command);
+    this.controller.handleCommand(event.command, event.isWhiteView);
+  }
   /**
    * print the message in the console.
    * 

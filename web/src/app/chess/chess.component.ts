@@ -34,7 +34,7 @@ export class ChessComponent implements OnInit, IChessViewer {
    * @param message
    */
   printOut(message : string) {
-    console.log("printOut " + message);
+    this.console.printOut(message);
   }
 
   /**
@@ -45,8 +45,7 @@ export class ChessComponent implements OnInit, IChessViewer {
    * @param temp
    */
   printTemp(temp : string) {
-    console.log("printOut " + temp);
-
+    this.console.printTemp(temp);
   }
 
   /**
@@ -54,7 +53,7 @@ export class ChessComponent implements OnInit, IChessViewer {
    * {@link ChessViewer#printTemp(String)}
    */
   cleanTemp() {
-    console.log('cleanTemp');
+    this.console.cleanTemp();
   }
 
   /**
@@ -95,9 +94,7 @@ export class ChessComponent implements OnInit, IChessViewer {
   /**
    * refresh the UI
    */
-  repaint() {
-
-  }
+  repaint() {}
 
   /**
    * update Piece at this position

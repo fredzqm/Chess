@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 /**
  * this class is a record of all the moves in this game, so we can undo steps or
  * check for special rules.
@@ -59,19 +61,6 @@ public abstract class Move {
 				&& (startPosition.getY() + lastPosition.getY()) == (p.getY() * 2));
 	}
 
-	/**
-	 * This methods is called to examine whether 'threefold repetition rule'.
-	 * 
-	 * @param x
-	 * @return if two moves are exactly the same and repeatable.
-	 */
-	public boolean equals(Move x) {
-		if (notQuiet() || x.notQuiet())
-			return false;
-		return movedPiece.equals(x.movedPiece) && startPosition.equals(x.startPosition)
-				&& lastPosition.equals(x.lastPosition);
-	}
-
 	public String toString() {
 		return getPrintOut() + " " + getDescript();
 	}
@@ -120,4 +109,14 @@ public abstract class Move {
 
 	public abstract void undo(Chess chess);
 
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Move) {
+			Move x = (Move) obj;
+			return isWhite == x.isWhite && movedPiece.equals(x.movedPiece) && startPosition.equals(x.startPosition)
+					&& lastPosition.equals(x.lastPosition) && Objects.equals(capturedPiece, x.capturedPiece);
+		}
+		return false;
+	}
 }

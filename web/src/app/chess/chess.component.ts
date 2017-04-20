@@ -108,7 +108,8 @@ export class ChessComponent implements OnInit, IChessViewer {
    * @param whiteOrBlack
    */
   upDatePiece(file : number, rank : number, pieceType : string, whiteOrBlack : boolean) {
-    
+    console.log('update Piece file ' + file + ' rank ' + rank + '  ' + pieceType);
+    this.board.updateSquare(file, rank, pieceType, whiteOrBlack);
   }
 
   /**
@@ -118,6 +119,6 @@ export class ChessComponent implements OnInit, IChessViewer {
    * @param rank
    */
   clearLabel(file : number, rank : number) {
-    console.log('clearLabel');
+    console.log('clearLabel file ' + file + ' rank ' + rank);
   }
 }

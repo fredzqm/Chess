@@ -1,58 +1,36 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { PieceSquare, PieceType } from '../PieceSquare';
+import { PieceSquare } from './square/pieceSquare';
 
 @Component({
   selector: 'app-board',
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.css']
 })
-export class BoardComponent implements OnInit {
+export class BoardComponent  {
   pieces : PieceSquare[][];
 
   @Output() click : EventEmitter<any> = new EventEmitter<any>();
-
-  onSquareClick(event) {
-    event.whiteOrBlack = true;
-    this.click.emit(event);
-  }
 
   constructor() {
       this.pieces = [];
       for (let i = 0; i < 8; i++) {
           this.pieces[i] = [];
           for (let j = 0; j < 8; j++) {
-              this.pieces[i][j] = this.getInitialPiece(j+1, i+1);
+              this.pieces[i][j] = null;
           }
       }
   }
 
-  getInitialPiece(i : number, j : number) : PieceSquare {
-      if (j === 2)
-          return new PieceSquare(PieceType.PAWN, false);
-      if (j === 7)
-          return new PieceSquare(PieceType.PAWN, true);
-      let isWhite : boolean = null;
-      if (j === 1)
-          isWhite = false;
-      if (j === 8)
-          isWhite = true;
-      if (isWhite === null)
-          return null;
-      if (i === 1 || i === 8)
-          return new PieceSquare(PieceType.ROOK, isWhite);
-      if (i === 2 || i === 7)
-          return new PieceSquare(PieceType.KNIGHT, isWhite);
-      if (i === 3 || i === 6)
-          return new PieceSquare(PieceType.BISHOP, isWhite);
-      if (i === 4)
-          return new PieceSquare(PieceType.QUEEN, isWhite);
-      if (i === 5)
-          return new PieceSquare(PieceType.KING, isWhite);
-      throw "invalid coordinate (" + i + ", "+ j + ")";
+  onSquareClick(pos) {
+    this.click.emit({
+      file: pos.i + 1,
+      rank: 8-pos.j,
+      whiteOrBlack : true
+    });
   }
 
-  ngOnInit() {
-
+  updateSquare(file : number, rank : number, pieceType : string, whiteOrBlack : boolean) {
+    this.pieces[8-rank][file-1] = new PieceSquare(pieceType, whiteOrBlack);
   }
 
 }

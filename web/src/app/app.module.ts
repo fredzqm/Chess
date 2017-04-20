@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
-import { SquareComponent } from './square/square.component';
+import { SquareComponent } from './board/square/square.component';
 import { BoardComponent } from './board/board.component';
 import { ChessComponent } from './chess/chess.component';
 import { ConsoleComponent } from './console/console.component';

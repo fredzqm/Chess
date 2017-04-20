@@ -1,9 +1,9 @@
 <table id='chess'>
-	<div *ngFor = "let row of pieces; let file = index">
-		<app-square *ngFor = "let square of row; let rank = index"
+	<div *ngFor = "let row of pieces; let j = index">
+		<app-square *ngFor = "let square of row; let i = index"
 			(clickSquare) = "onSquareClick($event)"
-			[file]="file"
-			[rank]="rank"
+			[i]="i"
+			[j]="j"
 			[piece]="square">
 		</app-square>
 	</div>

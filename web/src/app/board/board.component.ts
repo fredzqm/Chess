@@ -9,7 +9,7 @@ import { PieceSquare } from './square/pieceSquare';
 export class BoardComponent  {
   pieces : PieceSquare[][];
 
-  @Output() click : EventEmitter<any> = new EventEmitter<any>();
+  @Output() onSquareClicked : EventEmitter<any> = new EventEmitter<any>();
 
   constructor() {
       this.pieces = [];
@@ -22,7 +22,7 @@ export class BoardComponent  {
   }
 
   onSquareClick(pos) {
-    this.click.emit({
+    this.onSquareClicked.emit({
       file: pos.i + 1,
       rank: 8-pos.j,
       whiteOrBlack : true
@@ -31,6 +31,10 @@ export class BoardComponent  {
 
   updateSquare(file : number, rank : number, pieceType : string, whiteOrBlack : boolean) {
     this.pieces[8-rank][file-1] = new PieceSquare(pieceType, whiteOrBlack);
+  }
+
+  clearSquare(file : number, rank : number) {
+    this.pieces[8-rank][file-1] = null;
   }
 
 }

@@ -21,7 +21,7 @@ export class Knight extends Piece {
     }
 
     public legalPosition(end : Square) : Move {
-        if(this.spot.equals(end)) return null;
+        if(this.spot === end) return null;
         let a : number = Math.abs(this.spot.getX() - end.getX());
         let b : number = Math.abs(this.spot.getY() - end.getY());
         if(a + b === 3 && (a !== 0 && b !== 0)) return new RegularMove(this, this.spot, end.getPiece(), end); else return null;

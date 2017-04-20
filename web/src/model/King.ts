@@ -21,7 +21,7 @@ export class King extends Piece {
 
     public legalPosition(end : Square) : Move {
         if(Math.abs(this.spot.getX() - end.getX()) > 1 || Math.abs(this.spot.getY() - end.getY()) > 1) return null;
-        if(this.spot.equals(end)) return null; else {
+        if(this.spot === end) return null; else {
             return new RegularMove(this, this.spot, end.getPiece(), end);
         }
     }

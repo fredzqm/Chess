@@ -25,6 +25,9 @@ export class ChessComponent implements OnInit, IChessViewer {
 
   click(event : any) {
     console.log("click event: " + event);
+    console.log("click event.file: " + event.file);
+    console.log("click event.rank: " + event.rank);
+    console.log("click event.whiteOrBlack: " + event.whiteOrBlack);
     this.controller.click(event.file, event.rank, event.whiteOrBlack);
   }
 
@@ -119,6 +122,7 @@ export class ChessComponent implements OnInit, IChessViewer {
    * @param rank
    */
   clearLabel(file : number, rank : number) {
+    this.board.clearSquare(file, rank);
     console.log('clearLabel file ' + file + ' rank ' + rank);
   }
 }

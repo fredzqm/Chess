@@ -26,7 +26,7 @@ export class Bishop extends Piece {
     }
 
     static legalPosition(start : Square, end : Square, chess : Chess) : boolean {
-        if(start.equals(end)) return false;
+        if(start === end) return false;
         if(Math.abs(start.getX() - end.getX()) === Math.abs(start.getY() - end.getY())) {
             let k : number = ((end.getX() - start.getX()) / (Math.abs(end.getX() - start.getX()))|0);
             let l : number = ((end.getY() - start.getY()) / (Math.abs(end.getY() - start.getY()))|0);

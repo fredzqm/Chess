@@ -26,7 +26,7 @@ export class Rook extends Piece {
     }
 
     static legalPosition(start : Square, end : Square, chess : Chess) : boolean {
-        if(start.equals(end)) return false;
+        if(start === end) return false;
         if(end.getX() === start.getX()) {
             let k : number = ((end.getY() - start.getY()) / (Math.abs(end.getY() - start.getY()))|0);
             for(let i : number = start.getY() + k; i !== end.getY(); i += k) {

@@ -29,8 +29,12 @@ export class BoardComponent  {
     });
   }
 
+  setPieceAt(file : number, rank : number, piece : PieceSquare) {
+    this.pieces[8-rank][file-1] = piece;
+  }
+
   updateSquare(file : number, rank : number, pieceType : string, whiteOrBlack : boolean) {
-    this.pieces[8-rank][file-1] = new PieceSquare(pieceType, whiteOrBlack);
+    this.setPieceAt(file, rank, pieceType? new PieceSquare(pieceType, whiteOrBlack) : null);
   }
 
   clearSquare(file : number, rank : number) {

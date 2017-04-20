@@ -10,24 +10,21 @@ import { SingleViewChessControl } from '../../controller/SingleViewChessControl'
   styleUrls: ['./chess.component.css']
 })
 export class ChessComponent implements OnInit, IChessViewer {
-  title = 'app works!';
   status: string;
   controller : SingleViewChessControl;
 
   @ViewChild("board") board : BoardComponent;
   @ViewChild("console") console : ConsoleComponent;
    
-  constructor() {}
+  constructor() {
+    this.status  = "Welcome to my wonderful chess game!";
+  }
 
   ngOnInit() {
     this.controller = new SingleViewChessControl(this);
   }
 
   click(event : any) {
-    console.log("click event: " + event);
-    console.log("click event.file: " + event.file);
-    console.log("click event.rank: " + event.rank);
-    console.log("click event.whiteOrBlack: " + event.whiteOrBlack);
     this.controller.click(event.file, event.rank, event.whiteOrBlack);
   }
 
@@ -111,7 +108,6 @@ export class ChessComponent implements OnInit, IChessViewer {
    * @param whiteOrBlack
    */
   upDatePiece(file : number, rank : number, pieceType : string, whiteOrBlack : boolean) {
-    console.log('update Piece file ' + file + ' rank ' + rank + '  ' + pieceType);
     this.board.updateSquare(file, rank, pieceType, whiteOrBlack);
   }
 
@@ -122,7 +118,6 @@ export class ChessComponent implements OnInit, IChessViewer {
    * @param rank
    */
   clearLabel(file : number, rank : number) {
-    this.board.clearSquare(file, rank);
-    console.log('clearLabel file ' + file + ' rank ' + rank);
+    this.board.updateSquare(file, rank, null, null);
   }
 }

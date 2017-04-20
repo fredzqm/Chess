@@ -1,5 +1,4 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { SquareData } from './square/squareData';
 
 @Component({
   selector: 'app-board',
@@ -7,7 +6,7 @@ import { SquareData } from './square/squareData';
   styleUrls: ['./board.component.css']
 })
 export class BoardComponent  {
-  pieces : SquareData[][];
+  pieces : any[][];
 
   @Output() onSquareClicked : EventEmitter<any> = new EventEmitter<any>();
 
@@ -16,29 +15,43 @@ export class BoardComponent  {
       for (let i = 0; i < 8; i++) {
           this.pieces[i] = [];
           for (let j = 0; j < 8; j++) {
-              this.pieces[i][j] = null;
+              this.pieces[i][j] = {};
           }
       }
   }
 
-  onSquareClick(pos) {
+  onSquareClick(i, j) {
     this.onSquareClicked.emit({
-      file: pos.i + 1,
-      rank: 8-pos.j,
+      file: i + 1,
+      rank: 8-j,
       whiteOrBlack : true
     });
   }
 
-  setPieceAt(file : number, rank : number, piece : SquareData) {
-    this.pieces[8-rank][file-1] = piece;
+  getPieceAt(file : number, rank : number) : any {
+    return this.pieces[8-rank][file-1];
   }
 
   updateSquare(file : number, rank : number, pieceType : string, whiteOrBlack : boolean) {
-    this.setPieceAt(file, rank, pieceType? new SquareData(pieceType, whiteOrBlack) : null);
+    console.log(this.pieces);
+    this.getPieceAt(file, rank).type = pieceType;
+    this.getPieceAt(file, rank).isWhite = whiteOrBlack;
   }
 
   clearSquare(file : number, rank : number) {
     this.pieces[8-rank][file-1] = null;
+  }
+
+  highLight(file : number, rank : number) {
+    this.getPieceAt(file, rank).isHightLight = true;
+  }
+
+  deHighLightWholeBoard() {
+    for (let row of this.pieces) {
+      for (let x of row) {
+        x.isHightLight = false;
+      }
+    }
   }
 
 }

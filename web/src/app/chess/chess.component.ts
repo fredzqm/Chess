@@ -72,14 +72,14 @@ export class ChessComponent implements OnInit, IChessViewer {
    * @param rank
    */
   highLight(file : number, rank : number) {
-
+    this.board.highLight(file, rank);
   }
 
   /**
    * dehighlight the whole board
    */
   deHighLightWholeBoard() {
-
+    this.board.deHighLightWholeBoard();
   }
 
   /**

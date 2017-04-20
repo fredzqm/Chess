@@ -1,10 +1,13 @@
 <table id='chess'>
 	<div *ngFor = "let row of pieces; let j = index">
-		<app-square *ngFor = "let square of row; let i = index"
-			(clickSquare) = "onSquareClick($event)"
+		<app-square *ngFor = "let data of row; let i = index"
+			(clickSquare) = "onSquareClick(i, j)"
+			[isHightLight]="data.isHightLight"
+			[type]="data.type"
+			[isWhite]="data.isWhite"
 			[i]="i"
 			[j]="j"
-			[piece]="square">
+			>
 		</app-square>
 	</div>
 </table>

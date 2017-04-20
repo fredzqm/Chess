@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
-import { SquareComponent } from './board/square/square.component';
-import { BoardComponent } from './board/board.component';
+import { SquareComponent } from './chess/board/square/square.component';
+import { BoardComponent } from './chess/board/board.component';
+import { ConsoleComponent } from './chess/console/console.component';
 import { ChessComponent } from './chess/chess.component';
-import { ConsoleComponent } from './console/console.component';
 
 @NgModule({
   declarations: [

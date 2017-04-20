@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Output } from '@angular/core';
-import { BoardComponent } from '../board/board.component';
-import { ConsoleComponent } from '../console/console.component';
+import { BoardComponent } from './board/board.component';
+import { ConsoleComponent } from './console/console.component';
 import { IChessViewer } from '../../view/IChessViewer';
 import { SingleViewChessControl } from '../../controller/SingleViewChessControl';
 

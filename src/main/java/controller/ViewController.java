@@ -11,14 +11,11 @@ import model.Move;
 import model.Pawn;
 import model.Piece;
 import model.Promotion;
-import model.Piece.Player;
 import model.Record;
 import model.Square;
 import model.Win;
-import view.ChessPieceType;
-import view.ChessViewer;
+import view.IChessViewer;
 import view.IChessViewerControl;
-import view.SquareLabel;
 
 public abstract class ViewController implements IChessViewerControl {
 	private Piece chosen;
@@ -37,6 +34,11 @@ public abstract class ViewController implements IChessViewerControl {
 			+ "    Castling, Pawn, King, Queen, Rook, Bishop, Knight, En Passant, Promotion.";
 
 	public static final Map<String, String> rules = new HashMap<String, String>() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		{
 			put("castling",
 					"Only under those circumstances, you can castling\n"
@@ -74,33 +76,29 @@ public abstract class ViewController implements IChessViewerControl {
 	private void restart() {
 		chess = new Chess();
 		chosen = null;
-		ChessViewer white = chooesView(true);
-		ChessViewer black = chooesView(false);
+		IChessViewer white = chooesView(true);
+		IChessViewer black = chooesView(false);
 		restartView(white);
 		if (black != white)
 			restartView(black);
 	}
 
-	private void restartView(ChessViewer view) {
+	private void restartView(IChessViewer view) {
 		view.deHighLightWholeBoard();
 		view.setStatusLabelText("       Welcome to Another Wonderful Chess Game         ");
 		view.printOut("Start a new game!");
 	}
 
-	private void repaintAll(ChessViewer view) {
+	private void repaintAll(IChessViewer view) {
 		for (Square sq : chess.getBoard()) {
-			updateSquare(view, sq);
+			if (sq.isOccupied()) {
+				view.upDatePiece(sq.getX(), sq.getY(), sq.getPiece().getType(),
+						sq.getPiece().getWhiteOrBlack());
+			} else {
+				view.clearLabel(sq.getX(), sq.getY());
+			}
 		}
 		view.repaint();
-	}
-
-	private void updateSquare(ChessViewer view, Square sq) {
-		if (sq.isOccupied()) {
-			view.labelAt(sq.getX(), sq.getY()).upDatePiece(ChessPieceType.from(sq.getPiece().getType()),
-					sq.getPiece().getWhiteOrBlack() == Player.WHITE);
-		} else {
-			view.labelAt(sq.getX(), sq.getY()).clearLabel();
-		}
 	}
 
 	/**
@@ -108,7 +106,7 @@ public abstract class ViewController implements IChessViewerControl {
 	 * will undo two moves.
 	 * 
 	 */
-	private void undo(Chess chess, ChessViewer view) {
+	private void undo(Chess chess, IChessViewer view) {
 		if (!chess.undoLastMove())
 			view.printOut("It is already the start of Game");
 		else
@@ -122,7 +120,7 @@ public abstract class ViewController implements IChessViewerControl {
 	 * @param whiteOrBlack
 	 * @return
 	 */
-	private void showRules(String command, ChessViewer view, Map<String, String> rules) {
+	private void showRules(String command, IChessViewer view, Map<String, String> rules) {
 		if (rules.containsKey(command))
 			view.printOut(rules.get(command));
 		view.printOut("You can get rules for castling, pawn, king, queen, rook, bishop, knight, En Passant, promotion");
@@ -135,7 +133,7 @@ public abstract class ViewController implements IChessViewerControl {
 	 * 
 	 * @return records
 	 */
-	private void printRecords(ChessViewer view, Chess chess) {
+	private void printRecords(IChessViewer view, Chess chess) {
 		Record records = chess.getRecords();
 		if (records.isEmpty()) {
 			view.printOut("Game hasn't started yet.");
@@ -144,29 +142,14 @@ public abstract class ViewController implements IChessViewerControl {
 		view.printOut(records.printDoc());
 	}
 
-	private SquareLabel squareToLabel(Square sqr, ChessViewer view) {
-		return view.labelAt(sqr.getX(), sqr.getY());
-	}
-
-	private ArrayList<SquareLabel> getAllViewLabels(ArrayList<Square> squares, ChessViewer view) {
-		ArrayList<SquareLabel> list = new ArrayList<SquareLabel>();
-		for (Square sqr : squares)
-			list.add(squareToLabel(sqr, view));
-		return list;
-	}
-
-	private Square labelToSquare(SquareLabel sql, Chess chess) {
-		return chess.spotAt(sql.X(), sql.Y());
-	}
-
-	public void resign(ChessViewer view, Chess chess) {
+	public void resign(IChessViewer view, Chess chess) {
 		Draw canClaimDraw = chess.canClaimDraw();
 		if (canClaimDraw != null) {
 			view.printOut("Actually, you can go with a draw!");
 			chess.endGame(canClaimDraw);
 			return;
 		}
-		if (chess.getWhoseTurn() == Player.WHITE) {
+		if (chess.getWhoseTurn()) {
 			chess.endGame(Win.WHITERESIGN);
 		} else {
 			chess.endGame(Win.BLACKESIGN);
@@ -176,8 +159,8 @@ public abstract class ViewController implements IChessViewerControl {
 	private void askForDraw(boolean whiteOrBlack) {
 		Draw canClaimDraw = chess.canClaimDraw();
 		if (canClaimDraw == null) {
-			ChessViewer request = chooesView(whiteOrBlack);
-			ChessViewer response = chooesView(!whiteOrBlack);
+			IChessViewer request = chooesView(whiteOrBlack);
+			IChessViewer response = chooesView(!whiteOrBlack);
 			if (drawManager.canAskFordraw(whiteOrBlack)) {
 				while (true) {
 					response.printOut(side(whiteOrBlack) + " ask for draw, do you agreed?");
@@ -202,8 +185,8 @@ public abstract class ViewController implements IChessViewerControl {
 	}
 
 	protected void updateChessBoard() {
-		ChessViewer white = chooesView(true);
-		ChessViewer black = chooesView(false);
+		IChessViewer white = chooesView(true);
+		IChessViewer black = chooesView(false);
 		repaintAll(white);
 		if (black != white)
 			repaintAll(black);
@@ -219,7 +202,7 @@ public abstract class ViewController implements IChessViewerControl {
 	 *            the input command
 	 * @return
 	 */
-	public boolean makeMove(ChessViewer view, String moveCommand) {
+	public boolean makeMove(IChessViewer view, String moveCommand) {
 		Move move = null;
 		try {
 			move = chess.interpreteMoveCommand(moveCommand);
@@ -228,26 +211,26 @@ public abstract class ViewController implements IChessViewerControl {
 			return true;
 		} catch (InvalidMoveException e) {
 			switch (e.type) {
-			case invalidFormat:
+			case InvalidMoveException.invalidFormat:
 				view.printOut("The command is not in a valid format.");
 				break;
-			case ambiguousMove:
+			case InvalidMoveException.ambiguousMove:
 				view.printOut("Fail to guess move: There is ambiguity, multiple possible moves.");
 				break;
-			case castleNotAllowed:
+			case InvalidMoveException.castleNotAllowed:
 				view.printOut("You cannot do castling, please check the rules for castling.");
 				break;
-			case impossibleMove:
+			case InvalidMoveException.impossibleMove:
 				view.printOut("This is not a possible move.");
 				break;
-			case incorrectPiece:
+			case InvalidMoveException.incorrectPiece:
 				view.printOut("The chessman in the start Position is not correct! "
 						+ "\n R(Root), N(Knight), B(Bishop), Q(Queen), K(King), omission for pawn");
 				break;
-			case pieceNotPresent:
+			case InvalidMoveException.pieceNotPresent:
 				view.printOut("There is no piece at the start position.");
 				break;
-			case promotionTo:
+			case InvalidMoveException.promotionTo:
 				view.printOut("You should specify what piece you want to promote to");
 				break;
 			default:
@@ -258,7 +241,7 @@ public abstract class ViewController implements IChessViewerControl {
 	}
 
 	public void handleCommand(String input, boolean whiteOrBlack) {
-		ChessViewer view = chooesView(whiteOrBlack);
+		IChessViewer view = chooesView(whiteOrBlack);
 		if (input.length() == 0)
 			return;
 		if (input.equals("print")) {
@@ -291,17 +274,17 @@ public abstract class ViewController implements IChessViewerControl {
 		}
 	}
 
-	public void click(SquareLabel label, boolean whiteOrBlack) {
-		ChessViewer clickedView = chooesView(whiteOrBlack);
+	public void click(int file, int rank, boolean whiteOrBlack) {
+		IChessViewer clickedView = chooesView(whiteOrBlack);
 		if (chess.hasEnd()) {
 			clickedView.printOut("Game is already over! Type restart to start a new game");
 			return;
 		}
-		if (clickedView != chooesView(chess.getWhoseTurn() == Player.WHITE)) {
+		if (clickedView != chooesView(chess.getWhoseTurn())) {
 			clickedView.printOut("Please wait for your opponnet to finish");
 			return;
 		}
-		Square spot = labelToSquare(label, chess);
+		Square spot = chess.spotAt(file, rank);
 		if (chosen != null) {
 			Move move = chosen.getMove(spot);
 			if (move == null) {
@@ -322,7 +305,9 @@ public abstract class ViewController implements IChessViewerControl {
 				chosen = spot.getPiece();
 				ArrayList<Square> reachable = chosen.getReachableSquares();
 				reachable.add(spot);
-				clickedView.highLightAll(getAllViewLabels(reachable, clickedView));
+				for (Square sqr : reachable) {
+					clickedView.highLight(sqr.getX(), sqr.getY());
+				}
 
 				if (spot.getPiece().isType(Pawn.class))
 					clickedView.printTemp(spot.toString());
@@ -332,7 +317,7 @@ public abstract class ViewController implements IChessViewerControl {
 		}
 	}
 
-	public abstract ChessViewer chooesView(boolean whiteOrBlack);
+	public abstract IChessViewer chooesView(boolean whiteOrBlack);
 
 	/**
 	 * print messages and update GUI when this move just get accomplished

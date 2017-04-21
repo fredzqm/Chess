@@ -71,7 +71,7 @@ public class SquareLabel extends JLabel {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				chess.click(SquareLabel.this, isWhite);
+				chess.click(x, y, isWhite);
 			}
 		});
 	}
@@ -81,14 +81,6 @@ public class SquareLabel extends JLabel {
 
 	public String toString() {
 		return "(" + x + "," + y + ")";
-	}
-
-	public int X() {
-		return x;
-	}
-
-	public int Y() {
-		return y;
 	}
 
 	public boolean isHighLight() {
@@ -114,29 +106,33 @@ public class SquareLabel extends JLabel {
 	/**
 	 * upDate the color and text of this JLabel.
 	 */
-	public void upDatePiece(ChessPieceType chessPieceType, boolean wb) {
-		image = getSymbol(chessPieceType, wb);
+	public void upDatePiece(char type, boolean wb) {
+		image = getSymbol(type, wb);
 	}
 
-	public BufferedImage getSymbol(ChessPieceType type, boolean whiteOrBlack) {
+	public BufferedImage getSymbol(char type, boolean whiteOrBlack) {
 		int color;
 		if (whiteOrBlack)
 			color = 0;
 		else
 			color = 67;
+		return symbolProvider.imageAt(getXIndex(type), color, SQUARE_WIDTH, SQUARE_WIDTH);
+	}
+
+	private int getXIndex(char type) {
 		switch (type) {
-		case Pawn:
-			return symbolProvider.imageAt(333, color, SQUARE_WIDTH, SQUARE_WIDTH);
-		case Rook:
-			return symbolProvider.imageAt(268, color, SQUARE_WIDTH, SQUARE_WIDTH);
-		case Bishop:
-			return symbolProvider.imageAt(135, color, SQUARE_WIDTH, SQUARE_WIDTH);
-		case Knight:
-			return symbolProvider.imageAt(201, color, SQUARE_WIDTH, SQUARE_WIDTH);
-		case Queen:
-			return symbolProvider.imageAt(67, color, SQUARE_WIDTH, SQUARE_WIDTH);
-		case King:
-			return symbolProvider.imageAt(0, color, SQUARE_WIDTH, SQUARE_WIDTH);
+		case 'P':
+			return 333;
+		case 'R':
+			return 268;
+		case 'B':
+			return 135;
+		case 'N':
+			return 201;
+		case 'Q':
+			return 67;
+		case 'K':
+			return 0;
 		default:
 			throw new RuntimeException("Invalid type of ChessPiece " + type);
 		}

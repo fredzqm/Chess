@@ -6,9 +6,6 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,7 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 @SuppressWarnings("serial")
-public class ChessViewer extends JFrame {
+public class ChessViewer extends JFrame implements IChessViewer {
 	
 	private static final Font FONT_STATUS_LABEL = new Font("Serif", Font.PLAIN, 40);
 	private static final int CONSOLE_FONT_SIZE = 20;
@@ -30,7 +27,6 @@ public class ChessViewer extends JFrame {
 
 	private JLabel statusLabel;
 	private SquareLabel[][] labels;
-	private Collection<SquareLabel> highlighted;
 	
 	private JTextArea myConsole;
 	private String existence;
@@ -44,7 +40,6 @@ public class ChessViewer extends JFrame {
 	public ChessViewer(IChessViewerControl controller, String title, boolean whiteOrBlack) {
 		this.viewControl = controller;
 		this.isWhiteView = whiteOrBlack;
-		this.highlighted = Collections.emptyList();
 		setTitle(title);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -116,19 +111,15 @@ public class ChessViewer extends JFrame {
 
 	/**
 	 * 
-	 * @param x
-	 * @param y
+	 * @param file
+	 * @param rank
 	 * @return {link {@link SquareLabel} at (x , y) coordinate
 	 */
-	public SquareLabel labelAt(int x, int y) {
-		return isWhiteView ? labels[x][8 - y] : labels[9 - x][y - 1];
+	public SquareLabel labelAt(int file, int rank) {
+		return isWhiteView ? labels[file][8 - rank] : labels[9 - file][rank - 1];
 	}
 
-	/**
-	 * print the message in the console.
-	 * 
-	 * @param message
-	 */
+	@Override
 	public void printOut(String message) {
 		existence = myConsole.getText();
 		if (message != null) {
@@ -137,48 +128,36 @@ public class ChessViewer extends JFrame {
 		}
 	}
 
-	/**
-	 * print out the temporal string in the console, without updating the
-	 * record. The temp string printed can be clear with
-	 * {@link ChessViewer#cleanTemp()}
-	 * 
-	 * @param temp
-	 */
+	@Override
 	public void printTemp(String temp) {
 		myConsole.setText(existence + temp);
 	}
 
-	/**
-	 * erase the temporal string in the console printed by
-	 * {@link ChessViewer#printTemp(String)}
-	 */
+	@Override
 	public void cleanTemp() {
 		myConsole.setText(existence);
 	}
 
-	/**
-	 * 
-	 * @param str
-	 */
+	@Override
 	public void setStatusLabelText(String str) {
 		statusLabel.setText(str);
 	}
 
-	public void highLightAll(Collection<SquareLabel> hightlight) {
-		highlighted = hightlight;
-		for (SquareLabel sqrl : highlighted)
-			sqrl.highLight();
+	@Override
+	public void highLight(int file, int rank) {
+		labelAt(file, rank).highLight();
 	}
 
-	/**
-	 * dehighlight the whole board
-	 */
+	@Override
 	public void deHighLightWholeBoard() {
-		for (SquareLabel sqrl : highlighted)
-			sqrl.deHighLight();
-		highlighted = new ArrayList<>();
+		for (SquareLabel[] row : this.labels) {
+			for (SquareLabel label : row) {
+				label.deHighLight();
+			}
+		}
 	}
 
+	@Override
 	public String getResponse(String message) {
 		return JOptionPane.showInputDialog(message);
 	}
@@ -200,5 +179,16 @@ public class ChessViewer extends JFrame {
 		}
 
 	}
+
+	@Override
+	public void upDatePiece(int file, int rank, char pieceType, boolean whiteOrBlack) {
+		labelAt(file, rank).upDatePiece(pieceType, whiteOrBlack);
+	}
+
+	@Override
+	public void clearLabel(int file, int rank) {
+		labelAt(file, rank).clearLabel();
+	}
+
 
 }

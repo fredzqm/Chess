@@ -1,0 +1,6 @@
+<h1>{{status}}</h1>
+<app-board #board 
+	(onSquareClicked)="click($event)"
+	(enteredCommand)="handleCommand($event)"
+	></app-board>
+<app-console #console ></app-console>

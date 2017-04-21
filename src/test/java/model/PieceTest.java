@@ -13,11 +13,9 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
-import model.Piece.Player;
-
 public class PieceTest {
 	Square pieceSquare;
-	Player player;
+	boolean player;
 	Chess chess;
 	Board board;
 	Square square1;
@@ -26,7 +24,7 @@ public class PieceTest {
 
 	@Before
 	public void setUpBoard() {
-		player = Player.WHITE;
+		player = true;
 		pieceSquare = mock(Square.class);
 		chess = mock(Chess.class);
 		square1 = mock(Square.class);

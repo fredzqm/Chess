@@ -3,10 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import model.Piece.Player;
+import java.util.Iterator;
 
 /**
  * It is the system for a chess game. It has fields to store the condition of
@@ -43,13 +40,13 @@ public class Chess {
 				Square t = board.spotAt(i, j);
 				int y = t.getY();
 				if (y == 1) {
-					white.add(startSet(t.getX(), Player.WHITE, t));
+					white.add(startSet(t.getX(), true, t));
 				} else if (y == 2) {
-					white.add(new Pawn(Player.WHITE, t, this));
+					white.add(new Pawn(true, t, this));
 				} else if (y == 7) {
-					black.add(new Pawn(Player.BLACK, t, this));
+					black.add(new Pawn(false, t, this));
 				} else if (y == 8) {
-					black.add(startSet(t.getX(), Player.BLACK, t));
+					black.add(startSet(t.getX(), false, t));
 				}
 				list.add(t);
 			}
@@ -68,7 +65,7 @@ public class Chess {
 	 *            original position of this piece
 	 * @return creates new pieces to put into the start chessboard.
 	 */
-	private Piece startSet(int x, Player c, Square p) {
+	private Piece startSet(int x, boolean c, Square p) {
 		if (x == 1 || x == 8)
 			return new Rook(c, p, this);
 		else if (x == 2 || x == 7)
@@ -86,12 +83,8 @@ public class Chess {
 	// ---------------------------------------------------------------------------
 	// Accessors
 
-	public Player getWhoseTurn() {
-		if (time % 2 == 0) {
-			return Player.WHITE;
-		} else {
-			return Player.BLACK;
-		}
+	public boolean getWhoseTurn() {
+		return time % 2 == 0;
 	}
 
 	public int getRound() {
@@ -116,14 +109,14 @@ public class Chess {
 
 	/**
 	 * 
-	 * @param x
+	 * @param file
 	 *            the file of the square
-	 * @param y
+	 * @param rank
 	 *            the rank of the square
 	 * @return the position of the square
 	 */
-	public Square spotAt(int x, int y) {
-		return board.spotAt(x, y);
+	public Square spotAt(int file, int rank) {
+		return board.spotAt(file, rank);
 	}
 
 	public Record getRecords() {
@@ -146,12 +139,13 @@ public class Chess {
 	public ArrayList<Piece> possibleMovers(Class<? extends Piece> type, Square end) {
 		ArrayList<Piece> possible = new ArrayList<Piece>();
 		ArrayList<Piece> set;
-		if (getWhoseTurn() == Player.WHITE)
+		if (getWhoseTurn())
 			set = white;
 		else
 			set = black;
 
-		for (Piece i : set) {
+		for (int j = 0; j < set.size(); j++) {
+			Piece i = set.get(j);
 			if (i.isType(type) && i.canGo(end))
 				possible.add(i);
 		}
@@ -169,7 +163,7 @@ public class Chess {
 	 */
 	public boolean giveAwayKing(Move move) {
 		move.performMove(this);
-		boolean giveAway = checkOrNot(move.getWhoseTurn() == Player.BLACK);
+		boolean giveAway = checkOrNot(!move.getWhoseTurn());
 		move.undo(this);
 		return giveAway;
 	}
@@ -207,7 +201,8 @@ public class Chess {
 		else
 			attacker = black;
 
-		for (Piece i : attacker) {
+		for (int j = 0; j < attacker.size(); j++) {
+			Piece i = attacker.get(j);
 			if (i.canAttack(square) != null)
 				return true;
 		}
@@ -232,8 +227,11 @@ public class Chess {
 			inCheck = white;
 		else
 			inCheck = black;
-		for (Piece i : inCheck) {
-			for (Square p : board) {
+		for (int j = 0; j < inCheck.size(); j++) {
+			Piece i = inCheck.get(j);
+			Iterator<Square> iter = board.iterator();
+			while (iter.hasNext()) {
+				Square p = iter.next();
 				if (i.canGo(p)) {
 					return false;
 				}
@@ -314,14 +312,14 @@ public class Chess {
 	 *         side right now, null otherwise
 	 */
 	public Move canShortCastling(King k) {
-		if (canNotShortCastling(k.getY(), k.getWhiteOrBlack() == Player.BLACK))
+		if (canNotShortCastling(k.getY(), !k.getWhiteOrBlack()))
 			return null;
 		return new Castling(k, k.getSpot(), spotAt(7, k.getY()), (Rook) (spotAt(8, k.getY()).getPiece()),
 				spotAt(8, k.getY()), getRound());
 	}
 
 	public Move canLongCastling(King k) {
-		if (canNotLongCastling(k.getY(), k.getWhiteOrBlack() == Player.BLACK))
+		if (canNotLongCastling(k.getY(), !k.getWhiteOrBlack()))
 			return null;
 		return new Castling(k, k.getSpot(), spotAt(3, k.getY()), (Rook) (spotAt(1, k.getY()).getPiece()),
 				spotAt(1, k.getY()), getRound());
@@ -388,7 +386,7 @@ public class Chess {
 		if (p == null)
 			return;
 		taken.getSpot().setOccupied(null);
-		if (taken.getWhiteOrBlack() == Player.WHITE)
+		if (taken.getWhiteOrBlack())
 			white.remove(taken);
 		else
 			black.remove(taken);
@@ -402,7 +400,7 @@ public class Chess {
 	 */
 	public void putBackToBoard(Piece taken, Square spot) {
 		if (taken != null) {
-			if (taken.getWhiteOrBlack() == Player.WHITE) {
+			if (taken.getWhiteOrBlack()) {
 				white.add(taken);
 			} else {
 				black.add(taken);
@@ -464,19 +462,19 @@ public class Chess {
 		time++;
 
 		// check end game situations
-		if (checkOrNot(getWhoseTurn() == Player.BLACK)) {
-			if (checkMate(getWhoseTurn() == Player.WHITE)) {
+		if (checkOrNot(!getWhoseTurn())) {
+			if (checkMate(getWhoseTurn())) {
 				move.note = MoveNote.CHECKMATE;
-				if (getWhoseTurn() == Player.BLACK)
-					endGame(Win.WHITECHECKMATE);
-				else
+				if (getWhoseTurn())
 					endGame(Win.BLACKCHECKMATE);
+				else
+					endGame(Win.WHITECHECKMATE);
 				return;
 			}
 			move.note = MoveNote.CHECK;
 		} else {
-			if (checkMate(getWhoseTurn() == Player.WHITE)) {
-				endGame(Draw.STALEMENT);
+			if (checkMate(getWhoseTurn())) {
+				endGame(Draw.STALEMATE);
 				return;
 			}
 		}
@@ -505,7 +503,7 @@ public class Chess {
 		Move move = null;
 		if (moveCommand.startsWith("O")) {
 			King king;
-			if (getWhoseTurn() == Player.WHITE) {
+			if (getWhoseTurn()) {
 				king = (King) white.get(0);
 			} else {
 				king = (King) black.get(0);
@@ -515,52 +513,51 @@ public class Chess {
 			} else if (moveCommand.equals("O-O-O")) {
 				move = canLongCastling(king);
 			} else {
-				throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.invalidFormat);
+				throw new InvalidMoveException(moveCommand, InvalidMoveException.invalidFormat);
 			}
 			if (move != null) {
 				return move;
 			} else {
-				throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.castleNotAllowed);
+				throw new InvalidMoveException(moveCommand, InvalidMoveException.castleNotAllowed);
 			}
 		}
 
-		Pattern p = Pattern.compile("([PRNBQK])?([a-h])?([1-8])?([-x])?([a-h][1-8])(=[RNBQ])?(.*)");
-		Matcher m = p.matcher(moveCommand);
+		IMovePatternMatcher m = new MovePatternMatcher(moveCommand);
 		if (m.matches()) {
-			Class<? extends Piece> type = m.group(1) == null ? Pawn.class : Piece.getType(m.group(1).charAt(0));
+			Class<? extends Piece> type = m.getGroup(1) == null ? Pawn.class : Piece.getType(m.getGroup(1).charAt(0));
 			Square start = null;
-			if ((m.group(2) != null) && (m.group(3) != null)) {
-				start = board.getSquare(m.group(2) + m.group(3));
+			if ((m.getGroup(2) != null) && (m.getGroup(3) != null)) {
+				start = board.getSquare(m.getGroup(2) + m.getGroup(3));
 			}
-			Square end = board.getSquare(m.group(5));
+			Square end = board.getSquare(m.getGroup(5));
 			if (start != null) {
 				Piece movedPiece = start.getPiece();
 				if (movedPiece == null) {
-					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.pieceNotPresent);
+					throw new InvalidMoveException(moveCommand, InvalidMoveException.pieceNotPresent);
 				} else if (!(movedPiece.isType(type))) {
-					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.incorrectPiece);
+					throw new InvalidMoveException(moveCommand, InvalidMoveException.incorrectPiece);
 				}
 				move = movedPiece.getMove(end);
 			} else {
 				ArrayList<Piece> possible = possibleMovers(type, end);
 				if (possible.size() == 0) {
-					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.impossibleMove);
+					throw new InvalidMoveException(moveCommand, InvalidMoveException.impossibleMove);
 				} else if (possible.size() == 1) {
 					move = possible.get(0).getMove(end);
 				} else {
-					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.ambiguousMove);
+					throw new InvalidMoveException(moveCommand, InvalidMoveException.ambiguousMove);
 				}
 			}
 			if (move instanceof Promotion) {
 				Promotion promotion = (Promotion) move;
-				if (m.group(6) == null)
-					throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.promotionTo);
-				Class<? extends Piece> promotToClass = Piece.getType(m.group(6).charAt(1));
+				if (m.getGroup(6) == null)
+					throw new InvalidMoveException(moveCommand, InvalidMoveException.promotionTo);
+				Class<? extends Piece> promotToClass = Piece.getType(m.getGroup(6).charAt(1));
 				promotion.setPromoteTo(promotToClass);
 			}
 			return move;
 		} else {
-			throw new InvalidMoveException(moveCommand, InvalidMoveException.Type.invalidFormat);
+			throw new InvalidMoveException(moveCommand, InvalidMoveException.invalidFormat);
 		}
 	}
 

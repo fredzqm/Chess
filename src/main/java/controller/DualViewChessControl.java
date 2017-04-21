@@ -1,8 +1,8 @@
 package controller;
 
 import model.Move;
-import model.Piece.Player;
 import view.ChessViewer;
+import view.IChessViewer;
 
 /**
  * 
@@ -13,8 +13,8 @@ import view.ChessViewer;
  *
  */
 public class DualViewChessControl extends ViewController {
-	private ChessViewer whiteView;
-	private ChessViewer blackView;
+	private IChessViewer whiteView;
+	private IChessViewer blackView;
 
 	/**
 	 * start my little chess game!!!!
@@ -29,15 +29,15 @@ public class DualViewChessControl extends ViewController {
 		updateChessBoard();
 	}
 
-	public ChessViewer chooesView(boolean whiteOrBlack) {
+	public IChessViewer chooesView(boolean whiteOrBlack) {
 		return whiteOrBlack ? whiteView : blackView;
 	}
 
 
 	protected void updateGuiAfterMove(Move previousMove) {
 		updateChessBoard();
-		ChessViewer pre = chooesView(previousMove.getWhoseTurn() == Player.WHITE);
-		ChessViewer next = chooesView(previousMove.getWhoseTurn() == Player.BLACK);
+		IChessViewer pre = chooesView(previousMove.getWhoseTurn()  );
+		IChessViewer next = chooesView(!previousMove.getWhoseTurn());
 
 		pre.setStatusLabelText(chess.lastMoveDiscript());
 		next.setStatusLabelText(chess.lastMoveDiscript());
@@ -45,7 +45,7 @@ public class DualViewChessControl extends ViewController {
 		pre.printOut(chess.lastMoveOutPrint());
 		next.printOut(chess.lastMoveOutPrint());
 		next.printOut("Please make your move.");
-		pre.printOut("Wait for the " + side(previousMove.getWhoseTurn() == Player.BLACK) + " to make a move");
+		pre.printOut("Wait for the " + side(!previousMove.getWhoseTurn()) + " to make a move");
 	}
 
 	public static void main(String[] args) {

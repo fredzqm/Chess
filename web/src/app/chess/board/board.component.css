@@ -1,0 +1,16 @@
+table#chess div app-square {
+  width: 70px;
+  height: 70px;
+  border: solid #000 1px;
+  float:left; 
+}
+
+table#chess div:nth-child(odd) app-square:nth-child(even),
+table#chess div:nth-child(even) app-square:nth-child(odd) {
+  background: #255;
+}
+
+table#chess div:nth-child(odd) app-square:nth-child(odd),
+table#chess div:nth-child(even) app-square:nth-child(even) {
+  background: #fff;
+}

@@ -12,7 +12,6 @@ import model.Chess;
 import model.InvalidMoveException;
 import model.Move;
 import model.Piece;
-import model.Piece.Player;
 import model.Square;
 
 public class TestUtility {
@@ -123,7 +122,7 @@ public class TestUtility {
 				// test the chess side
 				if (piece != null) {
 					boolean type = sp[8 - i].charAt(j * 2 - 2) == '*';
-					assertEquals(String.format("At %s", square.toString()), type, piece.getWhiteOrBlack() == Player.WHITE);
+					assertEquals(String.format("At %s", square.toString()), type, piece.getWhiteOrBlack());
 				}
 			}
 		}

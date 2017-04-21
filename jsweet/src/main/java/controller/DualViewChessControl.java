@@ -1,0 +1,49 @@
+package controller;
+
+import model.Move;
+import view.IChessViewer;
+
+/**
+ * 
+ * A chess controller that control two ChessView, each views the board
+ * separately
+ * 
+ * @author zhang
+ *
+ */
+public class DualViewChessControl extends ViewController {
+	private IChessViewer whiteView;
+	private IChessViewer blackView;
+
+	/**
+	 * start my little chess game!!!!
+	 * 
+	 * @param args
+	 *            ignored
+	 */
+	public DualViewChessControl(IChessViewer whiteView, IChessViewer blackView) {
+		super();
+		this.whiteView = whiteView;
+		this.blackView = blackView;
+		updateChessBoard();
+	}
+
+	public IChessViewer chooesView(boolean whiteOrBlack) {
+		return whiteOrBlack ? whiteView : blackView;
+	}
+
+
+	protected void updateGuiAfterMove(Move previousMove) {
+		updateChessBoard();
+		IChessViewer pre = chooesView(previousMove.getWhoseTurn()  );
+		IChessViewer next = chooesView(!previousMove.getWhoseTurn());
+
+		pre.setStatusLabelText(chess.lastMoveDiscript());
+		next.setStatusLabelText(chess.lastMoveDiscript());
+		pre.cleanTemp();
+		pre.printOut(chess.lastMoveOutPrint());
+		next.printOut(chess.lastMoveOutPrint());
+		next.printOut("Please make your move.");
+		pre.printOut("Wait for the " + side(!previousMove.getWhoseTurn()) + " to make a move");
+	}
+}

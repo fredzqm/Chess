@@ -1,12 +1,13 @@
 package model;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import model.Piece.Player;
 
 public class SquareTest {
 	private Square square;
@@ -54,10 +55,10 @@ public class SquareTest {
 	@Test
 	public void testOccupiedBy() {
 		Piece piece = mock(Piece.class);
-		when(piece.getWhiteOrBlack()).thenReturn(Player.WHITE);
+		when(piece.getWhiteOrBlack()).thenReturn(true);
 		square.setOccupied(piece);
-		assertTrue(square.occupiedBy(Player.WHITE));
-		assertFalse(square.occupiedBy(Player.BLACK));
+		assertTrue(square.occupiedBy(true));
+		assertFalse(square.occupiedBy(false));
 	}
 	
 }

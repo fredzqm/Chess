@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Iterator;
+
 import model.Piece.Player;
 
 /**
@@ -8,7 +10,7 @@ import model.Piece.Player;
  * @author zhang
  *
  */
-public class Board {
+public class Board implements Iterable<Square> {
 	private Square[][] spots;
 
 	/**
@@ -77,4 +79,24 @@ public class Board {
 		return sb.toString();
 	}
 
+	@Override
+	public Iterator<Square> iterator() {
+		return new BoardIterator();
+	}
+
+	private class BoardIterator implements Iterator<Square> {
+		private int i = -1;
+
+		@Override
+		public boolean hasNext() {
+			return i != 63;
+		}
+
+		@Override
+		public Square next() {
+			i++;
+			return spots[i % 8][i / 8];
+		}
+
+	}
 }

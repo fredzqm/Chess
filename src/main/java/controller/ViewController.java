@@ -1,17 +1,16 @@
 package controller;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import model.Chess;
-import model.ChessGameException;
 import model.Draw;
 import model.InvalidMoveException;
 import model.Move;
 import model.Pawn;
 import model.Piece;
+import model.Promotion;
 import model.Piece.Player;
 import model.Record;
 import model.Square;
@@ -25,7 +24,7 @@ public abstract class ViewController implements IChessViewerControl {
 	private Piece chosen;
 	protected Chess chess;
 	private DrawManager drawManager;
-	
+
 	public static final String ERROR_MESSAGE = "Please enter the move as (The type of chessman)(the start position)(its action)(the end position)\n"
 			+ "you can omit the \"P\" at the begining for a pawn." + "for casting, enter \"O-O\" or \"O-O-O\"\n"
 			+ "for examples, \"e2-e4\", \"Nb2-c3\" \n" + "If you need further help, type \"help\"";
@@ -37,7 +36,7 @@ public abstract class ViewController implements IChessViewerControl {
 			+ "enter 'rules for ....' to get help about the rules of chess.\n"
 			+ "    Castling, Pawn, King, Queen, Rook, Bishop, Knight, En Passant, Promotion.";
 
-	public static final HashMap<String, String> rules = new HashMap<String, String>() {
+	public static final Map<String, String> rules = new HashMap<String, String>() {
 		{
 			put("castling",
 					"Only under those circumstances, you can castling\n"
@@ -89,8 +88,7 @@ public abstract class ViewController implements IChessViewerControl {
 	}
 
 	private void repaintAll(ChessViewer view) {
-		Collection<Square> board = chess.getAllSquares();
-		for (Square sq : board) {
+		for (Square sq : chess.getBoard()) {
 			updateSquare(view, sq);
 		}
 		view.repaint();
@@ -224,7 +222,10 @@ public abstract class ViewController implements IChessViewerControl {
 	public boolean makeMove(ChessViewer view, String moveCommand) {
 		Move move = null;
 		try {
-			move = chess.getMove(moveCommand);
+			move = chess.interpreteMoveCommand(moveCommand);
+			chess.makeMove(move);
+			updateGuiAfterMove(move);
+			return true;
 		} catch (InvalidMoveException e) {
 			switch (e.type) {
 			case invalidFormat:
@@ -246,13 +247,14 @@ public abstract class ViewController implements IChessViewerControl {
 			case pieceNotPresent:
 				view.printOut("There is no piece at the start position.");
 				break;
+			case promotionTo:
+				view.printOut("You should specify what piece you want to promote to");
+				break;
+			default:
+				throw new RuntimeException(e);
 			}
+			return false;
 		}
-		if (move != null) {
-			chess.makeMove(move);
-			return true;
-		}
-		return false;
 	}
 
 	public void handleCommand(String input, boolean whiteOrBlack) {
@@ -293,41 +295,41 @@ public abstract class ViewController implements IChessViewerControl {
 		ChessViewer clickedView = chooesView(whiteOrBlack);
 		if (chess.hasEnd()) {
 			clickedView.printOut("Game is already over! Type restart to start a new game");
-		} else {
-			if (clickedView != chooesView(chess.getWhoseTurn() == Player.WHITE)) {
-				clickedView.printOut("Please wait for your opponnet to finish");
-				return;
-			}
-			Square spot = labelToSquare(label, chess);
-			if (chosen != null) {
-				if (label.isHighLight() && !spot.equals(chosen.getSpot())) {
-					Move move;
-					if ((move = chess.performMove(chosen, spot)) == null) {
-						throw new ChessGameException(
-								"Illegal move of " + chosen.getName() + " did not correctly caught from UI!");
-					} else {
-						updateGuiAfterMove(move);
-					}
-				} else
-					clickedView.cleanTemp();
-				chosen = null;
-				clickedView.deHighLightWholeBoard();
+			return;
+		}
+		if (clickedView != chooesView(chess.getWhoseTurn() == Player.WHITE)) {
+			clickedView.printOut("Please wait for your opponnet to finish");
+			return;
+		}
+		Square spot = labelToSquare(label, chess);
+		if (chosen != null) {
+			Move move = chosen.getMove(spot);
+			if (move == null) {
+				clickedView.cleanTemp();
 			} else {
-				if (spot.occupiedBy(chess.getWhoseTurn())) {
-					chosen = spot.getPiece();
-					ArrayList<Square> reachable = chosen.getReachableSquares();
-					reachable.add(spot);
-					ArrayList<SquareLabel> hightlight = getAllViewLabels(reachable, chooesView(whiteOrBlack));
-					clickedView.highLightAll(hightlight);
-
-					if (spot.getPiece().isType(Pawn.class))
-						clickedView.printTemp(spot.toString());
-					else
-						clickedView.printTemp(spot.getPiece().getType() + spot.toString());
+				if (move instanceof Promotion) {
+					Promotion promotion = (Promotion) move;
+					String promoteTo = clickedView.getResponse("What do you want to promote to?");
+					promotion.setPromoteTo(Piece.getType(promoteTo.charAt(0)));
 				}
+				chess.makeMove(move);
+				updateGuiAfterMove(move);
+			}
+			chosen = null;
+			clickedView.deHighLightWholeBoard();
+		} else {
+			if (spot.occupiedBy(chess.getWhoseTurn())) {
+				chosen = spot.getPiece();
+				ArrayList<Square> reachable = chosen.getReachableSquares();
+				reachable.add(spot);
+				clickedView.highLightAll(getAllViewLabels(reachable, clickedView));
+
+				if (spot.getPiece().isType(Pawn.class))
+					clickedView.printTemp(spot.toString());
+				else
+					clickedView.printTemp(spot.getPiece().getType() + spot.toString());
 			}
 		}
-
 	}
 
 	public abstract ChessViewer chooesView(boolean whiteOrBlack);

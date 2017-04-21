@@ -43,4 +43,10 @@ public class EnPassant extends Move {
 			chess.putBackToBoard(capturedPiece, pawnPos);
 		}
 	}
+
+	public void performMove(Chess chess) {
+		if (capturedPiece != null)
+			chess.takeOffBoard(capturedPiece);
+		movedPiece.moveTo(lastPosition);
+	}
 }

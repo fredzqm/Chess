@@ -293,7 +293,7 @@ public class Chess {
 			for (int i = 0; i < pieces.size(); i++) {
 				boolean found = false;
 				for (int j = 0; j < pieceTypes.length; j++) {
-					if (pieces.get(i).isType(Piece.getType(pieceTypes[j]))) {
+					if (pieces.get(i).isType(getPieceClass(pieceTypes[j]))) {
 						found = true;
 						break;
 					}

@@ -18,8 +18,8 @@ import model.Piece.Player;
 public class Chess {
 	private int time;
 	private Board board;
-	private ArrayList<Piece> white;
-	private ArrayList<Piece> black;
+	ArrayList<Piece> white;
+	ArrayList<Piece> black;
 	private Record records;
 
 	private Collection<Square> list;
@@ -216,17 +216,17 @@ public class Chess {
 
 	/**
 	 * 
-	 * used to find if there is a checkmake, and stalment. if this method
+	 * used to find if there is a checkmake, and stalemate. if this method
 	 * returns true, and it is now in check, it is a checkmate; but if it is now
 	 * not in check, the opponent cannot make any legitimate move, so it is a
-	 * draw by stalment.
+	 * draw by stalemate.
 	 * 
 	 * @param checked
-	 *            the side that can be potentially checkmaked
+	 *            the side that can be potentially checkmated
 	 * @return after the opponent makes one move, is it possible for his king
 	 *         not to be in check
 	 */
-	private boolean checkMate(boolean checked) {
+	boolean checkMate(boolean checked) {
 		ArrayList<Piece> inCheck;
 		if (checked)
 			inCheck = white;
@@ -240,6 +240,53 @@ public class Chess {
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * Check if both players do not have enough pieces to make a checkmate.
+	 * 
+	 * @return True if both players lack the material to checkmate the other.
+	 */
+	boolean impossibleCheckMate() {
+		// King versus king
+		if(this.white.size() == 1 && this.black.size() == 1) {
+			return true;
+		}
+		
+		final char kingAndBishop[] = {'K', 'B'};
+		final char kingAndKnight[] = {'K', 'N'};
+		if(this.white.size() == 1) {
+			if(containsPieces(this.black, kingAndBishop)
+					|| containsPieces(this.black, kingAndKnight)) {
+				return true;
+			}
+		} else if(this.black.size() == 1) {
+			if(containsPieces(this.white, kingAndBishop)
+					|| containsPieces(this.white, kingAndKnight)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean containsPieces(ArrayList<Piece> pieces, 
+			char[] pieceTypes) {
+		if(pieces.size() == pieceTypes.length) {
+			for(int i = 0; i < pieces.size(); i++) {
+				boolean found = false;
+				for(int j = 0; j < pieceTypes.length; j++) {
+					if(pieces.get(i).isType(Piece.getType(pieceTypes[j]))) {
+						found = true;
+						break;
+					}
+				}
+				if(!found) return false;
+			}
+			return true;
+		}
+		
+		return false;
 	}
 
 	/**
@@ -475,7 +522,7 @@ public class Chess {
 			}
 			move.note = MoveNote.CHECK;
 		} else {
-			if (checkMate(getWhoseTurn() == Player.WHITE)) {
+			if (checkMate(getWhoseTurn() == Player.WHITE) || impossibleCheckMate()) {
 				endGame(Draw.STALEMATE);
 				return;
 			}

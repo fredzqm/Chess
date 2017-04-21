@@ -1,5 +1,5 @@
-<h1>{{status}}</h1>
-<app-board #board 
+<h1 class="status-label">{{status}}</h1>
+<app-board #board
 	(onSquareClicked)="click($event)"
 	(enteredCommand)="handleCommand($event)"
 	></app-board>

@@ -1,8 +1,14 @@
+#chess {
+  min-width: 580px;
+  max-width: 580px;
+  margin: auto;
+}
+
 table#chess div app-square {
   width: 70px;
   height: 70px;
   border: solid #000 1px;
-  float:left; 
+  float:left;
 }
 
 table#chess div:nth-child(odd) app-square:nth-child(even),

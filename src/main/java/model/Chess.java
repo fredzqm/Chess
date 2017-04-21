@@ -253,6 +253,7 @@ public class Chess {
 			return true;
 		}
 		
+		// King and Bishop or King and Knight against King
 		final char kingAndBishop[] = {'K', 'B'};
 		final char kingAndKnight[] = {'K', 'N'};
 		if(this.white.size() == 1) {
@@ -264,6 +265,23 @@ public class Chess {
 			if(containsPieces(this.white, kingAndBishop)
 					|| containsPieces(this.white, kingAndKnight)) {
 				return true;
+			}
+		// King and Bishop against King and Bishop same color bishops
+		} else if(containsPieces(this.white, kingAndBishop) &&
+				containsPieces(this.black, kingAndBishop)) {
+			boolean bishopColor = false;
+			for(int i = 0; i < this.white.size(); i++) {
+				Piece p = this.white.get(i);
+				if(p instanceof Bishop) {
+					bishopColor = ((Bishop) p).getBishopType();
+				}
+			}
+			
+			for(int i = 0; i < this.black.size(); i++) {
+				Piece p = this.black.get(i);
+				if(p instanceof Bishop) {
+					return ((Bishop) p).getBishopType() == bishopColor;
+				}
 			}
 		}
 		

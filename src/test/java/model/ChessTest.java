@@ -120,4 +120,82 @@ public class ChessTest {
 
 		assertTrue(chess.impossibleCheckMate());
 	}
+	
+	@Test
+	public void testImpossibleCheckMateKingAndBishopVKingAndBishop() {
+		Chess chess = new Chess();
+		
+		// Remove all but the King and one Bishop (black)
+		for(int i = 0; i < chess.white.size(); i++) {
+			Piece p = chess.white.get(i);
+			if(!(p instanceof King)) {
+				if(p instanceof Bishop) {
+					if(((Bishop) p).getBishopType()) {
+						chess.white.remove(p);
+						i--;
+					}
+				} else {
+					chess.white.remove(p);
+					i--;
+				}
+			}
+		}
+		
+		// Remove all but the King and one Bishop (black)
+		for(int i = 0; i < chess.black.size(); i++) {
+			Piece p = chess.black.get(i);
+			if(!(p instanceof King)) {
+				if(p instanceof Bishop) {
+					if(((Bishop) p).getBishopType()) {
+						chess.black.remove(p);
+						i--;
+					}
+				} else {
+					chess.black.remove(p);
+					i--;
+				}
+			}
+		}
+
+		assertTrue(chess.impossibleCheckMate());
+	}
+	
+	@Test
+	public void testImpossibleCheckMateKingAndBishopVKingAndBishopDifferentColors() {
+		Chess chess = new Chess();
+		
+		// Remove all but the King and one Bishop (black)
+		for(int i = 0; i < chess.white.size(); i++) {
+			Piece p = chess.white.get(i);
+			if(!(p instanceof King)) {
+				if(p instanceof Bishop) {
+					if(((Bishop) p).getBishopType()) {
+						chess.white.remove(p);
+						i--;
+					}
+				} else {
+					chess.white.remove(p);
+					i--;
+				}
+			}
+		}
+		
+		// Remove all but the King and one Bishop (white)
+		for(int i = 0; i < chess.black.size(); i++) {
+			Piece p = chess.black.get(i);
+			if(!(p instanceof King)) {
+				if(p instanceof Bishop) {
+					if(!((Bishop) p).getBishopType()) {
+						chess.black.remove(p);
+						i--;
+					}
+				} else {
+					chess.black.remove(p);
+					i--;
+				}
+			}
+		}
+
+		assertFalse(chess.impossibleCheckMate());
+	}
 }

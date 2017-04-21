@@ -293,7 +293,7 @@ public abstract class ViewController implements IChessViewerControl {
 				if (move instanceof Promotion) {
 					Promotion promotion = (Promotion) move;
 					String promoteTo = clickedView.getResponse("What do you want to promote to?");
-					promotion.setPromoteTo(Piece.getType(promoteTo.charAt(0)));
+					promotion.setPromoteTo(Chess.getPieceClass(promoteTo.charAt(0)));
 				}
 				chess.makeMove(move);
 				updateGuiAfterMove(move);

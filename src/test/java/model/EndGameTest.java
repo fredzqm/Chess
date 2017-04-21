@@ -41,4 +41,11 @@ public class EndGameTest {
 		
 		assertEquals(0, chess.getRecords().getEndGame().getResult());
 	}
+	
+	@Test
+	public void testImpossibleCheckmate() throws FileNotFoundException, InvalidMoveException {
+		Chess chess = setupChessGame("sampleGames/ImpossibleCheckmate.txt");
+		
+		assertEquals(0, chess.getRecords().getEndGame().getResult());
+	}
 }

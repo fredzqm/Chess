@@ -7,6 +7,7 @@ package model;
  */
 public class Bishop extends Piece {
 	private final int VALUE = 4;
+	private boolean bishopColor;
 
 	/**
 	 * constructs a Bishop with initial square
@@ -17,6 +18,23 @@ public class Bishop extends Piece {
 	 */
 	public Bishop(boolean isWhite, Square Position, Chess chess) {
 		super(isWhite, Position, chess);
+		
+		if((Position.getX() == 3 && Position.getY() == 1) ||
+				(Position.getX() == 6 && Position.getY() == 8)) {
+			bishopColor = false;
+		} else {
+			bishopColor = true;
+		}
+	}
+
+	/**
+	 * Determine whether this bishop is on the black or white squares.
+	 * 
+	 * @return True if it is on the white squares,
+	 * 			false if it is on the black squares.
+	 */
+	public boolean getBishopType() {
+		return this.bishopColor;
 	}
 
 	@Override

@@ -54,6 +54,17 @@ public abstract class Piece implements Comparable<Piece> {
 	 * @return the single character that represents this piece
 	 */
 	public abstract char getType();
+	
+	/**
+	 * white is uppercase, while black is lowercase
+	 * @return character representation in PEN standard
+	 */
+	public char getPENChar() {
+		if (isWhite)
+			return getType();
+		else
+			return Character.toLowerCase(getType());
+	}
 
 	/**
 	 * 

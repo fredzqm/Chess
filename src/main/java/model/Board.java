@@ -82,6 +82,31 @@ public class Board implements Iterable<Square> {
 		return new BoardIterator();
 	}
 
+	public String getPENRepresentation() {
+		StringBuilder sb = new StringBuilder();
+		int count = 0;
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				Piece p = spots[i][j].getPiece();
+				if (p == null){
+					count++;
+					continue;
+				}
+				if (count!= 0) {
+					sb.append(count);
+					count = 0;
+				}
+				sb.append(p.getPENChar());
+			}
+			if (count!= 0) {
+				sb.append(count);
+				count = 0;
+			}
+			sb.append('/');
+		}
+		return sb.toString();
+	}
+
 	private class BoardIterator implements Iterator<Square> {
 		private int i = -1;
 

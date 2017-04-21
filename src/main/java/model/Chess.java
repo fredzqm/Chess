@@ -270,6 +270,11 @@ public class Chess {
 		return false;
 	}
 	
+	/**
+	 * Check if a list of pieces contains certain piece types.
+	 * 
+	 * @return True if all of the piece types match.
+	 */
 	private boolean containsPieces(ArrayList<Piece> pieces, 
 			char[] pieceTypes) {
 		if(pieces.size() == pieceTypes.length) {

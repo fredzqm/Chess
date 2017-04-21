@@ -1,0 +1,38 @@
+[Event "Slovakia"]
+[Site "It Sliac  (07)"]
+[Date "1932.??.??"]
+[EventDate "?"]
+[Round "?"]
+[Result "1/2-1/2"]
+[White "Milan Vidmar"]
+[Black "Geza Maroczy"]
+[ECO "D34"]
+[WhiteElo "?"]
+[BlackElo "?"]
+[PlyCount "257"]
+
+1.d4 d5 2.c4 e6 3.Nf3 c5 4.c4xd5 e6xd5 5.g3 Nc6 6.Bg2 Nf6 7.O-O
+Be7 8.Nc3 O-O 9.d4xc5 d4 10.Nb5 Bxc5 11.Bf4 a6 12.Rc1 Bb6
+13.Nd6 Nh5 14.Nxc8 Rxc8 15.Bg5 Qd5 16.g4 h6 17.Bxh6 gxh6
+18.g4xh5 Qxa2 19.Nh4 Qe6 20.Qd3 Qf6 21.Nf5 Kh8 22.Ng3 Rf8e8
+23.Qb3 Na5 24.Qa4 Qe7 25.Be4 Rxc1 26.Rxc1 Rg8 27.Qc2 Qb4
+28.Bd5 d3 29.exd3 Bd4 30.Rf1 Qd6 31.Bg2 f5 32.Kh1 Qf6 33.Qc7
+f4 34.Qxa5 f4xg3 35.f2xg3 Qe5 36.Qxe5+ Bxe5 37.Bxb7 Bxb2 38.Bxa6
+Rg5 39.Rb1 Bf6 40.Rb5 Rxb5 41.Bxb5 Bd4 42.Kg2 Kg7 43.Kf3 Kf6
+44.Ke4 Bg1 45.h3 Bf2 46.g4 Bg1 47.Kd5 Bf2 48.Kd6 Be3 49.Kd7
+Bf2 50.Ke8 Bc5 51.Bc6 Kg7 52.Be4 Kf6 53.Bg6 Kg7 54.Kd7 Kf6
+55.Kc6 Bf2 56.Kd5 Bg1 57.Bf5 Bf2 58.Ke4 Bg1 59.d4 Bf2 60.d5
+Bc5 61.Kd3 Ke5 62.Be6 Be7 63.Kc4 Bf8 64.Kd3 Bc5 65.Kc4 Be7
+66.Bf5 Bf8 67.Bb1 Be7 68.Ba2 Bf8 69.Kd3 Bc5 70.Bb3 Be7 71.Ke3
+Bc5+ 72.Kf3 Be7 73.Ba2 Bf8 74.Ke2 Be7 75.Kd3 Bf8 76.Kc4 Be7
+77.Bb1 Bf8 78.Bf5 Be7 79.Be6 Bf8 80.Bd7 Be7 81.Bc8 Bf8 82.Be6
+Be7 83.Kb5 Kd6 84.Bg8 Bf8 85.Kc4 Ke5 86.Kd3 Be7 87.Ke3 Bc5+
+88.Kf3 Be7 89.Kg3 Bf8 90.Bf7 Be7 91.Kf2 Bc5+ 92.Ke2 Be7 93.Kd3
+Bf8 94.Kc4 Be7 95.Kb5 Kd6 96.Be6 Bf8 97.Kb6 Be7 98.Kb7 Bh4
+99.Ka6 Bd8 100.Kb5 Be7 101.Kc4 Ke5 102.Kd3 Bf8 103.Ke3 Bc5+
+104.Kf3 Bf8 105.Kg3 Be7 106.Bg8 Bf8 107.h4 Be7 108.Bf7 Bd8
+109.Kh3 Be7 110.Bg8 Kf6 111.Be6 Ke5 112.Bf7 Kf6 113.Be8 Ke5
+114.Bf7 Kf6 115.Bg8 Ke5 116.g5 hxg5 117.h6 Kf6 118.h5 Bf8
+119.Kg4 Bxh6 120.d6 Bf8 121.d7 Be7 122.h6 Kg6 123.h7 Kg7
+124.h8=B+ Kxh8 125.d8=B Kxg8 126.Bc7 Bd6 127.Kxg5 Kf7 128.Kf5
+Bxc7 129.Kg4

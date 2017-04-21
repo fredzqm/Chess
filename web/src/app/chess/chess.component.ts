@@ -29,9 +29,10 @@ export class ChessComponent implements OnInit, IChessViewer {
   }
 
   handleCommand(event: any) {
-    console.log(event.command);
-    this.controller.handleCommand(event.command, event.isWhiteView);
+    console.log("command: " + event);
+    this.controller.handleCommand(event, true);
   }
+
   /**
    * print the message in the console.
    * 

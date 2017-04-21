@@ -20,10 +20,11 @@ export class ConsoleComponent implements OnInit {
 
   submit() {
     if (this.existence.length < this.consoleMessage.length) {
-      let input = this.consoleMessage.substring(this.existence.length, this.consoleMessage.length - 1);
+      let input = this.consoleMessage.substring(this.existence.length);
       if (input.length > 0) {
         this.enteredCommand.emit(input);
       }
+      this.existence = this.consoleMessage;
     }
   }
 

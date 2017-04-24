@@ -22,8 +22,14 @@ public class ServerChessView implements IChessViewer {
 
 	@Exclude
 	private DatabaseReference ref;
+	private IChessViewerControl viewControl;
 
 	public ServerChessView() {
+	}
+
+	@Override
+	public void initializeViewController(IChessViewerControl controller) {
+		this.viewControl = controller;
 	}
 
 	public static ServerChessView newInstance(DatabaseReference firebaseReference, String roomID) {
@@ -83,12 +89,6 @@ public class ServerChessView implements IChessViewer {
 	@Override
 	public void clearLabel(int file, int rank) {
 		this.board.updatePiece(file, rank, PieceData.newInstance(null, false));
-	}
-
-	@Override
-	public void initializeViewController(IChessViewerControl controller) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public static void main(String[] args) throws FileNotFoundException {

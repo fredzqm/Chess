@@ -1,9 +1,11 @@
-<ul>
+<!-- <ul>
   <li class="text" *ngFor="let item of items | async">
     {{item.$value}}
   </li>
-</ul>
+</ul> -->
 
-{{somebody}}
-<app-chess>
-</app-chess>
+<a [routerLink]="['/']">Chess Game</a>
+<a [routerLink]="['/room']">Rooms</a>
+<div>
+  <router-outlet></router-outlet>
+</div>

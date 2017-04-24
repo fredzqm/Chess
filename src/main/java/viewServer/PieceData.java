@@ -7,4 +7,11 @@ public class PieceData {
 
 	public PieceData() {
 	}
+
+	public static PieceData newInstance(String type, boolean whiteOrBlack) {
+		PieceData pieceData = new PieceData();
+		pieceData.type = type;
+		pieceData.isWhite = whiteOrBlack;
+		return pieceData;
+	}
 }

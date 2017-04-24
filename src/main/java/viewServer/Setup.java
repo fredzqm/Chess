@@ -36,7 +36,7 @@ public class Setup {
 		// }
 		// });
 		
-		new ServerChessView(FirebaseDatabase.getInstance().getReference("MyRoomID"));
+		ServerChessView.newInstance(FirebaseDatabase.getInstance().getReference("MyRoomID"), "MyRoomID");
 		
 		while (true)
 			;

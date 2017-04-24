@@ -9,6 +9,13 @@ package view;
 public interface IChessViewer {
 
 	/**
+	 * set its view controller
+	 * 
+	 * @param controller
+	 */
+	void initializeViewController(IChessViewerControl controller);
+
+	/**
 	 * print the message in the console.
 	 * 
 	 * @param message

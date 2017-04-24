@@ -4,6 +4,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 
 import view.IChessViewer;
+import view.IChessViewerControl;
 
 public class ServerChessView implements IChessViewer {
 	private BoardData board;
@@ -74,6 +75,12 @@ public class ServerChessView implements IChessViewer {
 	@Override
 	public void clearLabel(int file, int rank) {
 		this.board.updatePiece(file, rank, PieceData.newInstance(null, false));
+	}
+
+	@Override
+	public void initializeViewController(IChessViewerControl controller) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

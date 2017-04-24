@@ -37,14 +37,18 @@ public class ChessViewer extends JFrame implements IChessViewer {
 	 * @param controller
 	 * @param b
 	 */
-	public ChessViewer(IChessViewerControl controller, String title, boolean whiteOrBlack) {
-		this.viewControl = controller;
+	public ChessViewer(String title, boolean whiteOrBlack) {
 		this.isWhiteView = whiteOrBlack;
 		setTitle(title);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
 
+	@Override
+	public void initializeViewController(IChessViewerControl controller) {
+		this.viewControl = controller;
 		this.labels = setupChessBoard(controller, DEFAULT_SYMBOL_PROVIDER);
 		this.statusLabel = setupStatusLabel();
+		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JPanel consolePanel = setupConsole();
 
 		add(consolePanel, BorderLayout.SOUTH);

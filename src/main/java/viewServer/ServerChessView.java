@@ -1,25 +1,21 @@
 package viewServer;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.FirebaseCredentials;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import controller.DualViewChessControl;
 import view.IChessViewer;
 import view.IChessViewerControl;
 
 public class ServerChessView implements IChessViewer {
+	public boolean isTurn;
 	public BoardData board;
 	public ActionData action;
 	public String status;
 	public String roomID;
-	public boolean isTurn;
+	public boolean whiteOrBlack;
 
 	@Exclude
 	private DatabaseReference ref;
@@ -29,11 +25,13 @@ public class ServerChessView implements IChessViewer {
 	public ServerChessView() {
 	}
 
-	public static ServerChessView newInstance(DatabaseReference firebaseReference, String roomID) {
+	public static ServerChessView newInstance(DatabaseReference firebaseReference, String roomID,
+			boolean whiteOrBlack) {
 		ServerChessView p = new ServerChessView();
 		p.board = BoardData.newInstance();
 		p.ref = firebaseReference;
 		p.roomID = roomID;
+		p.whiteOrBlack = whiteOrBlack;
 		return p;
 	}
 
@@ -91,5 +89,34 @@ public class ServerChessView implements IChessViewer {
 	@Override
 	public void initializeViewController(IChessViewerControl controller) {
 		this.controller = controller;
+		this.ref.child("action").addValueEventListener(new ServerValueEventListener());
+	}
+	
+	private class ServerValueEventListener implements ValueEventListener {
+
+		@Override
+		public void onCancelled(DatabaseError error) { }
+
+		@Override
+		public void onDataChange(DataSnapshot dataChange) {
+			action = dataChange.getValue(ActionData.class);
+									
+			if(action.click != null) {
+				controller.click((int) action.click.file,
+						(int) action.click.rank, whiteOrBlack);
+				action.click = null;
+			}
+			
+			if(action.requestDraw == true) {
+				controller.handleCommand("draw", whiteOrBlack);
+				action.requestDraw = false;
+			}
+			
+			if(action.resign == true) {
+				controller.handleCommand("resign", whiteOrBlack);
+				action.resign = false;
+			}
+		}
+		
 	}
 }

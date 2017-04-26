@@ -3,9 +3,6 @@ package viewServer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Exclude;
-
 public class BoardData {
 	public String message;
 	public List<List<PieceData>> pieces;

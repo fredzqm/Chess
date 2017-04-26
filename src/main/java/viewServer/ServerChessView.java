@@ -91,32 +91,32 @@ public class ServerChessView implements IChessViewer {
 		this.controller = controller;
 		this.ref.child("action").addValueEventListener(new ServerValueEventListener());
 	}
-	
+
 	private class ServerValueEventListener implements ValueEventListener {
 
 		@Override
-		public void onCancelled(DatabaseError error) { }
+		public void onCancelled(DatabaseError error) {
+		}
 
 		@Override
 		public void onDataChange(DataSnapshot dataChange) {
 			action = dataChange.getValue(ActionData.class);
-									
-			if(action.click != null) {
-				controller.click((int) action.click.file,
-						(int) action.click.rank, whiteOrBlack);
-				action.click = null;
-	}
 
-			if(action.requestDraw == true) {
+			if (action.click != null) {
+				controller.click((int) action.click.file, (int) action.click.rank, whiteOrBlack);
+				action.click = null;
+			}
+
+			if (action.requestDraw == true) {
 				controller.askForDraw(whiteOrBlack);
 				action.requestDraw = false;
 			}
 
-			if(action.resign == true) {
+			if (action.resign == true) {
 				controller.resign(whiteOrBlack);
 				action.resign = false;
 			}
 		}
-		
+
 	}
 }

@@ -16,14 +16,25 @@ public class MyConsole extends JTextArea {
 
 	private String existence;
 	private IChessViewerControl viewControl;
-	private boolean isWhiteView;
 
 	public MyConsole(IChessViewerControl controller, boolean isWhiteView, String title, int height, int width) {
 		super(title, height / CONSOLE_FONT_SIZE, width / CONSOLE_FONT_SIZE);
 		this.viewControl = controller;
-		this.isWhiteView = isWhiteView;
 		this.setFont(FONT_CONSOLE);
-		this.addKeyListener(new ConsoleListener());
+		this.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+				if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
+					String text = getText();
+					if (existence.length() < text.length()) {
+						String input = text.substring(existence.length(), text.length() - 1);
+						if (input.length() > 0) {
+							viewControl.handleCommand(input, isWhiteView);
+						}
+					}
+				}
+			}
+		});
 		existence = this.getText();
 	}
 
@@ -43,22 +54,5 @@ public class MyConsole extends JTextArea {
 		setText(existence);
 	}
 
-	class ConsoleListener extends KeyAdapter {
-		String input;
-
-		@Override
-		public void keyReleased(KeyEvent arg0) {
-			if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-				String text = getText();
-				if (existence.length() < text.length()) {
-					input = text.substring(existence.length(), text.length() - 1);
-					if (input.length() > 0) {
-						viewControl.handleCommand(input, isWhiteView);
-					}
-				}
-			}
-		}
-
-	}
 
 }

@@ -15,20 +15,23 @@ import view.IChessViewer;
 import view.IChessViewerControl;
 
 public class ServerChessView implements IChessViewer {
-	private BoardData board;
-	private ActionData action;
-	private String roomID;
-	private boolean isTurn;
+	public BoardData board;
+	public ActionData action;
+	public String status;
+	public String roomID;
+	public boolean isTurn;
 
 	@Exclude
 	private DatabaseReference ref;
+	@Exclude
+	private IChessViewerControl controller;
 
 	public ServerChessView() {
 	}
 
 	public static ServerChessView newInstance(DatabaseReference firebaseReference, String roomID) {
 		ServerChessView p = new ServerChessView();
-		p.board = BoardData.newInstance(firebaseReference.child("board"));
+		p.board = BoardData.newInstance();
 		p.ref = firebaseReference;
 		p.roomID = roomID;
 		return p;
@@ -52,7 +55,7 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public void setStatusLabelText(String str) {
-		// TODO Auto-generated method stub
+		this.status = str;
 	}
 
 	@Override
@@ -72,7 +75,7 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public void repaint() {
-		this.board.pushToFirebase();
+		this.ref.setValue(this);
 	}
 
 	@Override
@@ -87,12 +90,11 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public void initializeViewController(IChessViewerControl controller) {
-		// TODO Auto-generated method stub
-
+		this.controller = controller;
 	}
 
 	public static void main(String[] args) throws FileNotFoundException {
-		String roomId = "MyRoomID2";
+		String roomId = "MyRoomID";
 		ServerChessView whiteview = ServerChessView
 				.newInstance(FirebaseDatabase.getInstance().getReference(roomId + "/white"), roomId);
 		ServerChessView blackview = ServerChessView

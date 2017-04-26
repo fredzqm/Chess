@@ -6,19 +6,13 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-
-import com.google.firebase.database.DatabaseReference;
 
 public class BoardDataTest {
 	private BoardData board;
-	private DatabaseReference ref;
 	
 	@Before
 	public void setupBoardData() {
-		ref = Mockito.mock(DatabaseReference.class);
-		board = BoardData.newInstance(ref);
-		Mockito.verify(ref, Mockito.times(1)).setValue(board);
+		board = BoardData.newInstance();
 		
 		// Check each piece
 		for(List<PieceData> list : board.pieces) {

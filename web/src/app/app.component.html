@@ -4,8 +4,14 @@
   </li>
 </ul> -->
 
-<a [routerLink]="['/']">Chess Game</a>
-<a [routerLink]="['/room']">Rooms</a>
+<md-toolbar color="primary">
+  <span> Chess Grand Master </span>
+  <span class="fill-remaining-space"></span>
+  <span [routerLink]="['/']">Chess Game  </span>
+  <span [routerLink]="['/room']">Rooms</span>
+</md-toolbar>
+
+
 <div>
   <router-outlet></router-outlet>
 </div>

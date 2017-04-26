@@ -117,7 +117,6 @@ public class Record implements Iterable<Move> {
 	public String printDoc() {
 		StringBuilder sb = new StringBuilder();
 		int round = 1;
-		
 		for (Move r : list) {
 			if (r.isWhite) {
 				sb.append(round + ". " + r.getDoc());

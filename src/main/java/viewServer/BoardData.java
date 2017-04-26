@@ -9,9 +9,6 @@ import com.google.firebase.database.Exclude;
 public class BoardData {
 	public String message;
 	public List<List<PieceData>> pieces;
-
-	@Exclude
-	private DatabaseReference ref;
 	
 	public BoardData() {
 		this.pieces = new ArrayList<>();
@@ -24,10 +21,8 @@ public class BoardData {
 		}
 	}
 
-	public static BoardData newInstance(DatabaseReference databaseReference) {
+	public static BoardData newInstance() {
 		BoardData boardData = new BoardData();
-		boardData.ref = databaseReference;
-		boardData.pushToFirebase();
 		return boardData;
 	}
 
@@ -45,9 +40,5 @@ public class BoardData {
 
 	public void updatePiece(int file, int rank, PieceData pieceData) {
 		pieces.get(file-1).set(rank-1, pieceData);
-	}
-	
-	public void pushToFirebase() {
-		this.ref.setValue(this);
 	}
 }

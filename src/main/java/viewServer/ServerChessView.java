@@ -1,42 +1,37 @@
 package viewServer;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.FirebaseCredentials;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import controller.DualViewChessControl;
 import view.IChessViewer;
 import view.IChessViewerControl;
 
 public class ServerChessView implements IChessViewer {
-	private BoardData board;
-	private ActionData action;
-	private String roomID;
-	private boolean isTurn;
+	public boolean isTurn;
+	public BoardData board;
+	public ActionData action;
+	public String status;
+	public String roomID;
+	public boolean whiteOrBlack;
 
 	@Exclude
 	private DatabaseReference ref;
-	private IChessViewerControl viewControl;
+	@Exclude
+	private IChessViewerControl controller;
 
 	public ServerChessView() {
 	}
 
-	@Override
-	public void initializeViewController(IChessViewerControl controller) {
-		this.viewControl = controller;
-	}
-
-	public static ServerChessView newInstance(DatabaseReference firebaseReference, String roomID) {
+	public static ServerChessView newInstance(DatabaseReference firebaseReference, String roomID,
+			boolean whiteOrBlack) {
 		ServerChessView p = new ServerChessView();
-		p.board = BoardData.newInstance(firebaseReference.child("board"));
+		p.board = BoardData.newInstance();
 		p.ref = firebaseReference;
 		p.roomID = roomID;
+		p.whiteOrBlack = whiteOrBlack;
 		return p;
 	}
 
@@ -53,12 +48,11 @@ public class ServerChessView implements IChessViewer {
 	@Override
 	public void cleanTemp() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void setStatusLabelText(String str) {
-		// TODO Auto-generated method stub
+		this.status = str;
 	}
 
 	@Override
@@ -73,12 +67,13 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public String getResponse(String message) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void repaint() {
-		this.board.pushToFirebase();
+		this.ref.setValue(this);
 	}
 
 	@Override
@@ -91,27 +86,37 @@ public class ServerChessView implements IChessViewer {
 		this.board.updatePiece(file, rank, PieceData.newInstance(null, false));
 	}
 
-	public static void main(String[] args) throws FileNotFoundException {
-		String roomId = "MyRoomID2";
-		ServerChessView whiteview = ServerChessView
-				.newInstance(FirebaseDatabase.getInstance().getReference(roomId + "/white"), roomId);
-		ServerChessView blackview = ServerChessView
-				.newInstance(FirebaseDatabase.getInstance().getReference(roomId + "/black"), roomId);
-		new DualViewChessControl(whiteview, blackview);
-		while (true)
-			;
+	@Override
+	public void initializeViewController(IChessViewerControl controller) {
+		this.controller = controller;
+		this.ref.child("action").addValueEventListener(new ServerValueEventListener());
+	}
+	
+	private class ServerValueEventListener implements ValueEventListener {
+
+		@Override
+		public void onCancelled(DatabaseError error) { }
+
+		@Override
+		public void onDataChange(DataSnapshot dataChange) {
+			action = dataChange.getValue(ActionData.class);
+									
+			if(action.click != null) {
+				controller.click((int) action.click.file,
+						(int) action.click.rank, whiteOrBlack);
+				action.click = null;
 	}
 
-	static {
-		try {
-			FileInputStream serviceAccount = new FileInputStream("ServiceAccount.json");
-			FirebaseOptions options = new FirebaseOptions.Builder()
-					.setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
-					.setDatabaseUrl("https://chess-49b54.firebaseio.com/").build();
+			if(action.requestDraw == true) {
+				controller.askForDraw(whiteOrBlack);
+				action.requestDraw = false;
+			}
 
-			FirebaseApp.initializeApp(options);
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
+			if(action.resign == true) {
+				controller.resign(whiteOrBlack);
+				action.resign = false;
+			}
 		}
+		
 	}
 }

@@ -50,7 +50,6 @@ public class ServerChessView implements IChessViewer {
 	@Override
 	public void cleanTemp() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -70,6 +69,7 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public String getResponse(String message) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -91,29 +91,5 @@ public class ServerChessView implements IChessViewer {
 	@Override
 	public void initializeViewController(IChessViewerControl controller) {
 		this.controller = controller;
-	}
-
-	public static void main(String[] args) throws FileNotFoundException {
-		String roomId = "MyRoomID";
-		ServerChessView whiteview = ServerChessView
-				.newInstance(FirebaseDatabase.getInstance().getReference(roomId + "/white"), roomId);
-		ServerChessView blackview = ServerChessView
-				.newInstance(FirebaseDatabase.getInstance().getReference(roomId + "/black"), roomId);
-		new DualViewChessControl(whiteview, blackview);
-		while (true)
-			;
-	}
-
-	static {
-		try {
-			FileInputStream serviceAccount = new FileInputStream("ServiceAccount.json");
-			FirebaseOptions options = new FirebaseOptions.Builder()
-					.setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
-					.setDatabaseUrl("https://chess-49b54.firebaseio.com/").build();
-
-			FirebaseApp.initializeApp(options);
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
-		}
 	}
 }

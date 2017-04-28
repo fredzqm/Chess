@@ -1,7 +1,12 @@
 .new-room-button {
-  padding-top: 10px;
+  padding-top: 20px;
 }
 
 .room-card {
   width: 200px;
+}
+
+.rooms-row {
+  padding-right: 65px;
+  padding-top: 20px;
 }

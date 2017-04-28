@@ -20,9 +20,7 @@ export class RoomComponent implements OnInit {
 
   ngOnInit() {
     //TODO: remove this to get it from firebase
-    this.rooms.push({
-      id: 1
-    });
+    this.rooms.push({id:1},{id:1},{id:1},{id:1},{id:1},{id:1},{id:1},{id:1},{id:1});
   }
 
   openDialog() {

@@ -6,6 +6,7 @@ import { AngularFireModule } from 'angularfire2';
 import { RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '@angular/material';
+import {FlexLayoutModule} from "@angular/flex-layout";
 
 import { routes } from './app.routes';
 import { AppComponent } from './app.component';
@@ -31,10 +32,11 @@ import { RoomComponent, DialogContent } from './room/room.component';
     BrowserModule,
     FormsModule,
     HttpModule,
+    BrowserAnimationsModule,
+    FlexLayoutModule,
     AngularFireModule.initializeApp(firebaseConfig),
     RouterModule.forRoot(routes),
-    BrowserAnimationsModule,
-    MaterialModule.forRoot()
+    MaterialModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent],

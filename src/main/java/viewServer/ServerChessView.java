@@ -15,8 +15,6 @@ public class ServerChessView implements IChessViewer {
 	public String roomID;
 	public String status;
 	public BoardData board;
-	
-	public RequestData request;
 
 	@Exclude
 	private DatabaseReference ref;
@@ -24,6 +22,8 @@ public class ServerChessView implements IChessViewer {
 	private IChessViewerControl controller;
 	@Exclude
 	private ActionEventListener actionListener;
+	@Exclude
+	private ActionData action;
 
 	public ServerChessView() {
 	}
@@ -93,7 +93,7 @@ public class ServerChessView implements IChessViewer {
 
 	private class ActionEventListener implements ValueEventListener {
 		private DatabaseReference actionRef;
-		
+
 		public ActionEventListener(DatabaseReference actionRef) {
 			this.actionRef = actionRef;
 			this.actionRef.addValueEventListener(this);
@@ -106,7 +106,8 @@ public class ServerChessView implements IChessViewer {
 
 		@Override
 		public void onDataChange(DataSnapshot dataChange) {
-			ActionData action = dataChange.getValue(ActionData.class);			if (action.click != null) {
+			action = dataChange.getValue(ActionData.class);
+			if (action.click != null) {
 				controller.click((int) action.click.file, (int) action.click.rank, whiteOrBlack);
 				this.actionRef.child("click").removeValue();
 			}
@@ -118,19 +119,37 @@ public class ServerChessView implements IChessViewer {
 				controller.resign(whiteOrBlack);
 				this.actionRef.child("resign").removeValue();
 			}
+			if (action.agreeDraw != null) {
+				this.notifyAll();
+				this.actionRef.child("agreeDraw").removeValue();
+			}
+			if (action.promotionTo != null) {
+				this.notifyAll();
+				this.actionRef.child("promotionTo").removeValue();
+			}
 		}
 
 	}
 
 	@Override
 	public boolean askForDraw() {
-		// TODO Auto-generated method stub
-		return false;
+		this.ref.child("request").child("askForDraw").setValue(true);
+		try {
+			wait();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+		return action.agreeDraw.equals("Y");
 	}
 
 	@Override
 	public String getPromoteTo() {
-		// TODO Auto-generated method stub
-		return null;
+		this.ref.child("request").child("promotionTo").setValue(true);
+		try {
+			wait();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+		return this.action.promotionTo;
 	}
 }

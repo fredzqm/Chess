@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BoardData {
-	public String message;
 	public List<List<PieceData>> pieces;
 	
 	public BoardData() {

@@ -14,6 +14,7 @@ public class ServerChessView implements IChessViewer {
 	public BoardData board;
 	public ActionData action;
 	public String status;
+	public String dialogMessage;
 	public String roomID;
 	public boolean whiteOrBlack;
 
@@ -32,6 +33,8 @@ public class ServerChessView implements IChessViewer {
 		p.ref = firebaseReference;
 		p.roomID = roomID;
 		p.whiteOrBlack = whiteOrBlack;
+		p.dialogMessage = "";
+		p.status = "";
 		return p;
 	}
 
@@ -101,7 +104,7 @@ public class ServerChessView implements IChessViewer {
 		@Override
 		public void onDataChange(DataSnapshot dataChange) {
 			action = dataChange.getValue(ActionData.class);
-
+			
 			if (action.click != null) {
 				controller.click((int) action.click.file, (int) action.click.rank, whiteOrBlack);
 				action.click = null;

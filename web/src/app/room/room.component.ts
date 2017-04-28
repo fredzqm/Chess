@@ -19,8 +19,6 @@ export class RoomComponent implements OnInit {
   }
 
   ngOnInit() {
-    //TODO: remove this to get it from firebase
-    this.rooms.push({id:1},{id:1},{id:1},{id:1},{id:1},{id:1},{id:1},{id:1},{id:1});
   }
 
   openDialog() {
@@ -37,6 +35,16 @@ export class RoomComponent implements OnInit {
     this.rooms.push({id: roomId});
   }
 
+  joinRoom(index: number) {
+
+  }
+
+  deleteRoom(index: number) {
+    if (index > -1) {
+      this.rooms.splice(index, 1);
+    }
+  }
+  
 }
 
 @Component({

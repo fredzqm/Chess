@@ -2,15 +2,19 @@
     <button (click)="openDialog()" md-raised-button color="accent">Create New Room</button>
 </div>
 
-<div [fxLayout]="row" fxLayoutWrap fxLayoutAlign="space-between center">
-    <div *ngFor="let room of rooms" class="rooms-row">
+<div *ngIf="rooms?.length <= 0" fxLayoutAlign="center center">
+  No rooms created yet!
+</div>
+
+<div [fxLayout]="row" fxLayoutWrap fxLayoutAlign="start center">
+    <div *ngFor="let room of rooms; let i = index" class="rooms-row">
         <md-card class="room-card">
             <md-card-header>
               <md-card-title>Room ID: {{room.id}}</md-card-title>
             </md-card-header>
             <md-card-actions fxLayoutAlign="space-around center">
-              <button md-button>JOIN</button>
-              <button md-button>DELETE</button>
+              <button md-button (click)="joinRoom(i)">JOIN</button>
+              <button md-button (click)="deleteRoom(i)">DELETE</button>
             </md-card-actions>
         </md-card>
     </div>

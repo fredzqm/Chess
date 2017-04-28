@@ -12,7 +12,6 @@ import view.IChessViewerControl;
 public class ServerChessView implements IChessViewer {
 	public boolean isTurn;
 	public BoardData board;
-	public ActionData action;
 	public String status;
 	public String roomID;
 	public boolean whiteOrBlack;
@@ -21,6 +20,8 @@ public class ServerChessView implements IChessViewer {
 	private DatabaseReference ref;
 	@Exclude
 	private IChessViewerControl controller;
+	@Exclude
+	private ActionEventListener actionListener;
 
 	public ServerChessView() {
 	}
@@ -67,7 +68,6 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public String getResponse(String message) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -89,32 +89,36 @@ public class ServerChessView implements IChessViewer {
 	@Override
 	public void initializeViewController(IChessViewerControl controller) {
 		this.controller = controller;
-		this.ref.child("action").addValueEventListener(new ServerValueEventListener());
+		this.actionListener = new ActionEventListener(ref.child("action"));
 	}
 
-	private class ServerValueEventListener implements ValueEventListener {
+	private class ActionEventListener implements ValueEventListener {
+		private DatabaseReference actionRef;
+		
+		public ActionEventListener(DatabaseReference actionRef) {
+			this.actionRef = actionRef;
+			this.actionRef.addValueEventListener(this);
+		}
 
 		@Override
 		public void onCancelled(DatabaseError error) {
+			System.out.println("onCancelled: " + error);
 		}
 
 		@Override
 		public void onDataChange(DataSnapshot dataChange) {
-			action = dataChange.getValue(ActionData.class);
-
+			ActionData action = dataChange.getValue(ActionData.class);
 			if (action.click != null) {
 				controller.click((int) action.click.file, (int) action.click.rank, whiteOrBlack);
-				action.click = null;
+				this.actionRef.child("click").removeValue();
 			}
-
 			if (action.requestDraw == true) {
 				controller.askForDraw(whiteOrBlack);
-				action.requestDraw = false;
+				this.actionRef.child("requestDraw").removeValue();
 			}
-
 			if (action.resign == true) {
 				controller.resign(whiteOrBlack);
-				action.resign = false;
+				this.actionRef.child("resign").removeValue();
 			}
 		}
 

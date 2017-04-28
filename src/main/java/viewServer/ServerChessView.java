@@ -11,11 +11,12 @@ import view.IChessViewerControl;
 
 public class ServerChessView implements IChessViewer {
 	public boolean isTurn;
-	public BoardData board;
-	public String status;
-	public String dialogMessage;
-	public String roomID;
 	public boolean whiteOrBlack;
+	public String roomID;
+	public String status;
+	public BoardData board;
+	
+	public RequestData request;
 
 	@Exclude
 	private DatabaseReference ref;
@@ -34,8 +35,8 @@ public class ServerChessView implements IChessViewer {
 		p.ref = firebaseReference;
 		p.roomID = roomID;
 		p.whiteOrBlack = whiteOrBlack;
-		p.dialogMessage = "";
 		p.status = "";
+		p.ref.setValue(p);
 		return p;
 	}
 
@@ -76,7 +77,7 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public void repaint() {
-		this.ref.setValue(this);
+		this.ref.child("board").setValue(this.board);
 	}
 
 	@Override

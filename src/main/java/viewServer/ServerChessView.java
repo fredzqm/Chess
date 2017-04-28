@@ -12,17 +12,12 @@ import view.IChessViewerControl;
 public class ServerChessView implements IChessViewer {
 	public boolean isTurn;
 	public boolean whiteOrBlack;
-	public String roomID;
 	public String status;
 	public BoardData board;
 
-	@Exclude
 	private DatabaseReference ref;
-	@Exclude
 	private IChessViewerControl controller;
-	@Exclude
 	private ActionEventListener actionListener;
-	@Exclude
 	private ActionData action;
 
 	public ServerChessView() {
@@ -33,10 +28,9 @@ public class ServerChessView implements IChessViewer {
 		ServerChessView p = new ServerChessView();
 		p.board = BoardData.newInstance();
 		p.ref = firebaseReference;
-		p.roomID = roomID;
 		p.whiteOrBlack = whiteOrBlack;
-		p.status = "";
-		p.ref.setValue(p);
+		p.ref.child("board").setValue(p.board);
+		p.ref.child("whiteOrBlack").setValue(p.whiteOrBlack);
 		return p;
 	}
 
@@ -56,8 +50,9 @@ public class ServerChessView implements IChessViewer {
 	}
 
 	@Override
-	public void setStatusLabelText(String str) {
-		this.status = str;
+	public void setStatusLabelText(String status) {
+		this.status = status;
+		this.ref.child("status").setValue(status);
 	}
 
 	@Override

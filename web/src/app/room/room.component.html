@@ -13,7 +13,7 @@
               <md-card-title>Room ID: {{room.id}}</md-card-title>
             </md-card-header>
             <md-card-actions fxLayoutAlign="space-around center">
-              <button md-button (click)="joinRoom(i)">JOIN</button>
+              <button md-button [routerLink]="['/room', room.id]">JOIN</button>
               <button md-button (click)="deleteRoom(i)">DELETE</button>
             </md-card-actions>
         </md-card>

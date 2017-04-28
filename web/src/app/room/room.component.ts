@@ -10,7 +10,6 @@ import { AngularFire, FirebaseListObservable } from 'angularfire2';
 export class RoomComponent implements OnInit {
   // rooms: FirebaseListObservable<any[]>;
   rooms: any[];
-  lastDialogResult: string;
 
   constructor(af: AngularFire, private _dialog: MdDialog) {
     // this.rooms = af.database.list('/');
@@ -44,7 +43,7 @@ export class RoomComponent implements OnInit {
       this.rooms.splice(index, 1);
     }
   }
-  
+
 }
 
 @Component({

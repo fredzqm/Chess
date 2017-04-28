@@ -93,7 +93,7 @@ public abstract class ViewController implements IChessViewerControl {
 			} else {
 				if (move instanceof Promotion) {
 					Promotion promotion = (Promotion) move;
-					String promoteTo = clickedView.getResponse("What do you want to promote to?");
+					String promoteTo = clickedView.getPromoteTo();
 					promotion.setPromoteTo(Chess.getPieceClass(promoteTo.charAt(0)));
 				}
 				chess.makeMove(move);
@@ -154,19 +154,12 @@ public abstract class ViewController implements IChessViewerControl {
 			IChessViewer request = chooesView(whiteOrBlack);
 			IChessViewer response = chooesView(!whiteOrBlack);
 			if (drawManager.canAskFordraw(whiteOrBlack)) {
-				while (true) {
-					response.printOut(side(whiteOrBlack) + " ask for draw, do you agreed?");
-					String command = response.getResponse("Do you agree draw?");
-					if (command.isEmpty())
-						continue;
-					if (command.toLowerCase().startsWith("yes")) {
-						chess.endGame(Draw.AGREEMENT);
-						return;
-					} else if (command.toLowerCase().startsWith("no")) {
-						drawManager.setRightToRequestDraw(whiteOrBlack);
-						request.printOut("Request declined");
-						return;
-					}
+				response.printOut(side(whiteOrBlack) + " ask for draw, do you agreed?");
+				if (response.askForDraw()) {
+					chess.endGame(Draw.AGREEMENT);
+				} else {
+					drawManager.setRightToRequestDraw(whiteOrBlack);
+					request.printOut("Request declined");
 				}
 			} else {
 				request.printOut("You cannot request for draw again now.");

@@ -94,7 +94,8 @@ public class ChessViewer extends JFrame implements IChessViewer {
 		JPanel consolePanel = new JPanel();
 		consolePanel.setLayout(new FlowLayout());
 		consolePanel.setVisible(true);
-		myConsole = new MyConsole(controller, isWhiteView, "Welcome to little Chess Game. Enter \"help\" for instructions.\n", 130, 1000);
+		myConsole = new MyConsole(controller, isWhiteView,
+				"Welcome to little Chess Game. Enter \"help\" for instructions.\n", 130, 1000);
 		consolePanel.add(new JScrollPane(myConsole));
 		return consolePanel;
 	}
@@ -144,11 +145,6 @@ public class ChessViewer extends JFrame implements IChessViewer {
 	}
 
 	@Override
-	public String getResponse(String message) {
-		return JOptionPane.showInputDialog(message);
-	}
-
-	@Override
 	public void upDatePiece(int file, int rank, char pieceType, boolean whiteOrBlack) {
 		labelAt(file, rank).upDatePiece(pieceType, whiteOrBlack);
 	}
@@ -156,6 +152,17 @@ public class ChessViewer extends JFrame implements IChessViewer {
 	@Override
 	public void clearLabel(int file, int rank) {
 		labelAt(file, rank).clearLabel();
+	}
+
+	@Override
+	public boolean askForDraw() {
+		return 0 == JOptionPane.showConfirmDialog(null, "Do you agree draw?", "Do you agree draw?",
+				JOptionPane.YES_NO_OPTION);
+	}
+
+	@Override
+	public String getPromoteTo() {
+		return JOptionPane.showInputDialog("What do you want to promote to?");
 	}
 
 }

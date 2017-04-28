@@ -57,14 +57,6 @@ public interface IChessViewer {
 	void deHighLightWholeBoard();
 
 	/**
-	 * ask the user for a resonse
-	 * 
-	 * @param message
-	 * @return the responsded string
-	 */
-	String getResponse(String message);
-
-	/**
 	 * refresh the UI
 	 */
 	void repaint();
@@ -86,5 +78,17 @@ public interface IChessViewer {
 	 * @param rank
 	 */
 	void clearLabel(int file, int rank);
+
+	/**
+	 * 
+	 * @return
+	 */
+	boolean askForDraw();
+
+	/**
+	 * 
+	 * @return
+	 */
+	String getPromoteTo();
 
 }

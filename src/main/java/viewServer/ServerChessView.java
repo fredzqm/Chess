@@ -71,11 +71,6 @@ public class ServerChessView implements IChessViewer {
 	}
 
 	@Override
-	public String getResponse(String message) {
-		return null;
-	}
-
-	@Override
 	public void repaint() {
 		this.ref.child("board").setValue(this.board);
 	}
@@ -125,5 +120,17 @@ public class ServerChessView implements IChessViewer {
 			}
 		}
 
+	}
+
+	@Override
+	public boolean askForDraw() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public String getPromoteTo() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

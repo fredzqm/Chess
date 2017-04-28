@@ -65,6 +65,7 @@ public abstract class ViewController implements IChessViewerControl {
 			view.printOut("It is already the start of Game");
 		else
 			view.printOut("Undo the Previous Move!");
+		repaintAll(view);
 	}
 
 	protected void updateChessBoard() {

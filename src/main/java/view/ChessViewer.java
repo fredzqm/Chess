@@ -162,7 +162,15 @@ public class ChessViewer extends JFrame implements IChessViewer {
 
 	@Override
 	public String getPromoteTo() {
-		return JOptionPane.showInputDialog("What do you want to promote to?");
+		String[] choices = { "Queen", "Rook", "Biship", "Knight" };
+		String input = (String) JOptionPane.showInputDialog(null, "What do you want to promote to?",
+				"What do you want to promote to?", JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+		switch (input) {
+		case "Knight":
+			return "N";
+		default:
+			return input.substring(0, 1);
+		}
 	}
 
 }

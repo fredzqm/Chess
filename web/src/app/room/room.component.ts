@@ -10,11 +10,12 @@ import { AngularFire, FirebaseListObservable } from 'angularfire2';
 export class RoomComponent implements OnInit {
   rooms: FirebaseListObservable<any[]>;
 
-  constructor(private af: AngularFire, private _dialog: MdDialog) {
+  constructor(af: AngularFire, private _dialog: MdDialog) {
     this.rooms = af.database.list('/');
   }
 
   ngOnInit() {
+
   }
 
   openDialog() {
@@ -34,7 +35,6 @@ export class RoomComponent implements OnInit {
   deleteRoom(room) {
     this.rooms.remove(room);
   }
-
 }
 
 @Component({

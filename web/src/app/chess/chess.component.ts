@@ -1,4 +1,7 @@
 import { Component, OnInit, ViewChild, Output } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { AngularFire, FirebaseListObservable } from 'angularfire2';
+
 import { BoardComponent } from './board/board.component';
 import { ConsoleComponent } from './console/console.component';
 import { IChessViewer } from '../../view/IChessViewer';
@@ -11,17 +14,27 @@ import { SingleViewChessControl } from '../../controller/SingleViewChessControl'
 })
 export class ChessComponent implements OnInit, IChessViewer {
   status: string;
+  id: any;
+  room: any;
   controller : SingleViewChessControl;
 
   @ViewChild("board") board : BoardComponent;
   @ViewChild("console") console : ConsoleComponent;
 
-  constructor() {
+  constructor(private route: ActivatedRoute, private af: AngularFire) {
     this.status  = "Welcome to my wonderful chess game!";
   }
 
   ngOnInit() {
     this.controller = new SingleViewChessControl(this);
+    this.route.params.subscribe(params => {
+       this.id = params['id'];
+    });
+    console.log(this.id);
+
+    this.room = this.af.database.object('/' + this.id);
+    console.log(this.room);
+    console.log(this.room.id);
   }
 
   click(event : any) {

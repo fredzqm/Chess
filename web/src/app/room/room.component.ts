@@ -8,13 +8,10 @@ import { AngularFire, FirebaseListObservable } from 'angularfire2';
   styleUrls: ['./room.component.css']
 })
 export class RoomComponent implements OnInit {
-  // rooms: FirebaseListObservable<any[]>;
-  rooms: any[];
+  rooms: FirebaseListObservable<any[]>;
 
-  constructor(af: AngularFire, private _dialog: MdDialog) {
-    // this.rooms = af.database.list('/');
-    // console.log(this.rooms);
-    this.rooms = [];
+  constructor(private af: AngularFire, private _dialog: MdDialog) {
+    this.rooms = af.database.list('/');
   }
 
   ngOnInit() {
@@ -34,14 +31,8 @@ export class RoomComponent implements OnInit {
     this.rooms.push({id: roomId});
   }
 
-  joinRoom(index: number) {
-
-  }
-
-  deleteRoom(index: number) {
-    if (index > -1) {
-      this.rooms.splice(index, 1);
-    }
+  deleteRoom(room) {
+    this.rooms.remove(room);
   }
 
 }

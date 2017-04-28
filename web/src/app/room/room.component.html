@@ -7,14 +7,14 @@
 </div>
 
 <div [fxLayout]="row" fxLayoutWrap fxLayoutAlign="start center">
-    <div *ngFor="let room of rooms; let i = index" class="rooms-row">
+    <div *ngFor="let room of rooms | async; let i = index" class="rooms-row">
         <md-card class="room-card">
             <md-card-header>
               <md-card-title>Room ID: {{room.id}}</md-card-title>
             </md-card-header>
             <md-card-actions fxLayoutAlign="space-around center">
-              <button md-button [routerLink]="['/room', room.id]">JOIN</button>
-              <button md-button (click)="deleteRoom(i)">DELETE</button>
+              <button md-button [routerLink]="['/room', room.$key]">JOIN</button>
+              <button md-button (click)="deleteRoom(room)">DELETE</button>
             </md-card-actions>
         </md-card>
     </div>

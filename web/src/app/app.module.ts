@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { AngularFireModule } from 'angularfire2';
 import { RouterModule } from '@angular/router';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MaterialModule} from '@angular/material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from '@angular/material';
 
 import { routes } from './app.routes';
 import { AppComponent } from './app.component';
@@ -14,7 +14,8 @@ import { BoardComponent } from './chess/board/board.component';
 import { ConsoleComponent } from './chess/console/console.component';
 import { ChessComponent } from './chess/chess.component';
 import { firebaseConfig } from '../environments/firebase.config';
-import { RoomComponent } from './room/room.component';
+import { RoomComponent, DialogContent } from './room/room.component';
+
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { RoomComponent } from './room/room.component';
     BoardComponent,
     ChessComponent,
     ConsoleComponent,
-    RoomComponent
+    RoomComponent,
+    DialogContent,
   ],
   imports: [
     BrowserModule,
@@ -35,6 +37,7 @@ import { RoomComponent } from './room/room.component';
     MaterialModule.forRoot()
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [DialogContent]
 })
 export class AppModule { }

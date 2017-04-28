@@ -15,7 +15,7 @@ export class ChessComponent implements OnInit, IChessViewer {
 
   @ViewChild("board") board : BoardComponent;
   @ViewChild("console") console : ConsoleComponent;
-   
+
   constructor() {
     this.status  = "Welcome to my wonderful chess game!";
   }
@@ -29,12 +29,11 @@ export class ChessComponent implements OnInit, IChessViewer {
   }
 
   handleCommand(event: any) {
-    console.log(event.command);
     this.controller.handleCommand(event.command, event.isWhiteView);
   }
   /**
    * print the message in the console.
-   * 
+   *
    * @param message
    */
   printOut(message : string) {
@@ -45,7 +44,7 @@ export class ChessComponent implements OnInit, IChessViewer {
    * print out the temporal string in the console, without updating the
    * record. The temp string printed can be clear with
    * {@link ChessViewer#cleanTemp()}
-   * 
+   *
    * @param temp
    */
   printTemp(temp : string) {
@@ -61,7 +60,7 @@ export class ChessComponent implements OnInit, IChessViewer {
   }
 
   /**
-   * 
+   *
    * @param str
    */
   setStatusLabelText(str : string) {
@@ -70,7 +69,7 @@ export class ChessComponent implements OnInit, IChessViewer {
 
   /**
    * hightlight the square at this position
-   * 
+   *
    * @param file
    * @param rank
    */
@@ -87,7 +86,7 @@ export class ChessComponent implements OnInit, IChessViewer {
 
   /**
    * ask the user for a resonse
-   * 
+   *
    * @param message
    * @return the responsded string
    */
@@ -102,7 +101,7 @@ export class ChessComponent implements OnInit, IChessViewer {
 
   /**
    * update Piece at this position
-   * 
+   *
    * @param file
    * @param rank
    * @param pieceType
@@ -114,7 +113,7 @@ export class ChessComponent implements OnInit, IChessViewer {
 
   /**
    * clear piece at certain square
-   * 
+   *
    * @param file
    * @param rank
    */

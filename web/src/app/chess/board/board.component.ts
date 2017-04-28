@@ -33,7 +33,6 @@ export class BoardComponent  {
   }
 
   updateSquare(file : number, rank : number, pieceType : string, whiteOrBlack : boolean) {
-    console.log(this.pieces);
     this.getPieceAt(file, rank).type = pieceType;
     this.getPieceAt(file, rank).isWhite = whiteOrBlack;
   }

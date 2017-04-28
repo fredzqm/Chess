@@ -9674,7 +9674,6 @@ var java;
                         return;
                     }
                     var level = this.toConsoleLogLevel(record.getLevel());
-                    console.log(level, record.getMessage());
                     if (record.getThrown() != null) {
                         console.log(level, record.getThrown());
                     }

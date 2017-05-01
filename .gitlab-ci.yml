@@ -1,0 +1,10 @@
+stages:
+  - build
+build:
+  stage: build
+  script:
+    - gradle build
+  tags:
+    - gradle
+    - java
+    - linux

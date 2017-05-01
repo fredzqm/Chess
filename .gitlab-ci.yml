@@ -8,4 +8,3 @@ build:
     - gradle
     - java
     - linux
-    - graphviz

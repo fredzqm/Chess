@@ -1,5 +1,6 @@
 <h1 class="status-label">{{status}}</h1>
 <app-board #board
+	[ref] = "id"
 	(onSquareClicked)="click($event)"
 	(enteredCommand)="handleCommand($event)"
 	></app-board>

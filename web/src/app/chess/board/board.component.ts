@@ -1,23 +1,30 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { AngularFire, FirebaseListObservable } from 'angularfire2';
 
 @Component({
   selector: 'app-board',
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.css']
 })
-export class BoardComponent  {
-  pieces : any[][];
+export class BoardComponent implements OnInit{
+  pieces : any;
 
+  @Input() ref: string;
   @Output() onSquareClicked : EventEmitter<any> = new EventEmitter<any>();
 
-  constructor() {
-      this.pieces = [];
-      for (let i = 0; i < 8; i++) {
-          this.pieces[i] = [];
-          for (let j = 0; j < 8; j++) {
-              this.pieces[i][j] = {};
-          }
-      }
+  constructor(private af: AngularFire) {
+      // this.pieces = [];
+      // for (let i = 0; i < 8; i++) {
+      //     this.pieces[i] = [];
+      //     for (let j = 0; j < 8; j++) {
+      //         this.pieces[i][j] = {};
+      //     }
+      // }
+  }
+
+  ngOnInit() {
+      console.log(this.ref);
+      this.pieces = this.af.database.object(this.ref+'/white');
   }
 
   onSquareClick(i, j) {
@@ -46,11 +53,11 @@ export class BoardComponent  {
   }
 
   deHighLightWholeBoard() {
-    for (let row of this.pieces) {
-      for (let x of row) {
-        x.isHightLight = false;
-      }
-    }
+    // for (let row of this.pieces) {
+    //   for (let x of row) {
+    //     x.isHightLight = false;
+    //   }
+    // }
   }
 
 }

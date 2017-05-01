@@ -30,11 +30,7 @@ export class ChessComponent implements OnInit, IChessViewer {
     this.route.params.subscribe(params => {
        this.id = params['id'];
     });
-    console.log(this.id);
-
     this.room = this.af.database.object('/' + this.id);
-    console.log(this.room);
-    console.log(this.room.id);
   }
 
   click(event : any) {

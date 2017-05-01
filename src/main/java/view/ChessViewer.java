@@ -173,4 +173,9 @@ public class ChessViewer extends JFrame implements IChessViewer {
 		}
 	}
 
+	@Override
+	public void close() {
+		// Do nothing
+	}
+
 }

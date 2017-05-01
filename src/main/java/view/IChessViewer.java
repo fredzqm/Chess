@@ -91,4 +91,6 @@ public interface IChessViewer {
 	 */
 	String getPromoteTo();
 
+	void close();
+
 }

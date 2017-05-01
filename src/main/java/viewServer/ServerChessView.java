@@ -22,7 +22,7 @@ public class ServerChessView implements IChessViewer {
 	public ServerChessView() {
 	}
 
-	public static ServerChessView newInstance(DatabaseReference firebaseReference, String roomID,
+	public static ServerChessView newInstance(DatabaseReference firebaseReference,
 			boolean whiteOrBlack) {
 		ServerChessView p = new ServerChessView();
 		p.board = BoardData.newInstance();
@@ -145,5 +145,10 @@ public class ServerChessView implements IChessViewer {
 			throw new RuntimeException(e);
 		}
 		return this.action.promotionTo;
+	}
+
+	@Override
+	public void close() {
+		this.ref.removeEventListener(this.actionListener);
 	}
 }

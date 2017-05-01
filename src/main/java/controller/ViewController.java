@@ -235,4 +235,9 @@ public abstract class ViewController implements IChessViewerControl {
 		return whoseTurn ? "White" : "Black";
 	}
 
+	public void close() {
+		chooesView(false).close();
+		chooesView(true).close();
+	}
+
 }

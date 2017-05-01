@@ -8,16 +8,9 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.database.FirebaseDatabase;
 
-import controller.DualViewChessControl;
-
 public class ServerApplication {
 	public static void main(String[] args) throws FileNotFoundException {
-		String roomId = "MyRoomID";
-		ServerChessView whiteview = ServerChessView
-				.newInstance(FirebaseDatabase.getInstance().getReference(roomId + "/white"), roomId, true);
-		ServerChessView blackview = ServerChessView
-				.newInstance(FirebaseDatabase.getInstance().getReference(roomId + "/black"), roomId, false);
-		new DualViewChessControl(whiteview, blackview);
+		new Server(FirebaseDatabase.getInstance());
 		while (true)
 			;
 	}

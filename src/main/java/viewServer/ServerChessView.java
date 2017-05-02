@@ -9,10 +9,8 @@ import view.IChessViewer;
 import view.IChessViewerControl;
 
 public class ServerChessView implements IChessViewer {
-	public boolean isTurn;
-	public boolean whiteOrBlack;
-	public String status;
-	public BoardData board;
+	private boolean whiteOrBlack;
+	private BoardData board;
 
 	private DatabaseReference ref;
 	private IChessViewerControl controller;
@@ -35,12 +33,12 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public void printOut(String message) {
-		// TODO Auto-generated method stub
+		System.out.println(message);
 	}
 
 	@Override
 	public void printTemp(String temp) {
-		// TODO Auto-generated method stub
+		System.out.println(temp);
 	}
 
 	@Override
@@ -50,7 +48,6 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public void setStatusLabelText(String status) {
-		this.status = status;
 		this.ref.child("status").setValue(status);
 	}
 
@@ -66,6 +63,7 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public void repaint() {
+		System.out.println("repaint");
 		this.ref.child("board").setValue(this.board);
 	}
 

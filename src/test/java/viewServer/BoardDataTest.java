@@ -40,6 +40,13 @@ public class BoardDataTest {
 	}
 	
 	@Test
+	public void testHighlight57() {
+		board.highLight(5, 7);
+		
+		assertTrue(board.pieces.get(4).get(6).isHightLight);
+	}
+	
+	@Test
 	public void testDeHighLightWholeBoard() {
 		board.highLight(1, 1);
 		board.highLight(2, 5);

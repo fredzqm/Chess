@@ -5,14 +5,14 @@ import java.util.List;
 
 public class BoardData {
 	public List<List<PieceData>> pieces;
-	
+
 	public BoardData() {
 		this.pieces = new ArrayList<>();
-		for (int i = 0 ; i < 8; i++) {
-			ArrayList<PieceData> row = new ArrayList<>();
-			this.pieces.add(row);
+		for (int i = 0; i < 8; i++) {
+			ArrayList<PieceData> col = new ArrayList<>();
+			this.pieces.add(col);
 			for (int j = 0; j < 8; j++) {
-				row.add(PieceData.newInstance(null, false));
+				col.add(PieceData.newInstance(null, false));
 			}
 		}
 	}
@@ -31,10 +31,10 @@ public class BoardData {
 	}
 
 	public void highLight(int file, int rank) {
-		pieces.get(file-1).get(rank-1).isHightLight = true;
+		pieces.get(rank - 1).get(file - 1).isHightLight = true;
 	}
 
 	public void updatePiece(int file, int rank, PieceData pieceData) {
-		pieces.get(file-1).set(rank-1, pieceData);
+		pieces.get(rank - 1).set(file - 1, pieceData);
 	}
 }

@@ -32,12 +32,12 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public void printOut(String message) {
-		System.out.println(message);
+		// System.out.println("[printOut]: "+message);
 	}
 
 	@Override
 	public void printTemp(String temp) {
-		System.out.println(temp);
+		// System.out.println("[printTemp]: "+temp);
 	}
 
 	@Override

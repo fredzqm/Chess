@@ -20,8 +20,7 @@ public class ServerChessView implements IChessViewer {
 	public ServerChessView() {
 	}
 
-	public static ServerChessView newInstance(DatabaseReference firebaseReference,
-			boolean whiteOrBlack) {
+	public static ServerChessView newInstance(DatabaseReference firebaseReference, boolean whiteOrBlack) {
 		ServerChessView p = new ServerChessView();
 		p.board = BoardData.newInstance();
 		p.ref = firebaseReference;
@@ -53,7 +52,7 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public void highLight(int file, int rank) {
-		this.board.highLight(file, rank);
+		this.board.highLight(getI(file, rank), getJ(file, rank));
 	}
 
 	@Override
@@ -68,12 +67,24 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public void upDatePiece(int file, int rank, char pieceType, boolean whiteOrBlack) {
-		this.board.updatePiece(file, rank, PieceData.newInstance("" + pieceType, whiteOrBlack));
+		this.board.updatePiece(getI(file, rank), getJ(file, rank), PieceData.newInstance("" + pieceType, whiteOrBlack));
+	}
+
+	private int getI(int file, int rank) {
+		if (this.whiteOrBlack)
+			return 8 - rank;
+		return rank - 1;
+	}
+
+	private int getJ(int file, int rank) {
+		if (this.whiteOrBlack)
+			return 8 - file;
+		return file - 1;
 	}
 
 	@Override
 	public void clearLabel(int file, int rank) {
-		this.board.updatePiece(file, rank, PieceData.newInstance(null, false));
+		this.board.updatePiece(getI(file, rank), getJ(file, rank), PieceData.newInstance(null, false));
 	}
 
 	@Override

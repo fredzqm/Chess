@@ -76,7 +76,7 @@ public class ServerChessViewTest {
 		verify(this.boardRef, times(1)).setValue(any());
 		verify(this.boardRef).setValue(boardCaptor.capture());
 		
-		assertTrue(boardCaptor.getValue().pieces.get(0).get(0).isHightLight);
+		assertTrue(boardCaptor.getValue().pieces.get(7).get(7).isHightLight);
 	}
 	
 	@Test
@@ -87,7 +87,7 @@ public class ServerChessViewTest {
 		verify(this.boardRef, times(1)).setValue(any());
 		verify(this.boardRef).setValue(boardCaptor.capture());
 		
-		assertTrue(boardCaptor.getValue().pieces.get(6).get(1).isHightLight);
+		assertTrue(boardCaptor.getValue().pieces.get(1).get(6).isHightLight);
 	}
 	
 	@Test

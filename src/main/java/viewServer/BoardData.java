@@ -30,11 +30,11 @@ public class BoardData {
 		}
 	}
 
-	public void highLight(int file, int rank) {
-		pieces.get(rank - 1).get(file - 1).isHightLight = true;
+	public void highLight(int i, int j) {
+		pieces.get(i).get(j).isHightLight = true;
 	}
 
-	public void updatePiece(int file, int rank, PieceData pieceData) {
-		pieces.get(rank - 1).set(file - 1, pieceData);
+	public void updatePiece(int i, int j, PieceData pieceData) {
+		pieces.get(i).set(j, pieceData);
 	}
 }

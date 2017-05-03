@@ -63,7 +63,6 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public void repaint() {
-		System.out.println("repaint");
 		this.ref.child("board").setValue(this.board);
 	}
 

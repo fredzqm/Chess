@@ -1,37 +1,43 @@
 package viewServer;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import controller.ViewController;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
+import viewServer.ActionData.ClickData;
 
 public class ServerChessViewTest {
 	DatabaseReference baseRef;
 	DatabaseReference boardRef;
 	DatabaseReference whiteBlackRef;
 	DatabaseReference actionRef;
+	DatabaseReference clickRef;
 	ViewController viewController;
 
 	private ServerChessView view; 
 	
 	@Captor
-	ArgumentCaptor<BoardData> captor = ArgumentCaptor.forClass(BoardData.class);
+	ArgumentCaptor<BoardData> boardCaptor = ArgumentCaptor.forClass(BoardData.class);
+	
+	@Captor
+	ArgumentCaptor<ValueEventListener> listenerCaptor = ArgumentCaptor.forClass(ValueEventListener.class);
 	
 	@Before
 	public void setupMock() {
@@ -39,14 +45,18 @@ public class ServerChessViewTest {
 		this.boardRef = mock(DatabaseReference.class);
 		this.whiteBlackRef = mock(DatabaseReference.class);
 		this.actionRef = mock(DatabaseReference.class);
+		this.clickRef = mock(DatabaseReference.class);
 		when(this.baseRef.child("board")).thenReturn(this.boardRef);
 		when(this.baseRef.child("whiteOrBlack")).thenReturn(this.whiteBlackRef);
 		when(this.baseRef.child("action")).thenReturn(this.actionRef);
+		when(this.actionRef.child("click")).thenReturn(this.clickRef);
 		
 		this.viewController = mock(ViewController.class);
 		
 		this.view = ServerChessView.newInstance(this.baseRef, true);
 		this.view.initializeViewController(this.viewController);
+		
+		verify(this.actionRef).addValueEventListener(listenerCaptor.capture());
 		
 		reset(this.boardRef);
 		reset(this.boardRef);
@@ -58,9 +68,9 @@ public class ServerChessViewTest {
 		this.view.repaint();
 		
 		verify(this.boardRef, times(1)).setValue(any());
-		verify(this.boardRef).setValue(captor.capture());
+		verify(this.boardRef).setValue(boardCaptor.capture());
 		
-		assertTrue(captor.getValue().pieces.get(0).get(0).isHightLight);
+		assertTrue(boardCaptor.getValue().pieces.get(0).get(0).isHightLight);
 	}
 	
 	@Test
@@ -69,9 +79,9 @@ public class ServerChessViewTest {
 		this.view.repaint();
 		
 		verify(this.boardRef, times(1)).setValue(any());
-		verify(this.boardRef).setValue(captor.capture());
+		verify(this.boardRef).setValue(boardCaptor.capture());
 		
-		assertTrue(captor.getValue().pieces.get(1).get(6).isHightLight);
+		assertTrue(boardCaptor.getValue().pieces.get(6).get(1).isHightLight);
 	}
 	
 	@Test
@@ -83,13 +93,30 @@ public class ServerChessViewTest {
 		this.view.repaint();
 		
 		verify(this.boardRef, times(1)).setValue(any());
-		verify(this.boardRef).setValue(captor.capture());
+		verify(this.boardRef).setValue(boardCaptor.capture());
 		
-		BoardData captured = captor.getValue();
+		BoardData captured = boardCaptor.getValue();
 		for(List<PieceData> list : captured.pieces) {
 			for(PieceData p : list) {
 				assertFalse(p.isHightLight);
 			}
 		}
+	}
+	
+	@Test
+	public void testClick() {
+		ValueEventListener listener = listenerCaptor.getValue();
+		DataSnapshot data = mock(DataSnapshot.class);
+		ActionData action = new ActionData();
+		action.click = new ClickData();
+		action.click.file = 1;
+		action.click.rank = 1;
+		
+		when(data.getValue(ActionData.class)).thenReturn(action);
+		
+		listener.onDataChange(data);
+		
+		verify(this.viewController).click(1, 1, true);
+		verify(this.clickRef).removeValue();
 	}
 }

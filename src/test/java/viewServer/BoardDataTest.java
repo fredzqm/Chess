@@ -43,7 +43,7 @@ public class BoardDataTest {
 	public void testHighlight57() {
 		board.highLight(5, 7);
 		
-		assertTrue(board.pieces.get(4).get(6).isHightLight);
+		assertTrue(board.pieces.get(6).get(4).isHightLight);
 	}
 	
 	@Test
@@ -74,7 +74,7 @@ public class BoardDataTest {
 		PieceData p = PieceData.newInstance("N", true);
 		board.updatePiece(5, 7, p);
 		
-		assertEquals(p, board.pieces.get(4).get(6));
+		assertEquals(p, board.pieces.get(6).get(4));
 	}
 
 }

@@ -52,7 +52,6 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public void highLight(int file, int rank) {
-		System.out.println("great");
 		this.board.highLight(getI(file, rank), getJ(file, rank));
 	}
 

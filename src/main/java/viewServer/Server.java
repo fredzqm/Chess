@@ -11,8 +11,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import controller.DualViewChessControl;
 import controller.ViewController;
-import view.ChessViewer;
-import view.IChessViewer;
 
 public class Server {
 
@@ -39,9 +37,8 @@ public class Server {
 			
 			ServerChessView whiteview = ServerChessView
 					.newInstance(FirebaseDatabase.getInstance().getReference(roomLoc + "/white"), true);
-//			ServerChessView blackview = ServerChessView
-//					.newInstance(FirebaseDatabase.getInstance().getReference(roomLoc + "/black"), false);
-			IChessViewer blackview = new ChessViewer("hello", false);
+			ServerChessView blackview = ServerChessView
+					.newInstance(FirebaseDatabase.getInstance().getReference(roomLoc + "/black"), false);
 			games.put(roomLoc, new DualViewChessControl(whiteview, blackview));
 		}
 

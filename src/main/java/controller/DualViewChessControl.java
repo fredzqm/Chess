@@ -18,14 +18,18 @@ public class DualViewChessControl extends ViewController {
 
 	/**
 	 * start my little chess game!!!!
+	 * @param blackView 
+	 * @param whiteView 
 	 * 
 	 * @param args
 	 *            ignored
 	 */
-	public DualViewChessControl() {
+	public DualViewChessControl(IChessViewer whiteView, IChessViewer blackView) {
 		super();
-		whiteView = new ChessViewer(this, "The Great Chess Game white view", true);
-		blackView = new ChessViewer(this, "The Great Chess Game black view", false);
+		this.whiteView = whiteView;
+		this.blackView = blackView;
+		this.whiteView.initializeViewController(this);
+		this.blackView.initializeViewController(this);
 		updateChessBoard();
 	}
 
@@ -49,7 +53,7 @@ public class DualViewChessControl extends ViewController {
 	}
 
 	public static void main(String[] args) {
-		new DualViewChessControl();
+		new DualViewChessControl(new ChessViewer("The Great Chess Game white view", true), new ChessViewer("The Great Chess Game black view", false));
 	}
 
 }

@@ -16,12 +16,15 @@ public class SingleViewChessControl extends ViewController {
 	/**
 	 * start my little chess game!!!!
 	 * 
+	 * @param view
+	 * 
 	 * @param args
 	 *            ignored
 	 */
-	public SingleViewChessControl() {
+	public SingleViewChessControl(IChessViewer view) {
 		super();
-		view = new ChessViewer(this, "The Great Chess Game", true);
+		this.view = view;
+		this.view.initializeViewController(this);
 		updateChessBoard();
 	}
 
@@ -32,7 +35,7 @@ public class SingleViewChessControl extends ViewController {
 
 	protected void updateGuiAfterMove(Move previousMove) {
 		updateChessBoard();
-		
+
 		view.setStatusLabelText(chess.lastMoveDiscript());
 		view.cleanTemp();
 		view.printOut(chess.lastMoveOutPrint());
@@ -40,6 +43,6 @@ public class SingleViewChessControl extends ViewController {
 	}
 
 	public static void main(String[] args) {
-		new SingleViewChessControl();
+		new SingleViewChessControl(new ChessViewer("The Great Chess Game", true));
 	}
 }

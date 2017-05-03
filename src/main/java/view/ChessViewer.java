@@ -4,32 +4,23 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 @SuppressWarnings("serial")
 public class ChessViewer extends JFrame implements IChessViewer {
-	
 	private static final Font FONT_STATUS_LABEL = new Font("Serif", Font.PLAIN, 40);
-	private static final int CONSOLE_FONT_SIZE = 20;
-	private static final Font FONT_CONSOLE = new Font("Serif", Font.PLAIN, CONSOLE_FONT_SIZE);
 	private static final ISpriteProvider DEFAULT_SYMBOL_PROVIDER = new SpriteProvider("Chess_symbols.png");
 
 	private boolean isWhiteView;
-	private IChessViewerControl viewControl;
 
 	private JLabel statusLabel;
 	private SquareLabel[][] labels;
-	
-	private JTextArea myConsole;
-	private String existence;
+	private MyConsole myConsole;
 
 	/**
 	 * construct a chess view given a controller
@@ -37,15 +28,18 @@ public class ChessViewer extends JFrame implements IChessViewer {
 	 * @param controller
 	 * @param b
 	 */
-	public ChessViewer(IChessViewerControl controller, String title, boolean whiteOrBlack) {
-		this.viewControl = controller;
+	public ChessViewer(String title, boolean whiteOrBlack) {
 		this.isWhiteView = whiteOrBlack;
 		setTitle(title);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
 
+	@Override
+	public void initializeViewController(IChessViewerControl controller) {
 		this.labels = setupChessBoard(controller, DEFAULT_SYMBOL_PROVIDER);
 		this.statusLabel = setupStatusLabel();
-		JPanel consolePanel = setupConsole();
+
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		JPanel consolePanel = setupConsole(controller);
 
 		add(consolePanel, BorderLayout.SOUTH);
 		setVisible(true);
@@ -96,15 +90,12 @@ public class ChessViewer extends JFrame implements IChessViewer {
 		return label;
 	}
 
-	private JPanel setupConsole() {
+	private JPanel setupConsole(IChessViewerControl controller) {
 		JPanel consolePanel = new JPanel();
 		consolePanel.setLayout(new FlowLayout());
 		consolePanel.setVisible(true);
-		myConsole = new JTextArea("Welcome to little Chess Game. Enter \"help\" for instructions.\n",
-				130 / CONSOLE_FONT_SIZE, 1000 / CONSOLE_FONT_SIZE);
-		myConsole.setFont(FONT_CONSOLE);
-		myConsole.addKeyListener(new ConsoleListener());
-		existence = myConsole.getText();
+		myConsole = new MyConsole(controller, isWhiteView,
+				"Welcome to little Chess Game. Enter \"help\" for instructions.\n", 130, 1000);
 		consolePanel.add(new JScrollPane(myConsole));
 		return consolePanel;
 	}
@@ -121,21 +112,17 @@ public class ChessViewer extends JFrame implements IChessViewer {
 
 	@Override
 	public void printOut(String message) {
-		existence = myConsole.getText();
-		if (message != null) {
-			existence = existence + message + "\n";
-			myConsole.setText(existence);
-		}
+		this.myConsole.printOut(message);
 	}
 
 	@Override
 	public void printTemp(String temp) {
-		myConsole.setText(existence + temp);
+		myConsole.printTemp(temp);
 	}
 
 	@Override
 	public void cleanTemp() {
-		myConsole.setText(existence);
+		myConsole.cleanTemp();
 	}
 
 	@Override
@@ -158,29 +145,6 @@ public class ChessViewer extends JFrame implements IChessViewer {
 	}
 
 	@Override
-	public String getResponse(String message) {
-		return JOptionPane.showInputDialog(message);
-	}
-
-	class ConsoleListener extends KeyAdapter {
-		String input;
-
-		@Override
-		public void keyReleased(KeyEvent arg0) {
-			if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-				String text = myConsole.getText();
-				if (existence.length() < text.length()) {
-					input = text.substring(existence.length(), text.length() - 1);
-					if (input.length() > 0) {
-						viewControl.handleCommand(input, isWhiteView);
-					}
-				}
-			}
-		}
-
-	}
-
-	@Override
 	public void upDatePiece(int file, int rank, char pieceType, boolean whiteOrBlack) {
 		labelAt(file, rank).upDatePiece(pieceType, whiteOrBlack);
 	}
@@ -190,5 +154,28 @@ public class ChessViewer extends JFrame implements IChessViewer {
 		labelAt(file, rank).clearLabel();
 	}
 
+	@Override
+	public boolean askForDraw() {
+		return 0 == JOptionPane.showConfirmDialog(null, "Do you agree draw?", "Do you agree draw?",
+				JOptionPane.YES_NO_OPTION);
+	}
+
+	@Override
+	public String getPromoteTo() {
+		String[] choices = { "Queen", "Rook", "Biship", "Knight" };
+		String input = (String) JOptionPane.showInputDialog(null, "What do you want to promote to?",
+				"What do you want to promote to?", JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+		switch (input) {
+		case "Knight":
+			return "N";
+		default:
+			return input.substring(0, 1);
+		}
+	}
+
+	@Override
+	public void close() {
+		// Do nothing
+	}
 
 }

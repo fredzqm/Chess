@@ -324,14 +324,14 @@ public class Chess {
 	}
 
 	private boolean isThreeFoldRepetition() {
-		circleLoop: for (int circle = 4; circle < 50 && circle * 2 > time; circle += 2) {
-			for (int j = 1; j <= circle; j++) {
-				if (!records.get(time - j).equals(records.get(time - j - circle))) {
-					continue circleLoop;
-				}
-			}
-			return true;
-		}
+//		circleLoop: for (int circle = 4; circle < 50 && circle * 2 > time; circle += 2) {
+//			for (int j = 1; j <= circle; j++) {
+//				if (!records.get(time - j).equals(records.get(time - j - circle))) {
+//					continue circleLoop;
+//				}
+//			}
+//			return true;
+//		}
 		return false;
 	}
 

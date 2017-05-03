@@ -29,12 +29,12 @@ public class BoardDataTest {
 	public void testHighlight11() {
 		board.highLight(1, 1);
 		
-		assertTrue(board.pieces.get(0).get(0).isHightLight);
+		assertTrue(board.pieces.get(1).get(1).isHightLight);
 	}
 	
 	@Test
-	public void testHighlight88() {
-		board.highLight(8, 8);
+	public void testHighlight77() {
+		board.highLight(7, 7);
 		
 		assertTrue(board.pieces.get(7).get(7).isHightLight);
 	}
@@ -43,14 +43,14 @@ public class BoardDataTest {
 	public void testHighlight57() {
 		board.highLight(5, 7);
 		
-		assertTrue(board.pieces.get(6).get(4).isHightLight);
+		assertTrue(board.pieces.get(5).get(7).isHightLight);
 	}
 	
 	@Test
 	public void testDeHighLightWholeBoard() {
-		board.highLight(1, 1);
+		board.highLight(0, 0);
 		board.highLight(2, 5);
-		board.highLight(8, 8);
+		board.highLight(7, 7);
 		
 		board.deHighLightWholeBoard();
 		
@@ -66,7 +66,7 @@ public class BoardDataTest {
 		PieceData p = PieceData.newInstance("K", false);
 		board.updatePiece(1, 1, p);
 		
-		assertEquals(p, board.pieces.get(0).get(0));
+		assertEquals(p, board.pieces.get(1).get(1));
 	}
 	
 	@Test
@@ -74,7 +74,7 @@ public class BoardDataTest {
 		PieceData p = PieceData.newInstance("N", true);
 		board.updatePiece(5, 7, p);
 		
-		assertEquals(p, board.pieces.get(6).get(4));
+		assertEquals(p, board.pieces.get(5).get(7));
 	}
 
 }

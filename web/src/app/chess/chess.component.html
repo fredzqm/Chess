@@ -2,7 +2,7 @@
 <app-board #board
 	[pieces] = "(room | async)?.white.board.pieces"
 	(onSquareClicked)="click($event)"
-	></app-board>
-<app-console #console 
+></app-board>
+<app-console #console
 	(enteredCommand)="handleCommand($event)"
-	></app-console>
+></app-console>

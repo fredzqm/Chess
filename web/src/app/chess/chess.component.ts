@@ -27,4 +27,9 @@ export class ChessComponent implements OnInit {
        this.room = this.af.database.object('/' + this.id);
     });
   }
+
+  click(event : any) {
+    const whiteOrBlack = event.whiteOrBlack ? "white" : "black";
+    this.af.database.object('/' + this.id +'/' + whiteOrBlack + '/action').set({click: {file: event.file, rank: event.rank}});
+  }
 }

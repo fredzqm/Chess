@@ -52,6 +52,7 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public void highLight(int file, int rank) {
+		System.out.println("great");
 		this.board.highLight(getI(file, rank), getJ(file, rank));
 	}
 
@@ -67,7 +68,25 @@ public class ServerChessView implements IChessViewer {
 
 	@Override
 	public void upDatePiece(int file, int rank, char pieceType, boolean whiteOrBlack) {
-		this.board.updatePiece(getI(file, rank), getJ(file, rank), PieceData.newInstance("" + pieceType, whiteOrBlack));
+		this.board.updatePiece(getI(file, rank), getJ(file, rank), pieceType, whiteOrBlack);
+	}
+
+	private int getFile(int i, int j) {
+		if (this.whiteOrBlack)
+			return 1 + j;
+		return 8 - j;
+	}
+
+	private int getJ(int file, int rank) {
+		if (this.whiteOrBlack)
+			return file - 1;
+		return 8 - file;
+	}
+
+	private int getRank(int i, int j) {
+		if (this.whiteOrBlack)
+			return 8 - i;
+		return 1 + i;
 	}
 
 	private int getI(int file, int rank) {
@@ -76,27 +95,9 @@ public class ServerChessView implements IChessViewer {
 		return rank - 1;
 	}
 
-	private int getJ(int file, int rank) {
-		if (this.whiteOrBlack)
-			return 8 - file;
-		return file - 1;
-	}
-
-	private int getRank(int i, int j) {
-		if (this.whiteOrBlack)
-			return 8 - i;
-		return 8 + i;
-	}
-
-	private int getFile(int i, int j) {
-		if (this.whiteOrBlack)
-			return 8 - j;
-		return 8 + j;
-	}
-
 	@Override
 	public void clearLabel(int file, int rank) {
-		this.board.updatePiece(getI(file, rank), getJ(file, rank), PieceData.newInstance(null, false));
+		this.board.clearPiece(getI(file, rank), getJ(file, rank));
 	}
 
 	@Override
@@ -121,9 +122,11 @@ public class ServerChessView implements IChessViewer {
 		@Override
 		public void onDataChange(DataSnapshot dataChange) {
 			action = dataChange.getValue(ActionData.class);
+			if (action == null)
+				return;
 			if (action.click != null) {
-				int i = (int) action.click.file;
-				int j = (int) action.click.rank;
+				int i = (int) action.click.i;
+				int j = (int) action.click.j;
 				controller.click(getFile(i, j), getRank(i, j), whiteOrBlack);
 				this.actionRef.child("click").removeValue();
 			}

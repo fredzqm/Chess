@@ -34,7 +34,12 @@ public class BoardData {
 		pieces.get(i).get(j).isHightLight = true;
 	}
 
-	public void updatePiece(int i, int j, PieceData pieceData) {
-		pieces.get(i).set(j, pieceData);
+	public void updatePiece(int i, int j, char pieceType, boolean whiteOrBlack) {
+		pieces.get(i).get(j).type = "" + pieceType;
+		pieces.get(i).get(j).isWhite = whiteOrBlack;
+	}
+
+	public void clearPiece(int i, int j) {
+		pieces.get(i).get(j).type = null;
 	}
 }

@@ -115,8 +115,8 @@ public class ServerChessViewTest {
 		DataSnapshot data = mock(DataSnapshot.class);
 		ActionData action = new ActionData();
 		action.click = new ClickData();
-		action.click.file = 1;
-		action.click.rank = 1;
+		action.click.i = 1;
+		action.click.j = 1;
 		
 		when(data.getValue(ActionData.class)).thenReturn(action);
 		

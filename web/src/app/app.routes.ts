@@ -5,6 +5,6 @@ import { RoomComponent } from './room/room.component';
 
 export const routes: Routes = [
   { path: 'game', component: ChessComponent },
-  { path: 'room/:id', component: ChessComponent},
+  { path: 'room/:id/:isWhite', component: ChessComponent},
   { path: '', component: RoomComponent }
 ];

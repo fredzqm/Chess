@@ -1,6 +1,6 @@
 <h1 class="status-label">{{status}}</h1>
 <app-board #board
-	[pieces] = "(room | async)?.white.board.pieces"
+	[pieces] = "(player | async)?.board.pieces"
 	(onSquareClicked)="click($event)"
 ></app-board>
 <app-console #console

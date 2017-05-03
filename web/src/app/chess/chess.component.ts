@@ -12,7 +12,7 @@ import { ConsoleComponent } from './console/console.component';
 export class ChessComponent implements OnInit {
   status: string;
   id: any;
-  room: any;
+  player: any;
 
   @ViewChild("board") board : BoardComponent;
   @ViewChild("console") console : ConsoleComponent;
@@ -24,7 +24,8 @@ export class ChessComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe(params => {
        this.id = params['id'];
-       this.room = this.af.database.object('/' + this.id);
+       const isWhite = params['isWhite'] == 'white' ? 'white' : 'black';
+       this.player = this.af.database.object('/' + this.id + '/' + isWhite);
     });
   }
 

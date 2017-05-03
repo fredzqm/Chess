@@ -9,12 +9,13 @@
 <div [fxLayout]="row" fxLayoutWrap fxLayoutAlign="start center">
     <div *ngFor="let room of rooms | async" class="rooms-row">
         <md-card class="room-card">
+            <p class="delete-button" (click)="deleteRoom(room)">x</p>
             <md-card-header>
               <md-card-title>Room ID: {{room.id}}</md-card-title>
             </md-card-header>
             <md-card-actions fxLayoutAlign="space-around center">
-              <button md-button [routerLink]="['/room', room.$key]">JOIN</button>
-              <button md-button (click)="deleteRoom(room)">DELETE</button>
+              <button md-button [routerLink]="['/room', room.$key, 'white']">JOIN WHITE</button>
+              <button md-button [routerLink]="['/room', room.$key, 'black']">JOIN BLACK</button>
             </md-card-actions>
         </md-card>
     </div>

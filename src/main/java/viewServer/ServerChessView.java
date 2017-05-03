@@ -82,6 +82,18 @@ public class ServerChessView implements IChessViewer {
 		return file - 1;
 	}
 
+	private int getRank(int i, int j) {
+		if (this.whiteOrBlack)
+			return 8 - i;
+		return 8 + i;
+	}
+
+	private int getFile(int i, int j) {
+		if (this.whiteOrBlack)
+			return 8 - j;
+		return 8 + j;
+	}
+
 	@Override
 	public void clearLabel(int file, int rank) {
 		this.board.updatePiece(getI(file, rank), getJ(file, rank), PieceData.newInstance(null, false));
@@ -110,7 +122,9 @@ public class ServerChessView implements IChessViewer {
 		public void onDataChange(DataSnapshot dataChange) {
 			action = dataChange.getValue(ActionData.class);
 			if (action.click != null) {
-				controller.click((int) action.click.file, (int) action.click.rank, whiteOrBlack);
+				int i = (int) action.click.file;
+				int j = (int) action.click.rank;
+				controller.click(getFile(i, j), getRank(i, j), whiteOrBlack);
 				this.actionRef.child("click").removeValue();
 			}
 			if (action.requestDraw == true) {

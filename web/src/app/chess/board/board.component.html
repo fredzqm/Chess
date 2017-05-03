@@ -1,6 +1,6 @@
 <table id='chess'>
-	<div *ngFor = "let row of pieces; let j = index">
-		<app-square *ngFor = "let data of row; let i = index"
+	<div *ngFor = "let row of pieces; let i = index">
+		<app-square *ngFor = "let data of row; let j = index"
 			(clickSquare) = "onSquareClick(i, j)"
 			[isHightLight]="data.isHightLight"
 			[type]="data.type"

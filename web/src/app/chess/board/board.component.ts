@@ -14,9 +14,8 @@ export class BoardComponent  {
 
   onSquareClick(i, j) {
     this.onSquareClicked.emit({
-      file: i + 1,
-      rank: 8-j,
-      whiteOrBlack : true
+      i: i,
+      j: j
     });
   }
 }

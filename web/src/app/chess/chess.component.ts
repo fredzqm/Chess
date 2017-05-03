@@ -10,27 +10,24 @@ import { ConsoleComponent } from './console/console.component';
   styleUrls: ['./chess.component.css']
 })
 export class ChessComponent implements OnInit {
-  status: string;
   id: any;
   player: any;
+  isWhite: any;
 
   @ViewChild("board") board : BoardComponent;
   @ViewChild("console") console : ConsoleComponent;
-   
-  constructor(private route: ActivatedRoute, private af: AngularFire) {
-    this.status  = "Welcome to my wonderful chess game!";
-  }
+
+  constructor(private route: ActivatedRoute, private af: AngularFire) {}
 
   ngOnInit() {
     this.route.params.subscribe(params => {
        this.id = params['id'];
-       const isWhite = params['isWhite'] == 'white' ? 'white' : 'black';
-       this.player = this.af.database.object('/' + this.id + '/' + isWhite);
+       this.isWhite = params['isWhite'] == 'white' ? 'white' : 'black';
+       this.player = this.af.database.object('/' + this.id + '/' + this.isWhite);
     });
   }
 
   click(event : any) {
-    const whiteOrBlack = event.whiteOrBlack ? "white" : "black";
-    this.af.database.object('/' + this.id +'/' + whiteOrBlack + '/action').set({click: {file: event.file, rank: event.rank}});
+    this.af.database.object('/' + this.id +'/' + this.isWhite + '/action').set({click: {i: event.i, j: event.j}});
   }
 }

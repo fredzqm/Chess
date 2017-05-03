@@ -2,7 +2,7 @@
     <button (click)="openDialog()" md-raised-button color="accent">Create New Room</button>
 </div>
 
-<div *ngIf="rooms?.length <= 0" fxLayoutAlign="center center">
+<div *ngIf="(rooms | async)?.length <= 0" fxLayoutAlign="center center">
   No rooms created yet!
 </div>
 

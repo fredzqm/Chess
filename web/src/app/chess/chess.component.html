@@ -1,4 +1,4 @@
-<h1 class="status-label">{{status}}</h1>
+<h1 class="status-label">{{ (player|async)?.status }}</h1>
 <app-board #board
 	[pieces] = "(player | async)?.board.pieces"
 	(onSquareClicked)="click($event)"

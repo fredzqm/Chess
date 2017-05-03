@@ -1,2 +1,10 @@
-<app-chess>
-</app-chess>
+<md-toolbar color="primary" class="navbar-style">
+  <span fxFlex="80"> Chess Grand Master </span>
+  <span [routerLink]="['/game']" fxFlex="10">Quick Game</span>
+  <span [routerLink]="['/']" fxFlex="5" fxFlexOffset="5">Rooms</span>
+</md-toolbar>
+
+
+<div>
+  <router-outlet></router-outlet>
+</div>

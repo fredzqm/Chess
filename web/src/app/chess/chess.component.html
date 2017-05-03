@@ -1,7 +1,8 @@
 <h1 class="status-label">{{status}}</h1>
 <app-board #board
+	[pieces] = "(player | async)?.board.pieces"
 	(onSquareClicked)="click($event)"
-	></app-board>
+></app-board>
 <app-console #console
 	(enteredCommand)="handleCommand($event)"
-	></app-console>
+></app-console>

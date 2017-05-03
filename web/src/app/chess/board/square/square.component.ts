@@ -51,7 +51,6 @@ export class SquareComponent implements OnInit, OnChanges {
       style['background-color'] = '#ff0';
     }
     this.style = style;
-    console.log(style);
   }
 
   constructor() {
@@ -59,7 +58,7 @@ export class SquareComponent implements OnInit, OnChanges {
 
   ngOnInit() { }
 
-  @HostListener('click', ['$event']) 
+  @HostListener('click', ['$event'])
   onClick(event) {
     this.clickSquare.emit({
       i : this.i,

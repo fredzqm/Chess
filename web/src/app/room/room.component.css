@@ -1,0 +1,18 @@
+.new-room-button {
+  padding-top: 20px;
+}
+
+.room-card {
+  width: 200px;
+}
+
+.rooms-row {
+  padding-right: 65px;
+  padding-top: 20px;
+}
+
+.delete-button {
+  margin-top: -23px !important;
+  margin-left: 105%;
+  cursor: pointer;
+}

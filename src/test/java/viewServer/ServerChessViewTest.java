@@ -29,6 +29,8 @@ public class ServerChessViewTest {
 	DatabaseReference whiteBlackRef;
 	DatabaseReference actionRef;
 	DatabaseReference clickRef;
+	DatabaseReference requestRef;
+	DatabaseReference askForDrawRef;
 	ViewController viewController;
 
 	private ServerChessView view; 
@@ -46,10 +48,14 @@ public class ServerChessViewTest {
 		this.whiteBlackRef = mock(DatabaseReference.class);
 		this.actionRef = mock(DatabaseReference.class);
 		this.clickRef = mock(DatabaseReference.class);
+		this.requestRef = mock(DatabaseReference.class);
+		this.askForDrawRef = mock(DatabaseReference.class);
 		when(this.baseRef.child("board")).thenReturn(this.boardRef);
 		when(this.baseRef.child("whiteOrBlack")).thenReturn(this.whiteBlackRef);
 		when(this.baseRef.child("action")).thenReturn(this.actionRef);
 		when(this.actionRef.child("click")).thenReturn(this.clickRef);
+		when(this.baseRef.child("request")).thenReturn(this.requestRef);
+		when(this.requestRef.child("askForDraw")).thenReturn(this.askForDrawRef);
 		
 		this.viewController = mock(ViewController.class);
 		
@@ -118,5 +124,14 @@ public class ServerChessViewTest {
 		
 		verify(this.viewController).click(1, 1, true);
 		verify(this.clickRef).removeValue();
+	}
+	
+	@Test
+	public void testAskForDraw() {		
+		try {
+			this.view.askForDraw();
+		} catch(Exception e) {
+			verify(this.askForDrawRef).setValue(true);
+		}
 	}
 }

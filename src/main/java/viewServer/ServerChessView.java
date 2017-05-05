@@ -65,6 +65,8 @@ public class ServerChessView implements IChessViewer {
 		this.ref.child("board").setValue(this.board);
 	}
 
+	private DatabaseReference actionRef;
+
 	@Override
 	public void upDatePiece(int file, int rank, char pieceType, boolean whiteOrBlack) {
 		this.board.updatePiece(getI(file, rank), getJ(file, rank), pieceType, whiteOrBlack);
@@ -106,11 +108,9 @@ public class ServerChessView implements IChessViewer {
 	}
 
 	private class ActionEventListener implements ValueEventListener {
-		private DatabaseReference actionRef;
-
 		public ActionEventListener(DatabaseReference actionRef) {
-			this.actionRef = actionRef;
-			this.actionRef.addValueEventListener(this);
+			ServerChessView.this.actionRef = actionRef;
+			actionRef.addValueEventListener(this);
 		}
 
 		@Override
@@ -120,55 +120,67 @@ public class ServerChessView implements IChessViewer {
 
 		@Override
 		public void onDataChange(DataSnapshot dataChange) {
-			action = dataChange.getValue(ActionData.class);
-			if (action == null)
-				return;
-			if (action.click != null) {
-				int i = (int) action.click.i;
-				int j = (int) action.click.j;
-				controller.click(getFile(i, j), getRank(i, j), whiteOrBlack);
-				this.actionRef.child("click").removeValue();
-			}
-			if (action.requestDraw == true) {
-				controller.askForDraw(whiteOrBlack);
-				this.actionRef.child("requestDraw").removeValue();
-			}
-			if (action.resign == true) {
-				controller.resign(whiteOrBlack);
-				this.actionRef.child("resign").removeValue();
-			}
-			if (action.agreeDraw != null) {
-				this.notifyAll();
-				this.actionRef.child("agreeDraw").removeValue();
-			}
-			if (action.promotionTo != null) {
-				this.notifyAll();
-				this.actionRef.child("promotionTo").removeValue();
-			}
+			(new Thread(() -> {
+				action = dataChange.getValue(ActionData.class);
+				System.out.println(action);
+				if (action == null)
+					return;
+				if (action.click != null) {
+					int i = (int) action.click.i;
+					int j = (int) action.click.j;
+					controller.click(getFile(i, j), getRank(i, j), whiteOrBlack);
+					actionRef.child("click").removeValue();
+				}
+				if (action.requestDraw == true) {
+					controller.askForDraw(whiteOrBlack);
+					actionRef.child("requestDraw").removeValue();
+
+				}
+				if (action.resign == true) {
+					controller.resign(whiteOrBlack);
+					actionRef.child("resign").removeValue();
+				}
+				System.out.println(action.agreeDraw);
+				if (action.agreeDraw != null) {
+					synchronized (ServerChessView.this) {
+						ServerChessView.this.notifyAll();
+					}
+				}
+				if (action.promotionTo != null) {
+					synchronized (ServerChessView.this) {
+						ServerChessView.this.notifyAll();
+					}
+				}
+			})).start();
 		}
 
 	}
 
 	@Override
-	public boolean askForDraw() {
+	public synchronized boolean askForDraw() {
 		this.ref.child("request").child("askForDraw").setValue(true);
 		try {
 			wait();
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
-		return action.agreeDraw.equals("Y");
+		System.out.println("after wait: " + action.agreeDraw);
+		boolean yes = action.agreeDraw.equals("Y");
+		this.actionRef.child("agreeDraw").removeValue();
+		return yes;
 	}
 
 	@Override
-	public String getPromoteTo() {
+	public synchronized String getPromoteTo() {
 		this.ref.child("request").child("promotionTo").setValue(true);
 		try {
 			wait();
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
-		return this.action.promotionTo;
+		String x = this.action.promotionTo;
+		actionRef.child("promotionTo").removeValue();
+		return x;
 	}
 
 	@Override

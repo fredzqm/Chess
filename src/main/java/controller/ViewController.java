@@ -66,6 +66,7 @@ public abstract class ViewController implements IChessViewerControl {
 		else
 			view.printOut("Undo the Previous Move!");
 		repaintAll(view);
+		updateStatusLabel();
 	}
 
 	protected void updateChessBoard() {
@@ -143,6 +144,7 @@ public abstract class ViewController implements IChessViewerControl {
 		} else {
 			chess.endGame(Win.BLACKESIGN);
 		}
+		updateStatusLabel();
 	}
 
 	private void clearHightLight(IChessViewer view) {
@@ -169,6 +171,7 @@ public abstract class ViewController implements IChessViewerControl {
 		} else {
 			chess.endGame(canClaimDraw);
 		}
+		updateStatusLabel();
 	}
 
 	/**
@@ -224,6 +227,14 @@ public abstract class ViewController implements IChessViewerControl {
 	}
 
 	public abstract IChessViewer chooesView(boolean whiteOrBlack);
+
+	public void updateStatusLabel() {
+		IChessViewer whiteView = chooesView(true);
+		IChessViewer blackView = chooesView(false);
+		whiteView.setStatusLabelText(chess.lastMoveDiscript());
+		if (whiteView != blackView)
+			blackView.setStatusLabelText(chess.lastMoveDiscript());
+	}
 
 	/**
 	 * print messages and update GUI when this move just get accomplished

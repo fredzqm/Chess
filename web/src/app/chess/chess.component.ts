@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild, Output } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, Optional } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import { BoardComponent } from './board/board.component';
-import { ConsoleComponent } from './console/console.component';
+import { MdDialog, MdDialogRef } from '@angular/material';
 
 @Component({
   selector: 'app-chess',
@@ -13,21 +13,99 @@ export class ChessComponent implements OnInit {
   id: any;
   player: any;
   isWhite: any;
+  actionBaseUrl: any;
 
   @ViewChild("board") board : BoardComponent;
-  @ViewChild("console") console : ConsoleComponent;
 
-  constructor(private route: ActivatedRoute, private af: AngularFire) {}
+  constructor(private route: ActivatedRoute, private af: AngularFire, private _dialog: MdDialog) {}
 
   ngOnInit() {
     this.route.params.subscribe(params => {
        this.id = params['id'];
        this.isWhite = params['isWhite'] == 'white' ? 'white' : 'black';
        this.player = this.af.database.object('/' + this.id + '/' + this.isWhite);
+       this.actionBaseUrl = '/' + this.id +'/' + this.isWhite + '/action';
+       this.af.database.object('/' + this.id + '/' + this.isWhite + '/request').subscribe(data => {
+          if (data.askForDraw) {
+            this.openDrawDialog();
+          }
+          if (data.promotionTo) {
+            this.openPromotionDialog();
+          }
+       });
     });
   }
 
-  click(event : any) {
-    this.af.database.object('/' + this.id +'/' + this.isWhite + '/action').set({click: {i: event.i, j: event.j}});
+  openDrawDialog() {
+    let dialogRef = this._dialog.open(DrawDialogContent);
+
+    dialogRef.afterClosed().subscribe(accepted => {
+      if (accepted) {
+        this.af.database.object(this.actionBaseUrl).set({agreeDraw: 'Y'});
+      } else {
+        this.af.database.object(this.actionBaseUrl).set({agreeDraw: 'N'});
+      }
+    })
   }
+
+  openPromotionDialog() {
+    let dialogRef = this._dialog.open(PromotionDialogContent);
+
+    dialogRef.afterClosed().subscribe(promotion => {
+      if (promotion != null) {
+        this.af.database.object(this.actionBaseUrl).set({promotionTo: promotion});
+        this.af.database.object('/' + this.id + '/' + this.isWhite + '/request').remove();
+      }
+    })
+  }
+
+  click(event : any) {
+    this.af.database.object(this.actionBaseUrl).set({click: {i: event.i, j: event.j}});
+  }
+
+  requestForDraw() {
+    this.af.database.object(this.actionBaseUrl).set({requestDraw: true});
+  }
+
+  resign() {
+    this.af.database.object(this.actionBaseUrl).set({resign: true});
+  }
+}
+
+@Component({
+  template: `
+    <p>Do you accept the draw?</p>
+    <div>
+      <button md-button (click)="dialogRef.close(true)"> YES </button>
+      <button md-button (click)="dialogRef.close()"> NO </button>
+    </div>
+  `,
+})
+export class DrawDialogContent {
+  constructor(@Optional() public dialogRef: MdDialogRef<DrawDialogContent>) { }
+}
+
+
+@Component({
+  template: `
+    <md-select placeholder="Promotion" [(ngModel)]="selectedPromotion">
+       <md-option *ngFor="let p of promotions" [value]="p.value">
+         {{p.viewValue}}
+       </md-option>
+    </md-select>
+    <div>
+      <button md-button (click)="dialogRef.close(selectedPromotion)"> Submit </button>
+      <button md-button (click)="dialogRef.close()"> Cancel </button>
+    </div>
+  `,
+})
+export class PromotionDialogContent {
+  selectedPromotion: string;
+  promotions = [
+    {value: 'Q', viewValue: 'Queen'},
+    {value: 'R', viewValue: 'Rook'},
+    {value: 'N', viewValue: 'Knight'},
+    {value: 'B', viewValue: 'Bishop'}
+  ];
+  constructor(@Optional() public dialogRef: MdDialogRef<PromotionDialogContent>) { }
 }

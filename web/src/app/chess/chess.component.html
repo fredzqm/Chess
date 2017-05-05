@@ -3,6 +3,7 @@
 	[pieces] = "(player | async)?.board.pieces"
 	(onSquareClicked)="click($event)"
 ></app-board>
-<app-console #console
-	(enteredCommand)="handleCommand($event)"
-></app-console>
+<div fxLayout="row" fxLayoutAlign="center center">
+	<button md-raised-button (click)="requestForDraw()">Request for Draw</button>
+	<button md-raised-button (click)="resign()">Resign</button>
+</div>

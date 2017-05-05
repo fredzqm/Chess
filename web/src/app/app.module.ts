@@ -12,8 +12,7 @@ import { routes } from './app.routes';
 import { AppComponent } from './app.component';
 import { SquareComponent } from './chess/board/square/square.component';
 import { BoardComponent } from './chess/board/board.component';
-import { ConsoleComponent } from './chess/console/console.component';
-import { ChessComponent } from './chess/chess.component';
+import { ChessComponent, DrawDialogContent, PromotionDialogContent } from './chess/chess.component';
 import { firebaseConfig } from '../environments/firebase.config';
 import { RoomComponent, DialogContent } from './room/room.component';
 
@@ -24,7 +23,8 @@ import { RoomComponent, DialogContent } from './room/room.component';
     SquareComponent,
     BoardComponent,
     ChessComponent,
-    ConsoleComponent,
+    DrawDialogContent,
+    PromotionDialogContent,
     RoomComponent,
     DialogContent,
   ],
@@ -40,6 +40,6 @@ import { RoomComponent, DialogContent } from './room/room.component';
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [DialogContent]
+  entryComponents: [DrawDialogContent, PromotionDialogContent, DialogContent]
 })
 export class AppModule { }

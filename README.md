@@ -45,9 +45,9 @@ If one player sees little chance of winning or drawing, he can type `resign` in 
 If the program decides that the game has already satisfied conditions for automatic draw, it will declare a draw instead of resign.
 <img src="img/resign.png">
 
-<h3>Stalement</h3>
-When one player makes a stalement -- The opponent is not being checked and all moves it has will give its king away.
-<img src="img/stalement.png">
+<h3>Stalemate</h3>
+When one player makes a stalemate -- The opponent is not being checked and all moves it has will give its king away.
+<img src="img/stalemate.png">
 
 <h3>Draw by agreement</h3>
 If one player gets tired of playing and think neither sides have a chance of making checkmate, he or she can request an draw by type `darw` in the command console. If the program decides that the game has already satisfied conditions for automatic draw, it will declare draw immediately, otherwise it will send a request to his opponent for response, who can either type `yes` or `no` to accept or decline the draw request. One player cannot request for draw consecutively according to rules of chess. 

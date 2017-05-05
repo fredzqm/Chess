@@ -116,7 +116,6 @@ public abstract class ViewController implements IChessViewerControl {
 					clickedView.printTemp(spot.getPiece().getType() + spot.toString());
 			}
 		}
-		
 		updateChessBoard();
 	}
 

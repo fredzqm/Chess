@@ -76,7 +76,7 @@ public class ServerChessViewTest {
 		verify(this.boardRef, times(1)).setValue(any());
 		verify(this.boardRef).setValue(boardCaptor.capture());
 		
-		assertTrue(boardCaptor.getValue().pieces.get(7).get(7).isHightLight);
+		assertTrue(boardCaptor.getValue().pieces.get(7).get(0).isHightLight);
 	}
 	
 	@Test
@@ -87,7 +87,7 @@ public class ServerChessViewTest {
 		verify(this.boardRef, times(1)).setValue(any());
 		verify(this.boardRef).setValue(boardCaptor.capture());
 		
-		assertTrue(boardCaptor.getValue().pieces.get(1).get(6).isHightLight);
+		assertTrue(boardCaptor.getValue().pieces.get(1).get(1).isHightLight);
 	}
 	
 	@Test
@@ -115,14 +115,14 @@ public class ServerChessViewTest {
 		DataSnapshot data = mock(DataSnapshot.class);
 		ActionData action = new ActionData();
 		action.click = new ClickData();
-		action.click.file = 1;
-		action.click.rank = 1;
+		action.click.i = 1;
+		action.click.j = 1;
 		
 		when(data.getValue(ActionData.class)).thenReturn(action);
 		
 		listener.onDataChange(data);
 		
-		verify(this.viewController).click(1, 1, true);
+		verify(this.viewController).click(2, 7, true);
 		verify(this.clickRef).removeValue();
 	}
 	

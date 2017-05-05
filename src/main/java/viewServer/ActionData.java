@@ -10,7 +10,7 @@ public class ActionData {
 	}
 	
 	public static class ClickData {
-		public long file, rank;
+		public long i, j;
 		
 		public ClickData() {
 		}

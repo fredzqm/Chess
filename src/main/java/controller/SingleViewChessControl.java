@@ -26,6 +26,7 @@ public class SingleViewChessControl extends ViewController {
 		this.view = view;
 		this.view.initializeViewController(this);
 		updateChessBoard();
+		this.view.setStatusLabelText("Welcome to our game.");
 	}
 
 	@Override
@@ -36,7 +37,6 @@ public class SingleViewChessControl extends ViewController {
 	protected void updateGuiAfterMove(Move previousMove) {
 		updateChessBoard();
 
-		view.setStatusLabelText(chess.lastMoveDiscript());
 		view.cleanTemp();
 		view.printOut(chess.lastMoveOutPrint());
 		view.printOut("Next move -- " + side(!previousMove.getWhoseTurn()));

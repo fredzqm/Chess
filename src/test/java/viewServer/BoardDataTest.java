@@ -63,18 +63,18 @@ public class BoardDataTest {
 	
 	@Test
 	public void testUpdatePiece11() {
-		PieceData p = PieceData.newInstance("K", false);
-		board.updatePiece(1, 1, p);
+		board.updatePiece(1, 1, 'K', false);
 		
-		assertEquals(p, board.pieces.get(1).get(1));
+		assertEquals("K", board.pieces.get(1).get(1).type);
+		assertEquals(false, board.pieces.get(1).get(1).isWhite);
 	}
 	
 	@Test
 	public void testUpdatePiece57() {
-		PieceData p = PieceData.newInstance("N", true);
-		board.updatePiece(5, 7, p);
+		board.updatePiece(5, 7, 'N', true);
 		
-		assertEquals(p, board.pieces.get(5).get(7));
+		assertEquals("N", board.pieces.get(5).get(7).type);
+		assertEquals(true, board.pieces.get(5).get(7).isWhite);
 	}
 
 }

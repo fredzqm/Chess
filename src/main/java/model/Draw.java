@@ -8,7 +8,7 @@ package model;
  *
  */
 public class Draw implements EndGame{
-	public static Draw STALEMATE = new Draw("Stalement", "Draw due to Stalement."); 
+	public static Draw STALEMATE = new Draw("Stalemate", "Draw due to Stalemate."); 
 	public static Draw FIFTY_MOVE = new Draw("Quite" , "Fifty-move rule.");
 	public static Draw REPETITION = new Draw("Repetition", "threefold repetition.");
 	public static Draw AGREEMENT = new Draw("Agreement to draw", "Draw by Agreement.");

@@ -75,6 +75,7 @@ public abstract class ViewController implements IChessViewerControl {
 		repaintAll(white);
 		if (black != white)
 			repaintAll(black);
+		updateStatusLabel();
 	}
 
 	public void click(int file, int rank, boolean whiteOrBlack) {

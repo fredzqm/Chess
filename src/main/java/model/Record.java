@@ -135,6 +135,11 @@ public class Record implements Iterable<Move> {
 		}
 		return sb.toString();
 	}
+	
+	@Override
+	public String toString() {
+		return printDoc();
+	}
 
 	/**
 	 * 

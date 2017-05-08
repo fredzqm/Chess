@@ -122,7 +122,6 @@ public class ServerChessView implements IChessViewer {
 		public void onDataChange(DataSnapshot dataChange) {
 			(new Thread(() -> {
 				action = dataChange.getValue(ActionData.class);
-				System.out.println(action);
 				if (action == null)
 					return;
 				if (action.click != null) {
@@ -140,7 +139,6 @@ public class ServerChessView implements IChessViewer {
 					controller.resign(whiteOrBlack);
 					actionRef.child("resign").removeValue();
 				}
-				System.out.println(action.agreeDraw);
 				if (action.agreeDraw != null) {
 					synchronized (ServerChessView.this) {
 						ServerChessView.this.notifyAll();

@@ -110,7 +110,7 @@ public class ServerChessViewTest {
 	}
 	
 	@Test
-	public void testClick() {
+	public void testClick() throws InterruptedException {
 		ValueEventListener listener = listenerCaptor.getValue();
 		DataSnapshot data = mock(DataSnapshot.class);
 		ActionData action = new ActionData();
@@ -122,16 +122,10 @@ public class ServerChessViewTest {
 		
 		listener.onDataChange(data);
 		
+		Thread.sleep(10);
+		
 		verify(this.viewController).click(2, 7, true);
 		verify(this.clickRef).removeValue();
 	}
 	
-	@Test
-	public void testAskForDraw() {		
-		try {
-			this.view.askForDraw();
-		} catch(Exception e) {
-			verify(this.askForDrawRef).setValue(true);
-		}
-	}
 }

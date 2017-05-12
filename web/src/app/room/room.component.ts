@@ -1,6 +1,6 @@
 import { Component, OnInit, Optional } from '@angular/core';
 import { MdDialog, MdDialogRef } from '@angular/material';
-import { AngularFire, FirebaseListObservable } from 'angularfire2';
+import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database';
 
 @Component({
   selector: 'app-room',
@@ -10,8 +10,8 @@ import { AngularFire, FirebaseListObservable } from 'angularfire2';
 export class RoomComponent implements OnInit {
   rooms: FirebaseListObservable<any[]>;
 
-  constructor(af: AngularFire, private _dialog: MdDialog) {
-    this.rooms = af.database.list('/');
+  constructor(af: AngularFireDatabase, private _dialog: MdDialog) {
+    this.rooms = af.list('/');
   }
 
   ngOnInit() {

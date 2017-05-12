@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { AngularFireModule } from 'angularfire2';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '@angular/material';
@@ -15,7 +16,6 @@ import { BoardComponent } from './chess/board/board.component';
 import { ChessComponent, DrawDialogContent, PromotionDialogContent } from './chess/chess.component';
 import { firebaseConfig } from '../environments/firebase.config';
 import { RoomComponent, DialogContent } from './room/room.component';
-
 
 @NgModule({
   declarations: [
@@ -35,6 +35,7 @@ import { RoomComponent, DialogContent } from './room/room.component';
     BrowserAnimationsModule,
     FlexLayoutModule,
     AngularFireModule.initializeApp(firebaseConfig),
+    AngularFireDatabaseModule,
     RouterModule.forRoot(routes),
     MaterialModule.forRoot(),
   ],

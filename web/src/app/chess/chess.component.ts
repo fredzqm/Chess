@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Output, Optional } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AngularFire, FirebaseListObservable } from 'angularfire2';
+import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database';
 import { BoardComponent } from './board/board.component';
 import { MdDialog, MdDialogRef } from '@angular/material';
 
@@ -17,15 +17,15 @@ export class ChessComponent implements OnInit {
 
   @ViewChild("board") board : BoardComponent;
 
-  constructor(private route: ActivatedRoute, private af: AngularFire, private _dialog: MdDialog) {}
+  constructor(private route: ActivatedRoute, private af: AngularFireDatabase, private _dialog: MdDialog) {}
 
   ngOnInit() {
     this.route.params.subscribe(params => {
        this.id = params['id'];
        this.isWhite = params['isWhite'] == 'white' ? 'white' : 'black';
-       this.player = this.af.database.object('/' + this.id + '/' + this.isWhite);
+       this.player = this.af.object('/' + this.id + '/' + this.isWhite);
        this.actionBaseUrl = '/' + this.id +'/' + this.isWhite + '/action';
-       this.af.database.object('/' + this.id + '/' + this.isWhite + '/request').subscribe(data => {
+       this.af.object('/' + this.id + '/' + this.isWhite + '/request').subscribe(data => {
           if (data.askForDraw) {
             this.openDrawDialog();
           }
@@ -41,9 +41,9 @@ export class ChessComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(accepted => {
       if (accepted) {
-        this.af.database.object(this.actionBaseUrl).set({agreeDraw: 'Y'});
+        this.af.object(this.actionBaseUrl).set({agreeDraw: 'Y'});
       } else {
-        this.af.database.object(this.actionBaseUrl).set({agreeDraw: 'N'});
+        this.af.object(this.actionBaseUrl).set({agreeDraw: 'N'});
       }
     })
   }
@@ -53,22 +53,22 @@ export class ChessComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(promotion => {
       if (promotion != null) {
-        this.af.database.object(this.actionBaseUrl).set({promotionTo: promotion});
-        this.af.database.object('/' + this.id + '/' + this.isWhite + '/request').remove();
+        this.af.object(this.actionBaseUrl).set({promotionTo: promotion});
+        this.af.object('/' + this.id + '/' + this.isWhite + '/request').remove();
       }
     })
   }
 
   click(event : any) {
-    this.af.database.object(this.actionBaseUrl).set({click: {i: event.i, j: event.j}});
+    this.af.object(this.actionBaseUrl).set({click: {i: event.i, j: event.j}});
   }
 
   requestForDraw() {
-    this.af.database.object(this.actionBaseUrl).set({requestDraw: true});
+    this.af.object(this.actionBaseUrl).set({requestDraw: true});
   }
 
   resign() {
-    this.af.database.object(this.actionBaseUrl).set({resign: true});
+    this.af.object(this.actionBaseUrl).set({resign: true});
   }
 }
 

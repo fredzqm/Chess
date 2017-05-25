@@ -44,7 +44,7 @@ export class SquareComponent implements OnInit, OnChanges {
   ngOnChanges() {
     let style = {};
     if (this.type) {
-      style['background-image'] = 'url(../assets/Chess_symbols.png)';
+      style['background-image'] = 'url(assets/Chess_symbols.png)';
       style['background-position'] = getX(this.type) + "px " + getY(this.isWhite) + "px";
     }
     if (this.isHightLight) {

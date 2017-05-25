@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
+    "publish": "ng build --prod --base-href '/Chess/' && ngh",
     "start": "ng serve -o",
     "build": "ng build",
     "test": "ng test",

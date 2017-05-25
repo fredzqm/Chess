@@ -318,7 +318,7 @@ exports = module.exports = __webpack_require__(18)();
 
 
 // module
-exports.push([module.i, ".fill-remaining-space {\r\n  -webkit-box-flex: 1;\r\n      -ms-flex: 1 1 auto;\r\n          flex: 1 1 auto;\r\n}\r\n\r\n.navbar-style {\r\n  margin: -8px;\r\n}\r\n", ""]);
+exports.push([module.i, ".fill-remaining-space {\n  -webkit-box-flex: 1;\n      -ms-flex: 1 1 auto;\n          flex: 1 1 auto;\n}\n\n.navbar-style {\n  margin: -8px;\n}\n", ""]);
 
 // exports
 
@@ -336,7 +336,7 @@ exports = module.exports = __webpack_require__(18)();
 
 
 // module
-exports.push([module.i, "#chess {\r\n  min-width: 580px;\r\n  max-width: 580px;\r\n  margin: auto;\r\n}\r\n\r\ntable#chess div app-square {\r\n  width: 70px;\r\n  height: 70px;\r\n  border: solid #000 1px;\r\n  float:left;\r\n}\r\n\r\ntable#chess div:nth-child(odd) app-square:nth-child(even),\r\ntable#chess div:nth-child(even) app-square:nth-child(odd) {\r\n  background: #255;\r\n}\r\n\r\ntable#chess div:nth-child(odd) app-square:nth-child(odd),\r\ntable#chess div:nth-child(even) app-square:nth-child(even) {\r\n  background: #fff;\r\n}\r\n", ""]);
+exports.push([module.i, "#chess {\n  min-width: 580px;\n  max-width: 580px;\n  margin: auto;\n}\n\ntable#chess div app-square {\n  width: 70px;\n  height: 70px;\n  border: solid #000 1px;\n  float:left;\n}\n\ntable#chess div:nth-child(odd) app-square:nth-child(even),\ntable#chess div:nth-child(even) app-square:nth-child(odd) {\n  background: #255;\n}\n\ntable#chess div:nth-child(odd) app-square:nth-child(odd),\ntable#chess div:nth-child(even) app-square:nth-child(even) {\n  background: #fff;\n}\n", ""]);
 
 // exports
 
@@ -354,7 +354,7 @@ exports = module.exports = __webpack_require__(18)();
 
 
 // module
-exports.push([module.i, "div {\r\n\twidth: 100%;\r\n\theight: 100%;\r\n}\r\n\r\n.square {\r\n\tbackground-repeat: no-repeat;\r\n}", ""]);
+exports.push([module.i, "div {\n\twidth: 100%;\n\theight: 100%;\n}\n\n.square {\n\tbackground-repeat: no-repeat;\n}", ""]);
 
 // exports
 
@@ -372,7 +372,7 @@ exports = module.exports = __webpack_require__(18)();
 
 
 // module
-exports.push([module.i, ".status-label {\r\n  text-align: center;\r\n}\r\n", ""]);
+exports.push([module.i, ".status-label {\n  text-align: center;\n}\n", ""]);
 
 // exports
 
@@ -390,7 +390,7 @@ exports = module.exports = __webpack_require__(18)();
 
 
 // module
-exports.push([module.i, ".new-room-button {\r\n  padding-top: 20px;\r\n}\r\n\r\n.room-card {\r\n  width: 200px;\r\n}\r\n\r\n.rooms-row {\r\n  padding-right: 65px;\r\n  padding-top: 20px;\r\n}\r\n\r\n.delete-button {\r\n  margin-top: -23px !important;\r\n  margin-left: 105%;\r\n  cursor: pointer;\r\n}\r\n", ""]);
+exports.push([module.i, ".new-room-button {\n  padding-top: 20px;\n}\n\n.room-card {\n  width: 200px;\n}\n\n.rooms-row {\n  padding-right: 65px;\n  padding-top: 20px;\n}\n\n.delete-button {\n  margin-top: -23px !important;\n  margin-left: 105%;\n  cursor: pointer;\n}\n", ""]);
 
 // exports
 
@@ -403,35 +403,35 @@ module.exports = module.exports.toString();
 /***/ 228:
 /***/ (function(module, exports) {
 
-module.exports = "<md-toolbar color=\"primary\" class=\"navbar-style\">\r\n  <span fxFlex=\"80\"> Chess Grand Master </span>\r\n  <span [routerLink]=\"['/']\" fxFlex=\"5\" fxFlexOffset=\"15\">Rooms</span>\r\n</md-toolbar>\r\n\r\n<div>\r\n  <router-outlet></router-outlet>\r\n</div>\r\n"
+module.exports = "<md-toolbar color=\"primary\" class=\"navbar-style\">\n  <span fxFlex=\"80\"> Chess Grand Master </span>\n  <span [routerLink]=\"['/']\" fxFlex=\"5\" fxFlexOffset=\"15\">Rooms</span>\n</md-toolbar>\n\n<div>\n  <router-outlet></router-outlet>\n</div>\n"
 
 /***/ }),
 
 /***/ 229:
 /***/ (function(module, exports) {
 
-module.exports = "<table id='chess'>\r\n\t<div *ngFor = \"let row of pieces; let i = index\">\r\n\t\t<app-square *ngFor = \"let data of row; let j = index\"\r\n\t\t\t(clickSquare) = \"onSquareClick(i, j)\"\r\n\t\t\t[isHightLight]=\"data.isHightLight\"\r\n\t\t\t[type]=\"data.type\"\r\n\t\t\t[isWhite]=\"data.isWhite\"\r\n\t\t\t[i]=\"i\"\r\n\t\t\t[j]=\"j\"\r\n\t\t\t>\r\n\t\t</app-square>\r\n\t</div>\r\n</table>\r\n"
+module.exports = "<table id='chess'>\n\t<div *ngFor = \"let row of pieces; let i = index\">\n\t\t<app-square *ngFor = \"let data of row; let j = index\"\n\t\t\t(clickSquare) = \"onSquareClick(i, j)\"\n\t\t\t[isHightLight]=\"data.isHightLight\"\n\t\t\t[type]=\"data.type\"\n\t\t\t[isWhite]=\"data.isWhite\"\n\t\t\t[i]=\"i\"\n\t\t\t[j]=\"j\"\n\t\t\t>\n\t\t</app-square>\n\t</div>\n</table>\n"
 
 /***/ }),
 
 /***/ 230:
 /***/ (function(module, exports) {
 
-module.exports = "<div class='square'\r\n\t[ngStyle]=\"style\">\r\n</div>\r\n"
+module.exports = "<div class='square'\n\t[ngStyle]=\"style\">\n</div>\n"
 
 /***/ }),
 
 /***/ 231:
 /***/ (function(module, exports) {
 
-module.exports = "<h1 class=\"status-label\">{{ (player|async)?.status }}</h1>\r\n<app-board #board\r\n\t[pieces] = \"(player | async)?.board.pieces\"\r\n\t(onSquareClicked)=\"click($event)\"\r\n></app-board>\r\n<div fxLayout=\"row\" fxLayoutAlign=\"center center\">\r\n\t<button md-raised-button (click)=\"requestForDraw()\">Request for Draw</button>\r\n\t<button md-raised-button (click)=\"resign()\">Resign</button>\r\n</div>\r\n"
+module.exports = "<h1 class=\"status-label\">{{ (player|async)?.status }}</h1>\n<app-board #board\n\t[pieces] = \"(player | async)?.board.pieces\"\n\t(onSquareClicked)=\"click($event)\"\n></app-board>\n<div fxLayout=\"row\" fxLayoutAlign=\"center center\">\n\t<button md-raised-button (click)=\"requestForDraw()\">Request for Draw</button>\n\t<button md-raised-button (click)=\"resign()\">Resign</button>\n</div>\n"
 
 /***/ }),
 
 /***/ 232:
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"new-room-button\">\r\n    <button (click)=\"openDialog()\" md-raised-button color=\"accent\">Create New Room</button>\r\n</div>\r\n\r\n<div *ngIf=\"(rooms | async)?.length <= 0\" fxLayoutAlign=\"center center\">\r\n  No rooms created yet!\r\n</div>\r\n\r\n<div [fxLayout]=\"row\" fxLayoutWrap fxLayoutAlign=\"start center\">\r\n    <div *ngFor=\"let room of rooms | async\" class=\"rooms-row\">\r\n        <md-card class=\"room-card\">\r\n            <p class=\"delete-button\" (click)=\"deleteRoom(room)\">x</p>\r\n            <md-card-header>\r\n              <md-card-title>Room ID: {{room.id}}</md-card-title>\r\n            </md-card-header>\r\n            <md-card-actions fxLayoutAlign=\"space-around center\">\r\n              <button md-button [routerLink]=\"['/room', room.$key, 'white']\">JOIN WHITE</button>\r\n              <button md-button [routerLink]=\"['/room', room.$key, 'black']\">JOIN BLACK</button>\r\n            </md-card-actions>\r\n        </md-card>\r\n    </div>\r\n</div>\r\n"
+module.exports = "<div class=\"new-room-button\">\n    <button (click)=\"openDialog()\" md-raised-button color=\"accent\">Create New Room</button>\n</div>\n\n<div *ngIf=\"(rooms | async)?.length <= 0\" fxLayoutAlign=\"center center\">\n  No rooms created yet!\n</div>\n\n<div [fxLayout]=\"row\" fxLayoutWrap fxLayoutAlign=\"start center\">\n    <div *ngFor=\"let room of rooms | async\" class=\"rooms-row\">\n        <md-card class=\"room-card\">\n            <p class=\"delete-button\" (click)=\"deleteRoom(room)\">x</p>\n            <md-card-header>\n              <md-card-title>Room ID: {{room.id}}</md-card-title>\n            </md-card-header>\n            <md-card-actions fxLayoutAlign=\"space-around center\">\n              <button md-button [routerLink]=\"['/room', room.$key, 'white']\">JOIN WHITE</button>\n              <button md-button [routerLink]=\"['/room', room.$key, 'black']\">JOIN BLACK</button>\n            </md-card-actions>\n        </md-card>\n    </div>\n</div>\n"
 
 /***/ }),
 

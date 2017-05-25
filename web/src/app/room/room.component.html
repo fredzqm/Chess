@@ -6,7 +6,7 @@
   No rooms created yet!
 </div>
 
-<div [fxLayout]="row" fxLayoutWrap fxLayoutAlign="start center">
+<div fxLayout="row" fxLayoutWrap fxLayoutAlign="start center">
     <div *ngFor="let room of rooms | async" class="rooms-row">
         <md-card class="room-card">
             <p class="delete-button" (click)="deleteRoom(room)">x</p>

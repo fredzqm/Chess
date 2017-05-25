@@ -8,7 +8,7 @@ import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database
   styleUrls: ['./room.component.css']
 })
 export class RoomComponent implements OnInit {
-  rooms: FirebaseListObservable<any[]>;
+  public rooms: FirebaseListObservable<any[]>;
 
   constructor(af: AngularFireDatabase, private _dialog: MdDialog) {
     this.rooms = af.list('/');

@@ -1,6 +1,6 @@
-<h1 class="status-label">{{ (player|async)?.status }}</h1>
+<h1 class="status-label">{{ (game|async)?.status }}</h1>
 <app-board #board
-	[pieces] = "(player | async)?.board.pieces"
+	[pieces] = "(game | async)?.pieces"
 	(onSquareClicked)="click($event)"
 ></app-board>
 <div fxLayout="row" fxLayoutAlign="center center">

@@ -17,6 +17,7 @@ export class RoomComponent implements OnInit {
   constructor(private afs: AngularFirestore, private _dialog: MatDialog) {
     this.roomCollection = this.afs.collection<Room>('rooms');
     this.rooms = this.roomCollection.valueChanges();
+    console.error(this.afs);
   }
 
   ngOnInit() {

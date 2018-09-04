@@ -14,8 +14,8 @@ import {Observable} from 'rxjs';
 export class ChessComponent implements OnInit {
   id: any;
   isWhite: boolean;
-  game: Observable<Room>;
-  gameDoc: AngularFirestoreDocument<Room>;
+  game: Observable<any>;
+  gameDoc: AngularFirestoreDocument<any>;
 
   @ViewChild('board') board: BoardComponent;
 
@@ -25,9 +25,11 @@ export class ChessComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.id = params['id'];
       this.isWhite = params['isWhite'] === 'white';
-      this.gameDoc = this.afs.collection('rooms').doc(this.id);
+      this.gameDoc = this.afs.collection('rooms').doc(this.id).collection('display').doc(params['isWhite']);
       this.game = this.gameDoc.valueChanges();
-      this.gameDoc.collection('request-' + !this.isWhite).stateChanges(['added']).subscribe(snapshots => {
+      console.error(this.afs);
+      console.error(this.game);
+      this.gameDoc.collection('request').stateChanges(['added']).subscribe(snapshots => {
         snapshots.map(snapshot => {
           const request: any = snapshot.payload.doc.data();
           if (request.askForDraw) {
@@ -46,9 +48,9 @@ export class ChessComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(accepted => {
       if (accepted) {
-        this.gameDoc.collection('response-' + this.isWhite).add({agreeDraw: true});
+        this.gameDoc.collection('action').add({agreeDraw: true});
       } else {
-        this.gameDoc.collection('response-' + this.isWhite).add({agreeDraw: false});
+        this.gameDoc.collection('action').add({agreeDraw: false});
       }
     });
   }
@@ -57,20 +59,20 @@ export class ChessComponent implements OnInit {
     const dialogRef = this._dialog.open(PromotionDialogContent);
 
     dialogRef.afterClosed().subscribe(promotion => {
-      this.gameDoc.collection('response-' + this.isWhite).add({promotionTo: promotion});
+      this.gameDoc.collection('action').add({promotionTo: promotion});
     });
   }
 
   click(event: any) {
-    this.gameDoc.collection('click-' + this.isWhite).add({click: {i: event.i, j: event.j}});
+    this.gameDoc.collection('action').add({click: {i: event.i, j: event.j}});
   }
 
   requestForDraw() {
-    this.gameDoc.collection('request-' + this.isWhite).add({agreeDraw: true});
+    this.gameDoc.collection('action').add({agreeDraw: true});
   }
 
   resign() {
-    this.gameDoc.collection('request-' + this.isWhite).add({resign: true});
+    this.gameDoc.collection('action-').add({resign: true});
   }
 }
 

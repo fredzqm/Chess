@@ -68,3 +68,4 @@ fabric.properties
 .gradle
 *.iml
 node_modules
+secret

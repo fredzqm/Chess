@@ -13,7 +13,7 @@
             <mat-card-header>
               <mat-card-title>Room ID: {{room.name}}</mat-card-title>
             </mat-card-header>
-            <mat-card-actions ngIf="room.$key" fxLayoutAlign="space-around center">
+            <mat-card-actions *ngIf="room.$key" fxLayoutAlign="space-around center">
               <button mat-button [routerLink]="['/room', room.$key, 'white']">JOIN WHITE</button>
               <button mat-button [routerLink]="['/room', room.$key, 'black']">JOIN BLACK</button>
             </mat-card-actions>

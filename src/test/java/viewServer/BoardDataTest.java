@@ -12,10 +12,10 @@ public class BoardDataTest {
 	
 	@Before
 	public void setupBoardData() {
-		board = BoardData.newInstance();
+		board = new BoardData();
 		
 		// Check each piece
-		for(List<PieceData> list : board.pieces) {
+		for(PieceData[] list : board.pieces) {
 			for(PieceData p : list) {
 				assertEquals(null, p.type);
 			}

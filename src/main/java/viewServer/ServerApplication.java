@@ -1,11 +1,12 @@
 package viewServer;
 
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseOptions.Builder;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class ServerApplication {
@@ -17,13 +18,15 @@ public class ServerApplication {
 
 	static {
 		try {
-			FileInputStream serviceAccount = new FileInputStream("ServiceAccount.json");
-			FirebaseOptions options = new FirebaseOptions.Builder()
-					.setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
-					.setDatabaseUrl("https://chess-49b54.firebaseio.com/").build();
+			FileInputStream serviceAccount = new FileInputStream("secret/chess-2c8e2-firebase-adminsdk-1iya2-555539dd58.json");
+
+				FirebaseOptions options = new Builder()
+				.setCredentials(GoogleCredentials.fromStream(serviceAccount))
+				.setDatabaseUrl("https://chess-2c8e2.firebaseio.com")
+				.build();
 
 			FirebaseApp.initializeApp(options);
-		} catch (FileNotFoundException e) {
+		} catch (java.io.IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

@@ -151,7 +151,7 @@ public class ServerChessView implements IChessViewer {
           if (action.resign == true) {
             controller.resign(whiteOrBlack);
           }
-          if (action.agreeDraw != null) {
+          if (action.agreeDraw == true) {
             synchronized (ServerChessView.this) {
               ServerChessView.this.notifyAll();
             }

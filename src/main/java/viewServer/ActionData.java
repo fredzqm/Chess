@@ -2,8 +2,7 @@ package viewServer;
 
 public class ActionData {
 	public ClickData click;
-	public boolean requestDraw, resign;
-	public String agreeDraw;
+	public boolean requestDraw, resign, agreeDraw;
 	public String promotionTo;
 
 	public ActionData() {

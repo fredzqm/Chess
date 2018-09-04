@@ -1,8 +1,8 @@
-<h1 class="status-label">{{ (game|async)?.status }}</h1>
 <app-board #board
 	[pieces] = "(game | async)?.pieces"
 	(onSquareClicked)="click($event)"
 ></app-board>
+<h1 class="status-label">{{ (game|async)?.status }}</h1>
 <div fxLayout="row" fxLayoutAlign="center center">
 	<button mat-raised-button (click)="requestForDraw()">Request for Draw</button>
 	<button mat-raised-button (click)="resign()">Resign</button>

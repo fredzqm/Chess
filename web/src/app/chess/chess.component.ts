@@ -27,8 +27,6 @@ export class ChessComponent implements OnInit {
       this.isWhite = params['isWhite'] === 'white';
       this.gameDoc = this.afs.collection('rooms').doc(this.id).collection('display').doc(params['isWhite']);
       this.game = this.gameDoc.valueChanges();
-      console.error(this.afs);
-      console.error(this.game);
       this.gameDoc.collection('request').stateChanges(['added']).subscribe(snapshots => {
         snapshots.map(snapshot => {
           const request: any = snapshot.payload.doc.data();

@@ -32,9 +32,7 @@ function getY(isWhite : boolean) : number {
 })
 export class SquareComponent implements OnInit, OnChanges {
   @Output() clickSquare : EventEmitter<any> = new EventEmitter<any>();
-  @Input() isHightLight : boolean
-  @Input() type : string
-  @Input() isWhite : boolean
+  @Input() piece : any;
 
   @Input() i : number;
   @Input() j : number;
@@ -43,11 +41,11 @@ export class SquareComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     let style = {};
-    if (this.type) {
+    if (this.piece.type) {
       style['background-image'] = 'url(assets/Chess_symbols.png)';
-      style['background-position'] = getX(this.type) + "px " + getY(this.isWhite) + "px";
+      style['background-position'] = getX(this.piece.type) + "px " + getY(this.piece.white) + "px";
     }
-    if (this.isHightLight) {
+    if (this.piece.hightLight) {
       style['background-color'] = '#ff0';
     }
     this.style = style;

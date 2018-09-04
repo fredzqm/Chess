@@ -39,15 +39,7 @@ public class ServerChessView implements IChessViewer {
     p.ref = firebaseReference;
     p.whiteOrBlack = whiteOrBlack;
     p.board.whiteOrBlack = whiteOrBlack;
-      ApiFuture<WriteResult> x;
-    try {
-      x= p.ref.set(p.board);
-          x.get();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    } catch (ExecutionException e) {
-      e.printStackTrace();
-    }
+    p.ref.set(p.board);
     return p;
   }
 

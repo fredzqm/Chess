@@ -1,0 +1,23 @@
+[debug] [2018-09-04T16:07:24.265Z] ----------------------------------------------------------------------
+[debug] [2018-09-04T16:07:24.267Z] Command:       /usr/bin/node /usr/local/google/home/fredzqm/.yarn/bin/firebase init
+[debug] [2018-09-04T16:07:24.268Z] CLI Version:   4.2.1
+[debug] [2018-09-04T16:07:24.268Z] Platform:      linux
+[debug] [2018-09-04T16:07:24.268Z] Node Version:  v8.11.0
+[debug] [2018-09-04T16:07:24.268Z] Time:          Tue Sep 04 2018 16:07:24 GMT+0000 (UTC)
+[debug] [2018-09-04T16:07:24.268Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-09-04T16:07:24.275Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase"]
+[debug] [2018-09-04T16:07:24.275Z] > attempting to authenticate via app default credentials
+[debug] [2018-09-04T16:07:24.320Z] TypeError: Cannot create property 'refresh_token' on string 'No service account scopes specified.'
+    at /usr/local/google/home/fredzqm/.config/yarn/global/node_modules/firebase-tools/node_modules/google-auth-library/lib/auth/oauth2client.js:208:28
+    at /usr/local/google/home/fredzqm/.config/yarn/global/node_modules/firebase-tools/node_modules/google-auth-library/lib/auth/computeclient.js:85:7
+    at Request._callback (/usr/local/google/home/fredzqm/.config/yarn/global/node_modules/firebase-tools/node_modules/google-auth-library/lib/transporters.js:106:7)
+    at Request.self.callback (/usr/local/google/home/fredzqm/.config/yarn/global/node_modules/request/request.js:185:22)
+    at emitTwo (events.js:126:13)
+    at Request.emit (events.js:214:7)
+    at Request.<anonymous> (/usr/local/google/home/fredzqm/.config/yarn/global/node_modules/request/request.js:1161:10)
+    at emitOne (events.js:116:13)
+    at Request.emit (events.js:211:7)
+    at IncomingMessage.<anonymous> (/usr/local/google/home/fredzqm/.config/yarn/global/node_modules/request/request.js:1083:12)
+[error] 
+[error] Error: An unexpected error has occurred.

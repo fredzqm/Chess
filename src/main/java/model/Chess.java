@@ -1,5 +1,6 @@
 package model;
 
+import controller.DrawManager;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,6 +21,7 @@ public class Chess {
 	private Record records;
 
 	private Collection<Square> list;
+	private DrawManager drawManager;
 
 	// ----------------------------------------------------------------------------------------------------------------------------
 	// constructors and methods used to create and initializes the chess game.
@@ -30,6 +32,7 @@ public class Chess {
 	public Chess() {
 		time = 0;
 		records = new Record();
+		drawManager = new DrawManager();
 		board = new Board();
 		white = new ArrayList<Piece>();
 		black = new ArrayList<Piece>();
@@ -660,5 +663,9 @@ public class Chess {
 		default:
 			return Piece.class;
 		}
+	}
+
+  public DrawManager getDrawManager() {
+		return this.drawManager;
 	}
 }

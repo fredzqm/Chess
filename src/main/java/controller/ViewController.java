@@ -17,11 +17,9 @@ import view.IChessViewerControl;
 public abstract class ViewController implements IChessViewerControl {
 	private Piece chosen;
 	protected Chess chess;
-	private DrawManager drawManager;
 
 	public ViewController() {
 		chess = new Chess();
-		drawManager = new DrawManager();
 		chosen = null;
 	}
 
@@ -158,12 +156,12 @@ public abstract class ViewController implements IChessViewerControl {
 		if (canClaimDraw == null) {
 			IChessViewer request = chooesView(whiteOrBlack);
 			IChessViewer response = chooesView(!whiteOrBlack);
-			if (drawManager.canAskFordraw(whiteOrBlack)) {
+			if (this.chess.getDrawManager().canAskFordraw(whiteOrBlack)) {
 				response.printOut(side(whiteOrBlack) + " ask for draw, do you agreed?");
 				if (response.askForDraw()) {
 					chess.endGame(Draw.AGREEMENT);
 				} else {
-					drawManager.setRightToRequestDraw(whiteOrBlack);
+					chess.getDrawManager().setRightToRequestDraw(whiteOrBlack);
 					request.printOut("Request declined");
 				}
 			} else {

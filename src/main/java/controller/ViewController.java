@@ -15,17 +15,16 @@ import view.IChessViewer;
 import view.IChessViewerControl;
 
 public abstract class ViewController implements IChessViewerControl {
-	private Piece chosen;
 	protected Chess chess;
 
 	public ViewController() {
 		chess = new Chess();
-		chosen = null;
+		setChosen(null);
 	}
 
 	public void restart() {
 		chess = new Chess();
-		chosen = null;
+		setChosen(null);
 		IChessViewer white = chooesView(true);
 		IChessViewer black = chooesView(false);
 		restartView(white);
@@ -87,8 +86,8 @@ public abstract class ViewController implements IChessViewerControl {
 			return;
 		}
 		Square spot = chess.spotAt(file, rank);
-		if (chosen != null) {
-			Move move = chosen.getMove(spot);
+		if (getChosen() != null) {
+			Move move = getChosen().getMove(spot);
 			if (move == null) {
 				clickedView.cleanTemp();
 			} else {
@@ -103,8 +102,8 @@ public abstract class ViewController implements IChessViewerControl {
 			clearHightLight(clickedView);
 		} else {
 			if (spot.occupiedBy(chess.getWhoseTurn())) {
-				chosen = spot.getPiece();
-				ArrayList<Square> reachable = chosen.getReachableSquares();
+				setChosen(spot.getPiece());
+				ArrayList<Square> reachable = getChosen().getReachableSquares();
 				reachable.add(spot);
 				for (Square sqr : reachable) {
 					clickedView.highLight(sqr.getX(), sqr.getY());
@@ -147,7 +146,7 @@ public abstract class ViewController implements IChessViewerControl {
 	}
 
 	private void clearHightLight(IChessViewer view) {
-		chosen = null;
+		setChosen(null);
 		view.deHighLightWholeBoard();
 	}
 
@@ -251,4 +250,11 @@ public abstract class ViewController implements IChessViewerControl {
 		chooesView(true).close();
 	}
 
+	public Piece getChosen() {
+		return chess.getChosen();
+	}
+
+	public void setChosen(Piece chosen) {
+		this.chess.setChosen(chosen);
+	}
 }

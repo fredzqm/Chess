@@ -22,6 +22,7 @@ public class Chess {
 
 	private Collection<Square> list;
 	private DrawManager drawManager;
+	private Piece chosen;
 
 	// ----------------------------------------------------------------------------------------------------------------------------
 	// constructors and methods used to create and initializes the chess game.
@@ -667,5 +668,13 @@ public class Chess {
 
   public DrawManager getDrawManager() {
 		return this.drawManager;
+	}
+
+	public Piece getChosen() {
+		return chosen;
+	}
+
+	public void setChosen(Piece chosen) {
+		this.chosen = chosen;
 	}
 }

@@ -1,6 +1,9 @@
-import { Component, OnInit, Optional } from '@angular/core';
-import { MdDialog, MdDialogRef } from '@angular/material';
-import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database';
+///<reference path="../../../node_modules/@angular/core/src/metadata/directives.d.ts"/>
+import {Component, OnInit, Optional} from '@angular/core';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {Observable} from 'rxjs';
+import {AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection} from 'angularfire2/firestore';
+import {Room} from '../model';
 
 @Component({
   selector: 'app-room',
@@ -8,10 +11,12 @@ import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database
   styleUrls: ['./room.component.css']
 })
 export class RoomComponent implements OnInit {
-  public rooms: FirebaseListObservable<any[]>;
+  private roomCollection: AngularFirestoreCollection<Room>;
+  public rooms: Observable<Room[]>;
 
-  constructor(af: AngularFireDatabase, private _dialog: MdDialog) {
-    this.rooms = af.list('/');
+  constructor(private afs: AngularFirestore, private _dialog: MatDialog) {
+    this.roomCollection = this.afs.collection<Room>('rooms');
+    this.rooms = this.roomCollection.valueChanges();
   }
 
   ngOnInit() {
@@ -19,21 +24,23 @@ export class RoomComponent implements OnInit {
   }
 
   openDialog() {
-    let dialogRef = this._dialog.open(DialogContent);
+    const dialogRef = this._dialog.open(DialogContent);
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.createNewRoom(result);
       }
-    })
+    });
   }
 
-  createNewRoom(roomId: string) {
-    this.rooms.push({id: roomId});
+  createNewRoom(name: string) {
+    this.roomCollection.add({name: name });
   }
 
   deleteRoom(room) {
-    this.rooms.remove(room);
+    if (room.id) {
+      this.roomCollection.doc(room.id).delete();
+    }
   }
 }
 
@@ -42,11 +49,12 @@ export class RoomComponent implements OnInit {
     <p>Choose a Room Number: </p>
     <input #dialogInput>
     <div>
-      <button md-button (click)="dialogRef.close(dialogInput.value)">OK</button>
-      <button md-button (click)="dialogRef.close()"> CLOSE </button>
+      <button mat-button (click)="dialogRef.close(dialogInput.value)">OK</button>
+      <button mat-button (click)="dialogRef.close()"> CLOSE</button>
     </div>
   `,
 })
 export class DialogContent {
-  constructor(@Optional() public dialogRef: MdDialogRef<DialogContent>) { }
+  constructor(@Optional() public dialogRef: MatDialogRef<DialogContent>) {
+  }
 }

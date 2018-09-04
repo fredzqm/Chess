@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild, Output, Optional } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database';
+import {AngularFirestore, AngularFirestoreDocument, DocumentSnapshot} from 'angularfire2/firestore';
 import { BoardComponent } from './board/board.component';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import {Game, Room, Request} from '../model';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-chess',
@@ -11,64 +13,64 @@ import { MdDialog, MdDialogRef } from '@angular/material';
 })
 export class ChessComponent implements OnInit {
   id: any;
-  player: any;
-  isWhite: any;
-  actionBaseUrl: any;
+  isWhite: boolean;
+  game: Observable<Room>;
+  gameDoc: AngularFirestoreDocument<Room>;
 
-  @ViewChild("board") board : BoardComponent;
+  @ViewChild('board') board: BoardComponent;
 
-  constructor(private route: ActivatedRoute, private af: AngularFireDatabase, private _dialog: MdDialog) {}
+  constructor(private route: ActivatedRoute, private afs: AngularFirestore, private _dialog: MatDialog) {}
 
   ngOnInit() {
     this.route.params.subscribe(params => {
-       this.id = params['id'];
-       this.isWhite = params['isWhite'] == 'white' ? 'white' : 'black';
-       this.player = this.af.object('/' + this.id + '/' + this.isWhite);
-       this.actionBaseUrl = '/' + this.id +'/' + this.isWhite + '/action';
-       this.af.object('/' + this.id + '/' + this.isWhite + '/request').subscribe(data => {
-          if (data.askForDraw) {
+      this.id = params['id'];
+      this.isWhite = params['isWhite'] === 'white';
+      this.gameDoc = this.afs.collection('rooms').doc(this.id);
+      this.game = this.gameDoc.valueChanges();
+      this.gameDoc.collection('request-' + !this.isWhite).stateChanges(['added']).subscribe(snapshots => {
+        snapshots.map(snapshot => {
+          const request: any = snapshot.payload.doc.data();
+          if (request.askForDraw) {
             this.openDrawDialog();
           }
-          if (data.promotionTo) {
+          if (request.promotionTo) {
             this.openPromotionDialog();
           }
-       });
+        });
+      });
     });
   }
 
   openDrawDialog() {
-    let dialogRef = this._dialog.open(DrawDialogContent);
+    const dialogRef = this._dialog.open(DrawDialogContent);
 
     dialogRef.afterClosed().subscribe(accepted => {
       if (accepted) {
-        this.af.object(this.actionBaseUrl).set({agreeDraw: 'Y'});
+        this.gameDoc.collection('response-' + this.isWhite).add({agreeDraw: true});
       } else {
-        this.af.object(this.actionBaseUrl).set({agreeDraw: 'N'});
+        this.gameDoc.collection('response-' + this.isWhite).add({agreeDraw: false});
       }
-    })
+    });
   }
 
   openPromotionDialog() {
-    let dialogRef = this._dialog.open(PromotionDialogContent);
+    const dialogRef = this._dialog.open(PromotionDialogContent);
 
     dialogRef.afterClosed().subscribe(promotion => {
-      if (promotion != null) {
-        this.af.object(this.actionBaseUrl).set({promotionTo: promotion});
-        this.af.object('/' + this.id + '/' + this.isWhite + '/request').remove();
-      }
-    })
+      this.gameDoc.collection('response-' + this.isWhite).add({promotionTo: promotion});
+    });
   }
 
-  click(event : any) {
-    this.af.object(this.actionBaseUrl).set({click: {i: event.i, j: event.j}});
+  click(event: any) {
+    this.gameDoc.collection('click-' + this.isWhite).add({click: {i: event.i, j: event.j}});
   }
 
   requestForDraw() {
-    this.af.object(this.actionBaseUrl).set({requestDraw: true});
+    this.gameDoc.collection('request-' + this.isWhite).add({agreeDraw: true});
   }
 
   resign() {
-    this.af.object(this.actionBaseUrl).set({resign: true});
+    this.gameDoc.collection('request-' + this.isWhite).add({resign: true});
   }
 }
 
@@ -76,26 +78,26 @@ export class ChessComponent implements OnInit {
   template: `
     <p>Do you accept the draw?</p>
     <div>
-      <button md-button (click)="dialogRef.close(true)"> YES </button>
-      <button md-button (click)="dialogRef.close()"> NO </button>
+      <button mat-button (click)="dialogRef.close(true)"> YES </button>
+      <button mat-button (click)="dialogRef.close()"> NO </button>
     </div>
   `,
 })
 export class DrawDialogContent {
-  constructor(@Optional() public dialogRef: MdDialogRef<DrawDialogContent>) { }
+  constructor(@Optional() public dialogRef: MatDialogRef<DrawDialogContent>) { }
 }
 
 
 @Component({
   template: `
-    <md-select placeholder="Promotion" [(ngModel)]="selectedPromotion">
-       <md-option *ngFor="let p of promotions" [value]="p.value">
-         {{p.viewValue}}
-       </md-option>
-    </md-select>
+    <mat-select placeholder="Promotion" [(ngModel)]="selectedPromotion">
+      <mat-option *ngFor="let p of promotions" [value]="p.value">
+        {{p.viewValue}}
+      </mat-option>
+    </mat-select>
     <div>
-      <button md-button (click)="dialogRef.close(selectedPromotion)"> Submit </button>
-      <button md-button (click)="dialogRef.close()"> Cancel </button>
+      <button mat-button (click)="dialogRef.close(selectedPromotion)"> Submit </button>
+      <button mat-button (click)="dialogRef.close()"> Cancel </button>
     </div>
   `,
 })
@@ -107,5 +109,5 @@ export class PromotionDialogContent {
     {value: 'N', viewValue: 'Knight'},
     {value: 'B', viewValue: 'Bishop'}
   ];
-  constructor(@Optional() public dialogRef: MdDialogRef<PromotionDialogContent>) { }
+  constructor(@Optional() public dialogRef: MatDialogRef<PromotionDialogContent>) { }
 }

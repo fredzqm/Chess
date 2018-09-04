@@ -1,0 +1,46 @@
+[debug] [2018-09-01T01:14:23.507Z] ----------------------------------------------------------------------
+[debug] [2018-09-01T01:14:23.510Z] Command:       /usr/bin/node /usr/local/google/home/fredzqm/.yarn/bin/firebase init
+[debug] [2018-09-01T01:14:23.510Z] CLI Version:   4.2.1
+[debug] [2018-09-01T01:14:23.510Z] Platform:      linux
+[debug] [2018-09-01T01:14:23.510Z] Node Version:  v8.11.0
+[debug] [2018-09-01T01:14:23.510Z] Time:          Sat Sep 01 2018 01:14:23 GMT+0000 (UTC)
+[debug] [2018-09-01T01:14:23.510Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-09-01T01:14:23.521Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase"]
+[debug] [2018-09-01T01:14:23.521Z] > attempting to authenticate via app default credentials
+[debug] [2018-09-01T01:14:23.572Z] TypeError: Cannot create property 'refresh_token' on string 'No service account scopes specified.'
+    at /usr/local/google/home/fredzqm/.config/yarn/global/node_modules/firebase-tools/node_modules/google-auth-library/lib/auth/oauth2client.js:208:28
+    at /usr/local/google/home/fredzqm/.config/yarn/global/node_modules/firebase-tools/node_modules/google-auth-library/lib/auth/computeclient.js:85:7
+    at Request._callback (/usr/local/google/home/fredzqm/.config/yarn/global/node_modules/firebase-tools/node_modules/google-auth-library/lib/transporters.js:106:7)
+    at Request.self.callback (/usr/local/google/home/fredzqm/.config/yarn/global/node_modules/request/request.js:185:22)
+    at emitTwo (events.js:126:13)
+    at Request.emit (events.js:214:7)
+    at Request.<anonymous> (/usr/local/google/home/fredzqm/.config/yarn/global/node_modules/request/request.js:1161:10)
+    at emitOne (events.js:116:13)
+    at Request.emit (events.js:211:7)
+    at IncomingMessage.<anonymous> (/usr/local/google/home/fredzqm/.config/yarn/global/node_modules/request/request.js:1083:12)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2018-09-04T16:07:04.578Z] ----------------------------------------------------------------------
+[debug] [2018-09-04T16:07:04.581Z] Command:       /usr/bin/node /usr/local/google/home/fredzqm/.yarn/bin/firebase init
+[debug] [2018-09-04T16:07:04.581Z] CLI Version:   4.2.1
+[debug] [2018-09-04T16:07:04.581Z] Platform:      linux
+[debug] [2018-09-04T16:07:04.581Z] Node Version:  v8.11.0
+[debug] [2018-09-04T16:07:04.581Z] Time:          Tue Sep 04 2018 16:07:04 GMT+0000 (UTC)
+[debug] [2018-09-04T16:07:04.581Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-09-04T16:07:04.591Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase"]
+[debug] [2018-09-04T16:07:04.591Z] > attempting to authenticate via app default credentials
+[debug] [2018-09-04T16:07:04.637Z] TypeError: Cannot create property 'refresh_token' on string 'No service account scopes specified.'
+    at /usr/local/google/home/fredzqm/.config/yarn/global/node_modules/firebase-tools/node_modules/google-auth-library/lib/auth/oauth2client.js:208:28
+    at /usr/local/google/home/fredzqm/.config/yarn/global/node_modules/firebase-tools/node_modules/google-auth-library/lib/auth/computeclient.js:85:7
+    at Request._callback (/usr/local/google/home/fredzqm/.config/yarn/global/node_modules/firebase-tools/node_modules/google-auth-library/lib/transporters.js:106:7)
+    at Request.self.callback (/usr/local/google/home/fredzqm/.config/yarn/global/node_modules/request/request.js:185:22)
+    at emitTwo (events.js:126:13)
+    at Request.emit (events.js:214:7)
+    at Request.<anonymous> (/usr/local/google/home/fredzqm/.config/yarn/global/node_modules/request/request.js:1161:10)
+    at emitOne (events.js:116:13)
+    at Request.emit (events.js:211:7)
+    at IncomingMessage.<anonymous> (/usr/local/google/home/fredzqm/.config/yarn/global/node_modules/request/request.js:1083:12)
+[error] 
+[error] Error: An unexpected error has occurred.

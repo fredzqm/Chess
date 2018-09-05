@@ -36,6 +36,7 @@ export class ChessComponent implements OnInit {
           if (request.promotionTo) {
             this.openPromotionDialog();
           }
+          this.gameDoc.collection('request').doc(snapshot.payload.doc.id).delete();
         });
       });
     });

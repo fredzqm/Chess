@@ -2,6 +2,8 @@ package viewServer;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentChange;
+import com.google.cloud.firestore.DocumentChange.Type;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.EventListener;
@@ -136,33 +138,35 @@ public class ServerChessView implements IChessViewer {
     @Override
     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirestoreException error) {
       (new Thread(() -> {
-        for (DocumentSnapshot documentSnapshot : value) {
-          action = documentSnapshot.toObject(ActionData.class);
-          if (action == null) {
-            return;
-          }
-          if (action.click != null) {
-            int i = (int) action.click.i;
-            int j = (int) action.click.j;
-            controller.click(getFile(i, j), getRank(i, j), whiteOrBlack);
-          }
-          if (action.requestDraw == true) {
-            controller.askForDraw(whiteOrBlack);
-          }
-          if (action.resign == true) {
-            controller.resign(whiteOrBlack);
-          }
-          if (action.agreeDraw == true) {
-            synchronized (ServerChessView.this) {
-              ServerChessView.this.notifyAll();
+        for (DocumentChange documentChange : value.getDocumentChanges()) {
+          if (documentChange.getType() == Type.ADDED) {
+            action = documentChange.getDocument().toObject(ActionData.class);
+            if (action == null) {
+              return;
             }
-          }
-          if (action.promotionTo != null) {
-            synchronized (ServerChessView.this) {
-              ServerChessView.this.notifyAll();
+            if (action.click != null) {
+              int i = (int) action.click.i;
+              int j = (int) action.click.j;
+              controller.click(getFile(i, j), getRank(i, j), whiteOrBlack);
             }
+            if (action.requestDraw == true) {
+              controller.askForDraw(whiteOrBlack);
+            }
+            if (action.resign == true) {
+              controller.resign(whiteOrBlack);
+            }
+            if (action.agreeDraw == true) {
+              synchronized (ServerChessView.this) {
+                ServerChessView.this.notifyAll();
+              }
+            }
+            if (action.promotionTo != null) {
+              synchronized (ServerChessView.this) {
+                ServerChessView.this.notifyAll();
+              }
+            }
+            actionRef.document(documentChange.getDocument().getId()).delete();
           }
-          actionRef.document(documentSnapshot.getId()).delete();
         }
       })).start();
     }
@@ -176,7 +180,6 @@ public class ServerChessView implements IChessViewer {
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
-    System.out.println("after wait: " + action.agreeDraw);
     return action.agreeDraw;
   }
 

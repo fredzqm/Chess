@@ -56,6 +56,7 @@ public class Server {
                   .newInstance(FirestoreClient.getFirestore().collection("rooms").document(roomLoc)
                       .collection("display")
                       .document("black"), false);
+              System.out.println("Room " + dc.getDocument().getData().toString() + " added");
               games.put(roomLoc, new DualViewChessControl(whiteview, blackview));
               FirestoreClient.getFirestore().collection("rooms").document(roomLoc)
                   .update("$key", roomLoc);

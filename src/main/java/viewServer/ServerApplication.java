@@ -18,7 +18,9 @@ public class ServerApplication {
 
 	static {
 		try {
-			FileInputStream serviceAccount = new FileInputStream("secret/chess-2c8e2-firebase-adminsdk-1iya2-555539dd58.json");
+			FileInputStream serviceAccount = new FileInputStream(
+					ServerApplication.class.getClassLoader()
+							.getResource("secret/chess-2c8e2-firebase-adminsdk-1iya2-555539dd58.json").getFile());
 
 				FirebaseOptions options = new Builder()
 				.setCredentials(GoogleCredentials.fromStream(serviceAccount))

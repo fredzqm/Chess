@@ -11,12 +11,24 @@
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'idea'
+apply plugin: "com.google.cloud.tools.appengine-flexible"
 
-// In this section you declare where to find the dependencies of your project
-repositories {
-    // Use 'jcenter' for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+buildscript {      // Configuration for building
+  repositories {
+    jcenter()      // Bintray's repository - a fast Maven Central mirror & more
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'com.google.cloud.tools:appengine-gradle-plugin:2.0.+'
+  }
+}
+
+repositories {   // repositories for JARs you access in your code
+  maven {
+    url 'https://maven-central.storage.googleapis.com'             // Google's mirror of Maven Central
+  }
+  jcenter()
+  mavenCentral()
 }
 
 mainClassName = "viewServer.ServerApplication"
@@ -28,12 +40,44 @@ dependencies {
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
 	compile 'com.google.firebase:firebase-admin:6.4.0'
-    
+
     // Declare the dependency for your favourite test framework you want to use in your tests.
     // TestNG is also supported by the Gradle Test task. Just change the
     // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
     // 'test.useTestNG()' to your build script.
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.7.+'
     testCompile 'junit:junit:4.12'
-
 }
+
+jar {
+    manifest {
+        attributes("Implementation-Title": 'Chess-service',
+            "Implementation-Version": '1.0',
+            "Main-Class": 'viewServer.ServerApplication')
+    }
+}
+
+appengine {
+  deploy {   // deploy configuration
+    stopPreviousVersion = true  // default - stop the current version
+    promote = true              // default - & make this the current version
+  }
+  tools {
+    // configure the Cloud Sdk tooling
+  }
+  run {
+    // configure local run
+  }
+  stage {
+    // configure staging for deployment
+  }
+}
+
+group = 'com.example.appengine'   // Generated output GroupId
+version = '1.0-SNAPSHOT'          // Version in generated output
+appengine.deploy.projectId = 'chess-2c8e2'
+appengine.deploy.version = 'GCLOUD_CONFIG'
+
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8

@@ -28,6 +28,7 @@ public class ServerChessView implements IChessViewer {
   private IChessViewerControl controller;
   private ActionEventListener actionListener;
   private ActionData action;
+  private CollectionReference requestRef;
 
   public ServerChessView() {
   }
@@ -122,6 +123,7 @@ public class ServerChessView implements IChessViewer {
   public void initializeViewController(IChessViewerControl controller) {
     this.controller = controller;
     this.actionListener = new ActionEventListener(ref.collection("action"));
+    this.requestRef = ref.collection("request");
   }
 
   private class ActionEventListener implements EventListener<QuerySnapshot> {
@@ -146,7 +148,6 @@ public class ServerChessView implements IChessViewer {
           }
           if (action.requestDraw == true) {
             controller.askForDraw(whiteOrBlack);
-
           }
           if (action.resign == true) {
             controller.resign(whiteOrBlack);
@@ -169,31 +170,25 @@ public class ServerChessView implements IChessViewer {
 
   @Override
   public synchronized boolean askForDraw() {
-    // DocumentReference newRequest = this.ref.collection("request").document();
-    // newRequest.update("askForDraw", true);
-    // try {
-    //   wait();
-    // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
-    // }
-    // System.out.println("after wait: " + action.agreeDraw);
-    // boolean yes = action.agreeDraw.equals("Y");
-    // this.actionRef.child("agreeDraw").removeValue(null);
-    // return yes;
-    return false;
+    this.requestRef.add(ImmutableMap.of("askForDraw", true));
+    try {
+      wait();
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+    System.out.println("after wait: " + action.agreeDraw);
+    return action.agreeDraw;
   }
 
   @Override
   public synchronized String getPromoteTo() {
-    // this.ref.child("request").child("promotionTo").setValue(true, null);
-    // try {
-    // 	wait();
-    // } catch (InterruptedException e) {
-    // 	throw new RuntimeException(e);
-    // }
-    // String x = this.action.promotionTo;
-    // actionRef.child("promotionTo").removeValue(null);
-    return "Q";
+    this.requestRef.add(ImmutableMap.of("promotionTo", true));
+    try {
+      wait();
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+    return this.action.promotionTo;
   }
 
   @Override

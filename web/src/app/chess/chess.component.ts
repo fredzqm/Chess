@@ -66,11 +66,11 @@ export class ChessComponent implements OnInit {
   }
 
   requestForDraw() {
-    this.gameDoc.collection('action').add({agreeDraw: true});
+    this.gameDoc.collection('action').add({requestDraw: true});
   }
 
   resign() {
-    this.gameDoc.collection('action-').add({resign: true});
+    this.gameDoc.collection('action').add({resign: true});
   }
 }
 

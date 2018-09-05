@@ -43,8 +43,7 @@ public class Server {
         System.err.println("Listen failed: " + error);
         return;
       }
-
-      new Thread(()-> {
+      (new Thread(() -> {
         for (DocumentChange dc : snapshots.getDocumentChanges()) {
           switch (dc.getType()) {
             case ADDED:
@@ -58,13 +57,14 @@ public class Server {
                       .collection("display")
                       .document("black"), false);
               games.put(roomLoc, new DualViewChessControl(whiteview, blackview));
-              FirestoreClient.getFirestore().collection("rooms").document(roomLoc).update("$key", roomLoc);
+              FirestoreClient.getFirestore().collection("rooms").document(roomLoc)
+                  .update("$key", roomLoc);
               break;
             default:
               break;
           }
         }
-      }).start();
+      })).start();
     }
 
     @Override

@@ -38,8 +38,8 @@ export class RoomComponent implements OnInit {
   }
 
   deleteRoom(room) {
-    if (room.id) {
-      this.roomCollection.doc(room.id).delete();
+    if (room.$key) {
+      this.roomCollection.doc(room.$key).delete();
     }
   }
 }

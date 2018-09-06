@@ -28,6 +28,7 @@ public class Server {
     this.ref = data.getReference();
     this.rootListener = new RootListener();
     FirestoreClient.getFirestore().collection("rooms").addSnapshotListener(rootListener);
+    System.err.println("Listener added");
   }
 
   private class RootListener implements ChildEventListener, EventListener<QuerySnapshot> {
@@ -43,29 +44,28 @@ public class Server {
         System.err.println("Listen failed: " + error);
         return;
       }
-      (new Thread(() -> {
-        for (DocumentChange dc : snapshots.getDocumentChanges()) {
-          switch (dc.getType()) {
-            case ADDED:
-              String roomLoc = dc.getDocument().getId();
-              ServerChessView whiteview = ServerChessView
-                  .newInstance(FirestoreClient.getFirestore().collection("rooms").document(roomLoc)
-                      .collection("display")
-                      .document("white"), true);
-              ServerChessView blackview = ServerChessView
-                  .newInstance(FirestoreClient.getFirestore().collection("rooms").document(roomLoc)
-                      .collection("display")
-                      .document("black"), false);
-              System.out.println("Room " + dc.getDocument().getData().toString() + " added");
-              games.put(roomLoc, new DualViewChessControl(whiteview, blackview));
-              FirestoreClient.getFirestore().collection("rooms").document(roomLoc)
-                  .update("$key", roomLoc);
-              break;
-            default:
-              break;
-          }
+      System.out.println("Event triggered");
+      for (DocumentChange dc : snapshots.getDocumentChanges()) {
+        switch (dc.getType()) {
+          case ADDED:
+            String roomLoc = dc.getDocument().getId();
+            ServerChessView whiteview = ServerChessView
+                .newInstance(FirestoreClient.getFirestore().collection("rooms").document(roomLoc)
+                    .collection("display")
+                    .document("white"), true);
+            ServerChessView blackview = ServerChessView
+                .newInstance(FirestoreClient.getFirestore().collection("rooms").document(roomLoc)
+                    .collection("display")
+                    .document("black"), false);
+            System.out.println("Room " + dc.getDocument().getData().toString() + " added");
+            games.put(roomLoc, new DualViewChessControl(whiteview, blackview));
+            FirestoreClient.getFirestore().collection("rooms").document(roomLoc)
+                .update("$key", roomLoc);
+            break;
+          default:
+            break;
         }
-      })).start();
+      }
     }
 
     @Override
@@ -87,6 +87,9 @@ public class Server {
       ViewController viewControl = games.remove(roomLoc);
       viewControl.close();
     }
+  }
 
+  public Map<String, ViewController> getGames() {
+    return games;
   }
 }

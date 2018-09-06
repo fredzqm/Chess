@@ -1,17 +1,19 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { auth } from 'firebase';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-
-export class AppComponent implements OnInit {
-  constructor() {
+export class AppComponent {
+  constructor(public afAuth: AngularFireAuth) {
   }
-
-  ngOnInit() {
-
+  login() {
+    this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider());
   }
-
+  logout() {
+    this.afAuth.auth.signOut();
+  }
 }

@@ -6,7 +6,7 @@
 export const environment = {
   production: true,
   firebase: {
-    apeKey: "AIzaSyCeQRS66HV77kZRUVF9uugvrjNmoDoQ53Y",
+    apiKey: "AIzaSyCeQRS66HV77kZRUVF9uugvrjNmoDoQ53Y",
     authDomain: "chess-2c8e2.firebaseapp.com",
     databaseURL: "https://chess-2c8e2.firebaseio.com",
     projectId: "chess-2c8e2",

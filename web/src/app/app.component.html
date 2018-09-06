@@ -3,6 +3,14 @@
   <span [routerLink]="['/']" fxFlex="5" fxFlexOffset="15">Rooms</span>
 </mat-toolbar>
 
-<div>
-  <router-outlet></router-outlet>
+<div *ngIf="afAuth.user | async as user; else showLogin">
+  <h1>Hello {{ user.displayName }}!</h1>
+  <button (click)="logout()">Logout</button>
+  <div>
+    <router-outlet></router-outlet>
+  </div>
 </div>
+<ng-template #showLogin>
+  <p>Please login.</p>
+  <button (click)="login()">Login with Google</button>
+</ng-template>

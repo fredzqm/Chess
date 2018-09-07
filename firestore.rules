@@ -10,7 +10,7 @@ service cloud.firestore {
         allow read, write: if request.auth.token.email == resource.data.player;
       }
       match /display/{side}/{x=**} {
-        allow read, write: if request.auth.token.email == get(/databases/$(database)/documents/rooms/$(roomId)/display/$(side)).player;
+        allow read, write: if request.auth.token.email == get(/databases/$(database)/documents/rooms/$(roomId)/display/$(side)).data.player;
       }
     }
   }

@@ -69,3 +69,4 @@ fabric.properties
 *.iml
 node_modules
 src/main/resources/secret
+.firebase

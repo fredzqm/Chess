@@ -5,3 +5,8 @@
 .navbar-style {
   margin: -8px;
 }
+
+#header {
+  color: white;
+  text-decoration: none;
+}

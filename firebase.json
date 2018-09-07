@@ -9,7 +9,13 @@
   "functions": {
   },
   "hosting": {
-    "public": "web/dist"
+    "public": "web/dist",
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   },
   "storage": {
     "rules": "storage.rules"

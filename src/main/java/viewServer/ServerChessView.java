@@ -36,12 +36,14 @@ public class ServerChessView implements IChessViewer {
   }
 
   public static ServerChessView newInstance(DocumentReference firebaseReference,
+      String player,
       boolean whiteOrBlack) {
     ServerChessView p = new ServerChessView();
     p.board = new BoardData();
     p.ref = firebaseReference;
     p.whiteOrBlack = whiteOrBlack;
     p.board.whiteOrBlack = whiteOrBlack;
+    p.board.player = player;
     p.ref.set(p.board);
     return p;
   }

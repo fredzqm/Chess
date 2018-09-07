@@ -6,6 +6,7 @@ import java.util.List;
 public class BoardData {
 	public List<PieceData> pieces;
 	public boolean whiteOrBlack;
+	public String player;
 
 	public List<PieceData> getPieces() {
 		return pieces;

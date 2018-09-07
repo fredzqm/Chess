@@ -3,6 +3,7 @@ package viewServer;
 import com.google.cloud.firestore.DocumentChange;
 import com.google.cloud.firestore.EventListener;
 import com.google.cloud.firestore.FirestoreException;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.firebase.cloud.FirestoreClient;
 import java.util.HashMap;
@@ -44,20 +45,21 @@ public class Server {
         System.err.println("Listen failed: " + error);
         return;
       }
-      System.out.println("Event triggered");
       for (DocumentChange dc : snapshots.getDocumentChanges()) {
         switch (dc.getType()) {
           case ADDED:
-            String roomLoc = dc.getDocument().getId();
+            final QueryDocumentSnapshot document = dc.getDocument();
+            final Map<String, Object> data = document.getData();
+            String roomLoc = document.getId();
             ServerChessView whiteview = ServerChessView
                 .newInstance(FirestoreClient.getFirestore().collection("rooms").document(roomLoc)
                     .collection("display")
-                    .document("white"), true);
+                    .document("white"), (String) data.get("owner"), true);
             ServerChessView blackview = ServerChessView
                 .newInstance(FirestoreClient.getFirestore().collection("rooms").document(roomLoc)
                     .collection("display")
-                    .document("black"), false);
-            System.out.println("Room " + dc.getDocument().getData().toString() + " added");
+                    .document("black"), (String) data.get("invite") , false);
+            System.out.println("Room " + data.toString() + " added");
             games.put(roomLoc, new DualViewChessControl(whiteview, blackview));
             FirestoreClient.getFirestore().collection("rooms").document(roomLoc)
                 .update("$key", roomLoc);

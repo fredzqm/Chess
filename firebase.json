@@ -7,9 +7,6 @@
     "indexes": "firestore.indexes.json"
   },
   "functions": {
-    "predeploy": [
-      "cd web; yarn build"
-    ]
   },
   "hosting": {
     "public": "web/dist"

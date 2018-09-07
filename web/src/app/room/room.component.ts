@@ -4,6 +4,10 @@ import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Observable} from 'rxjs';
 import {AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection} from 'angularfire2/firestore';
 import {Room} from '../model';
+import {AngularFireAuth} from 'angularfire2/auth';
+import {merge} from 'rxjs/internal/observable/merge';
+import {map} from 'rxjs/operators';
+import {combineLatest} from 'rxjs/internal/observable/combineLatest';
 
 @Component({
   selector: 'app-room',
@@ -11,12 +15,21 @@ import {Room} from '../model';
   styleUrls: ['./room.component.css']
 })
 export class RoomComponent implements OnInit {
-  private roomCollection: AngularFirestoreCollection<Room>;
-  public rooms: Observable<Room[]>;
+  private roomCollection: AngularFirestoreCollection<any>;
+  private invitedColletion: AngularFirestoreCollection<any>;
+  public rooms: Observable<any[]>;
+  public invited: Observable<any[]>;
+  private user: firebase.User | null;
 
-  constructor(private afs: AngularFirestore, private _dialog: MatDialog) {
-    this.roomCollection = this.afs.collection<Room>('rooms');
-    this.rooms = this.roomCollection.valueChanges();
+  constructor(private afs: AngularFirestore, public afAuth: AngularFireAuth, private _dialog: MatDialog) {
+    this.afAuth.user.subscribe((user) => {
+      this.user = user;
+      const email = user.email;
+      this.roomCollection = this.afs.collection<any>('rooms', ref => ref.where('owner', '==', email));
+      this.rooms = this.roomCollection.valueChanges();
+      this.invitedColletion = this.afs.collection<any>('rooms', ref => ref.where('invite', '==', email));
+      this.invited = this.invitedColletion.valueChanges();
+    });
   }
 
   ngOnInit() {
@@ -33,8 +46,12 @@ export class RoomComponent implements OnInit {
     });
   }
 
-  createNewRoom(name: string) {
-    this.roomCollection.add({name: name });
+  createNewRoom(data: any) {
+    this.roomCollection.add({
+      name: data.name,
+      owner: this.user.email,
+      invite: data.invite
+    });
   }
 
   deleteRoom(room) {
@@ -46,10 +63,15 @@ export class RoomComponent implements OnInit {
 
 @Component({
   template: `
-    <p>Choose a Room Number: </p>
-    <input #dialogInput>
+    <p>Choose a Room Name: </p>
+    <input #nameInput>
+    <p>Invite email: </p>
+    <input #inviteInput>
     <div>
-      <button mat-button (click)="dialogRef.close(dialogInput.value)">OK</button>
+      <button mat-button
+              (click)="dialogRef.close({'name':nameInput.value, 'invite': inviteInput.value})">
+        OK
+      </button>
       <button mat-button (click)="dialogRef.close()"> CLOSE</button>
     </div>
   `,
